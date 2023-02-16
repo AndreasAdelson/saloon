@@ -1,0 +1,16 @@
+/*
+Theme Name:  My Child Theme. Child for Hello Elementor.
+Theme URI:  https://andreasadelson.com
+Description:  Theme enfant pour le salon de coiffure dreadlocks natty
+Author:  Andréas ADELSON
+Textdomain:  aadelson
+Author URI:  https://andreasadelson.com/
+Template:  hello-elementor
+Version:  1.0
+License:  GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html             
+*/
+
+.entry-title {
+    color: gold;
+}

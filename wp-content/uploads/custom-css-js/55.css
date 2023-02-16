@@ -1,0 +1,25 @@
+<!-- start Simple Custom CSS and JS -->
+<style type="text/css">
+/* Ajouter votre code CSS ici.
+          
+Par exemple:
+.exemple {
+    color: red;
+}
+
+Pour améliorer vos connaissances en CSS, visitez http://www.w3schools.com/css/css_syntax.asp
+
+Fin du commentaire */ 
+.elementor-column-gap-default>.elementor-column>.elementor-element-populated {
+	padding: 0px;
+}
+/* .elementor-section .elementor-container {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.hfe-nav-menu__align-justify .hfe-nav-menu__layout-horizontal .hfe-nav-menu {
+	margin-left: auto;
+	margin-right: auto;
+} */</style>
+<!-- end Simple Custom CSS and JS -->
