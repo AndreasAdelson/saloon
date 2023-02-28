@@ -10,16 +10,34 @@ Par exemple:
 Pour améliorer vos connaissances en CSS, visitez http://www.w3schools.com/css/css_syntax.asp
 
 Fin du commentaire */ 
+/* Header */
 .elementor-column-gap-default>.elementor-column>.elementor-element-populated {
 	padding: 0px;
 }
-/* .elementor-section .elementor-container {
-	margin-left: 0;
-	margin-right: 0;
+
+/* .elementor-14 .elementor-element.elementor-element-76c5469 .menu-item {
+	position: relative;
+} */
+.elementor-14 .hfe-nav-menu .hfe-creative-menu:not(:last-child) {
+	position: relative;
+}
+.elementor-14 .hfe-nav-menu .hfe-creative-menu:not(:last-child) .hfe-menu-item::after {
+	content: '';
+	background-color: #FFFFFF !important;
+	height: 55%;
+	width: 1px;
+	position: absolute;
+	right: 0;
+	top: 25%;
+	opacity: 1 !important;
 }
 
-.hfe-nav-menu__align-justify .hfe-nav-menu__layout-horizontal .hfe-nav-menu {
-	margin-left: auto;
-	margin-right: auto;
-} */</style>
+.elementor-14 .elementor-element.elementor-element-76c5469 .menu-item a.hfe-menu-item:hover,
+.elementor-14 .elementor-element.elementor-element-76c5469 .sub-menu a.hfe-sub-menu-item:hover,
+.elementor-14 .elementor-element.elementor-element-76c5469 .menu-item.current-menu-item a.hfe-menu-item,
+.elementor-14 .elementor-element.elementor-element-76c5469 .menu-item a.hfe-menu-item.highlighted,
+.elementor-14 .elementor-element.elementor-element-76c5469 .menu-item a.hfe-menu-item:focus {
+	color: #f4be86;
+	background: linear-gradient(#00000081, transparent, transparent);
+}</style>
 <!-- end Simple Custom CSS and JS -->
