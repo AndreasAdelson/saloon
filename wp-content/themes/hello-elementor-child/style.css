@@ -14,3 +14,20 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 .entry-title {
     color: gold;
 }
+
+@font-face {
+    font-family: 'Sarabun';
+    src: url("/fonts/Sarabun-Regular.ttf") format("ttf"),
+        url("/fonts/Sarabun-Regular.ttf") format("ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'Futura';
+    src: url("/fonts/futur.ttf") format("ttf"),
+        url("/fonts/futur.ttf") format("ttf");
+    font-weight: normal;
+    font-style: normal;
+}
