@@ -1,7 +1,8 @@
 <?php
+
 namespace Elementor;
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
@@ -13,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.5.0
  */
-class Control_Exit_Animation extends Control_Animation {
+class Control_Exit_Animation extends Control_Animation
+{
 
 	/**
 	 * Get control type.
@@ -25,7 +27,8 @@ class Control_Exit_Animation extends Control_Animation {
 	 *
 	 * @return string Control type.
 	 */
-	public function get_type() {
+	public function get_type()
+	{
 		return 'exit_animation';
 	}
 
@@ -40,40 +43,41 @@ class Control_Exit_Animation extends Control_Animation {
 	 *
 	 * @return array Control type.
 	 */
-	public static function get_animations() {
+	public static function get_animations()
+	{
 		$animations = [
 			'Fading' => [
-				'fadeIn' => 'Fade Out',
-				'fadeInDown' => 'Fade Out Up',
-				'fadeInLeft' => 'Fade Out Left',
-				'fadeInRight' => 'Fade Out Right',
-				'fadeInUp' => 'Fade Out Down',
+				'fadeOut' => 'Fade Out',
+				'fadeOutDown' => 'Fade Out Up',
+				'fadeOutLeft' => 'Fade Out Left',
+				'fadeOutRight' => 'Fade Out Right',
+				'fadeOutUp' => 'Fade Out Down',
 			],
 			'Zooming' => [
-				'zoomIn' => 'Zoom Out',
-				'zoomInDown' => 'Zoom Out Up',
-				'zoomInLeft' => 'Zoom Out Left',
-				'zoomInRight' => 'Zoom Out Right',
-				'zoomInUp' => 'Zoom Out Down',
+				'zoomOut' => 'Zoom Out',
+				'zoomOutDown' => 'Zoom Out Up',
+				'zoomOutLeft' => 'Zoom Out Left',
+				'zoomOutRight' => 'Zoom Out Right',
+				'zoomOutUp' => 'Zoom Out Down',
 			],
 			'Sliding' => [
-				'slideInDown' => 'Slide Out Up',
-				'slideInLeft' => 'Slide Out Left',
-				'slideInRight' => 'Slide Out Right',
-				'slideInUp' => 'Slide Out Down',
+				'slideOutDown' => 'Slide Out Up',
+				'slideOutLeft' => 'Slide Out Left',
+				'slideOutRight' => 'Slide Out Right',
+				'slideOutUp' => 'Slide Out Down',
 			],
 			'Rotating' => [
-				'rotateIn' => 'Rotate Out',
-				'rotateInDownLeft' => 'Rotate Out Up Left',
-				'rotateInDownRight' => 'Rotate Out Up Right',
-				'rotateInUpRight' => 'Rotate Out Down Left',
-				'rotateInUpLeft' => 'Rotate Out Down Right',
+				'rotateOut' => 'Rotate Out',
+				'rotateOutDownLeft' => 'Rotate Out Up Left',
+				'rotateOutDownRight' => 'Rotate Out Up Right',
+				'rotateOutUpRight' => 'Rotate Out Down Left',
+				'rotateOutUpLeft' => 'Rotate Out Down Right',
 			],
 			'Light Speed' => [
-				'lightSpeedIn' => 'Light Speed Out',
+				'lightSpeedOut' => 'Light Speed Out',
 			],
 			'Specials' => [
-				'rollIn' => 'Roll Out',
+				'rollOut' => 'Roll Out',
 			],
 		];
 
@@ -91,18 +95,19 @@ class Control_Exit_Animation extends Control_Animation {
 		 *
 		 * @param array $additional_animations Additional animations array.
 		 */
-		$additional_animations = apply_filters( 'elementor/controls/exit-animations/additional_animations', $additional_animations );
+		$additional_animations = apply_filters('elementor/controls/exit-animations/additional_animations', $additional_animations);
 
-		return array_merge( $animations, $additional_animations );
+		return array_merge($animations, $additional_animations);
 	}
 
-	public static function get_assets( $setting ) {
-		if ( ! $setting || 'none' === $setting ) {
+	public static function get_assets($setting)
+	{
+		if (!$setting || 'none' === $setting) {
 			return [];
 		}
 
 		return [
-			'styles' => [ 'e-animations' ],
+			'styles' => ['e-animations'],
 		];
 	}
 }
