@@ -11,6 +11,12 @@ For brushing up on your CSS knowledge, check out http://www.w3schools.com/css/cs
 
 End of comment */ 
 
+html,
+body{
+width:100%;
+overflow-x:hidden;
+}
+
 @keyframes fadeOut {
     0% {
         opacity: 1
@@ -27,9 +33,46 @@ End of comment */
     animation-delay: 2s;
 }
 
-.e-gallery-container {
-	overflow-x: hidden;
-	overflow-y: scroll;
+.e-gallery-container{
+    max-height: 600px;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
+
+.e-gallery-container::-webkit-scrollbar{
+width: 5px;
+}
+
+.e-gallery-container::-webkit-scrollbar-track{
+background: rgba(0, 0, 0, 0.1);
+}
+
+.e-gallery-container::-webkit-scrollbar-thumb{
+background: rgba(0, 0, 0, 0.31);
+}
+
+.site-footer {
+	display: none;
+}
+
+#forfait{
+    max-height: 850px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+	background-color: #00000061;
+}
+
+#forfait::-webkit-scrollbar{
+width: 5px;
+}
+
+#forfait::-webkit-scrollbar-track{
+background: rgba(0, 0, 0, 0.1);
+}
+
+#forfait::-webkit-scrollbar-thumb{
+background: #F4BE86;
+}
+
 </style>
 <!-- end Simple Custom CSS and JS -->

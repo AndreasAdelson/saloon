@@ -51716,7 +51716,7 @@ function useResizeCanvas(deviceType) {
   const marginValue = () => window.innerHeight < 800 ? 36 : 72;
 
   const contentInlineStyles = device => {
-    const height = device === 'Mobile' ? '768px' : '1024px';
+    const height = device === 'Mobile' ? '768px' : '1200px';
 
     switch (device) {
       case 'Tablet':
