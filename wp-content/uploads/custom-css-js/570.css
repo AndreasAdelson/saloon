@@ -55,22 +55,22 @@ background: rgba(0, 0, 0, 0.31);
 	display: none;
 }
 
-#forfait{
-    max-height: 850px;
+.forfait{
+    max-height: 750px;
     overflow-x: hidden;
     overflow-y: scroll;
 	background-color: #00000061;
 }
 
-#forfait::-webkit-scrollbar{
+.forfait::-webkit-scrollbar{
 width: 5px;
 }
 
-#forfait::-webkit-scrollbar-track{
+.forfait::-webkit-scrollbar-track{
 background: rgba(0, 0, 0, 0.1);
 }
 
-#forfait::-webkit-scrollbar-thumb{
+.forfait::-webkit-scrollbar-thumb{
 background: #F4BE86;
 }
 
