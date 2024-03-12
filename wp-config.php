@@ -27,7 +27,7 @@ define('DB_NAME', 'salon');
 define('DB_USER', 'root');
 
 /** Database password */
-define('DB_PASSWORD', 'SKB2022');
+define('DB_PASSWORD', 'root');
 
 /** Database hostname */
 define('DB_HOST', 'localhost');
