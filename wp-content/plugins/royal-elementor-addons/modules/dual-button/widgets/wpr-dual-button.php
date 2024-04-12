@@ -3,11 +3,10 @@ namespace WprAddons\Modules\DualButton\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Responsive\Responsive;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
@@ -148,6 +147,9 @@ class Wpr_Dual_Button extends Widget_Base {
 				'label' => esc_html__( 'Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => 'Button 1',
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -155,6 +157,9 @@ class Wpr_Dual_Button extends Widget_Base {
 			'button_a_url',
 			[
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'default' => [
 					'url' => '#link',
@@ -232,6 +237,9 @@ class Wpr_Dual_Button extends Widget_Base {
 			[
 				'label' => esc_html__( 'Effect Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Go 1',
 				'condition' => [
 					'button_a_hover_animation' => ['wpr-button-winona','wpr-button-rayen-left','wpr-button-rayen-right']
@@ -305,6 +313,9 @@ class Wpr_Dual_Button extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button ID', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'wpr-addons' ),
 				'description' => esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this button is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'wpr-addons' ),
 				'label_block' => false,
@@ -420,6 +431,9 @@ class Wpr_Dual_Button extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Button 2',
 			]
 		);
@@ -428,6 +442,9 @@ class Wpr_Dual_Button extends Widget_Base {
 			'button_b_url',
 			[
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'label' => esc_html__( 'Link', 'wpr-addons' ),
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'show_label' => false,
@@ -506,6 +523,9 @@ class Wpr_Dual_Button extends Widget_Base {
 			[
 				'label' => esc_html__( 'Effect Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Go',
 				'condition' => [
 					'button_b_hover_animation' => ['wpr-button-winona','wpr-button-rayen-left','wpr-button-rayen-right']
@@ -579,6 +599,9 @@ class Wpr_Dual_Button extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button ID', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'wpr-addons' ),
 				'description' => esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this button is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'wpr-addons' ),
 				'label_block' => false,
@@ -733,7 +756,6 @@ class Wpr_Dual_Button extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'general_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-button-text-a,{{WRAPPER}} .wpr-button-a::after,{{WRAPPER}} .wpr-button-text-b,{{WRAPPER}} .wpr-button-b::after',
 				'separator' => 'before',
 			]
@@ -1080,7 +1102,7 @@ class Wpr_Dual_Button extends Widget_Base {
 
 			$btn_a_element = 'a';
 
-			$this->add_render_attribute( 'button_a_attribute', 'href', $settings['button_a_url']['url'] );
+			$this->add_render_attribute( 'button_a_attribute', 'href', esc_url( $settings['button_a_url']['url'] ));
 
 			if ( $settings['button_a_url']['is_external'] ) {
 				$this->add_render_attribute( 'button_a_attribute', 'target', '_blank' );
@@ -1133,7 +1155,7 @@ class Wpr_Dual_Button extends Widget_Base {
 
 			$btn_b_element = 'a';
 
-			$this->add_render_attribute( 'button_b_attribute', 'href', $settings['button_b_url']['url'] );
+			$this->add_render_attribute( 'button_b_attribute', 'href', esc_url( $settings['button_b_url']['url'] ));
 
 			if ( $settings['button_b_url']['is_external'] ) {
 				$this->add_render_attribute( 'button_b_attribute', 'target', '_blank' );

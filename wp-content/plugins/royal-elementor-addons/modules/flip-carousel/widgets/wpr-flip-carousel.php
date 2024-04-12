@@ -3,14 +3,13 @@ namespace WprAddons\Modules\FlipCarousel\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Repeater;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Utils;
@@ -86,6 +85,9 @@ class Wpr_Flip_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Choose Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => WPR_ADDONS_ASSETS_URL . 'img/logo-slider-450x450.png',
 				],
@@ -97,6 +99,9 @@ class Wpr_Flip_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image Caption', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Image Caption',
 				'description' => 'Show/Hide Image Caption from Settings tab.'
 				// 'condition' => [
@@ -120,6 +125,9 @@ class Wpr_Flip_Carousel extends Widget_Base {
 			[
 				'label' => __( 'Link', 'plugin-domain' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => __( 'https://your-link.com', 'wpr-addons' ),
 				'show_external' => true,
 				'default' => [
@@ -141,15 +149,15 @@ class Wpr_Flip_Carousel extends Widget_Base {
 				'fields' => $repeater->get_controls(),
 				'default' => [
 					[
-						'element_select' => esc_html__('title'),
+						'element_select' => esc_html__('title', 'wpr-addons'),
 						'image' => WPR_ADDONS_ASSETS_URL . 'img/logo-slider-450x450.png'
 					],
 					[
-						'element_select' => esc_html__('title'),
+						'element_select' => esc_html__('title', 'wpr-addons'),
 						'image' => WPR_ADDONS_ASSETS_URL . 'img/logo-slider-450x450.png'
 					],
 					[
-						'element_select' => esc_html__('title'),
+						'element_select' => esc_html__('title', 'wpr-addons'),
 						'image' => WPR_ADDONS_ASSETS_URL . 'img/logo-slider-450x450.png'
 					],
 				],
@@ -706,7 +714,6 @@ class Wpr_Flip_Carousel extends Widget_Base {
 			[
 				'name' => 'pagination_content_typography',
 				'label' => __( 'Typography', 'wpr-addons' ),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .flipster__nav__link',
 				'fields_options' => [
 					'typography' => [
@@ -1014,7 +1021,6 @@ class Wpr_Flip_Carousel extends Widget_Base {
 			[
 				'name' => 'content_typography_caption',
 				'label' => __( 'Typography', 'wpr-addons' ),
-				'scheme' => \Elementor\Core\Schemes\Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .flipcaption',
 				'fields_options' => [
 					'typography' => [
@@ -1182,7 +1188,7 @@ class Wpr_Flip_Carousel extends Widget_Base {
 				} if (WPR_ADDONS_ASSETS_URL . 'img/logo-slider-450x450.png' === $element['image']['url']) {
 					$flip_slide_image = '<img src="'. esc_url($element['image']['url']) .'" />';
 				} else {
-					$flip_slide_image = '<img src="'.  Group_Control_Image_Size::get_attachment_image_src( $element['image']['id'], 'flip_carousel_image_size', $settings ) .'" />';
+					$flip_slide_image = '<img alt="'. $element['image']['alt'] .'" src="'.  Group_Control_Image_Size::get_attachment_image_src( $element['image']['id'], 'flip_carousel_image_size', $settings ) .'" />';
 				}
 
 				if ( 'yes' === $settings['enable_figcaption'] ) {

@@ -2,6 +2,7 @@
 namespace ElementorPro\Modules\Carousel\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Control_Media;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Embed;
 use Elementor\Group_Control_Text_Shadow;
@@ -110,6 +111,7 @@ class Media_Carousel extends Base {
 			[
 				'label' => esc_html__( 'Video Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -192,7 +194,6 @@ class Media_Carousel extends Base {
 					'type' => 'image',
 					'image_link_to_type' => 'custom',
 				],
-				'separator' => 'none',
 				'show_label' => false,
 			]
 		);
@@ -278,6 +279,8 @@ class Media_Carousel extends Base {
 
 		$this->add_render_attribute( $element_key . '-image', [
 			'class' => 'elementor-carousel-image',
+			'role' => 'img',
+			'aria-label' => Control_Media::get_image_alt( $slide['image'] ),
 		] );
 
 		$img_src = $this->get_slide_image_url( $slide, $settings );
@@ -297,7 +300,7 @@ class Media_Carousel extends Base {
 			if ( 'custom' === $slide['image_link_to_type'] ) {
 				$this->add_link_attributes( $element_key . '_link', $slide['image_link_to'] );
 			} else {
-				$this->add_render_attribute( $element_key . '_link', 'href', $image_link_to );
+				$this->add_render_attribute( $element_key . '_link', 'href', esc_url( $image_link_to ) );
 
 				$this->add_lightbox_data_attributes( $element_key . '_link', $slide['image']['id'], 'yes', $this->get_id() );
 
@@ -441,10 +444,19 @@ class Media_Carousel extends Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 20,
 						'max' => 150,
+					],
+					'em' => [
+						'min' => 2,
+						'max' => 15,
+					],
+					'rem' => [
+						'min' => 2,
+						'max' => 15,
 					],
 				],
 				'selectors' => [
@@ -616,6 +628,7 @@ class Media_Carousel extends Base {
 			[
 				'label' => esc_html__( 'Icon Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-carousel-image-overlay' => '--e-carousel-image-overlay-icon-size: {{SIZE}}{{UNIT}};',
 				],
@@ -640,6 +653,7 @@ class Media_Carousel extends Base {
 			[
 				'type' => Controls_Manager::SLIDER,
 				'label' => esc_html__( 'Height', 'elementor-pro' ),
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 20,

@@ -3,11 +3,10 @@ namespace WprAddons\Modules\ThemeBuilder\AuthorBox\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use WprAddons\Classes\Utilities;
 
@@ -208,6 +207,9 @@ class Wpr_Author_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Writer & Blogger',
 				'condition' => [
 					'author_title' => 'yes',
@@ -259,6 +261,9 @@ class Wpr_Author_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Posts Link Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'All Posts',
 				'condition' => [
 					'author_posts_link' => [ 'yes' ],
@@ -433,7 +438,6 @@ class Wpr_Author_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'name_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-author-box-name',
 				'fields_options' => [
 					'typography' => [
@@ -529,7 +533,6 @@ class Wpr_Author_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-author-box-title',
 				'fields_options' => [
 					'typography'      => [
@@ -654,7 +657,6 @@ class Wpr_Author_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'archive_link_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-author-box-btn'
 			]
 		);

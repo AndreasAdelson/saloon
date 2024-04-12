@@ -4,26 +4,28 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-function greenshift_edd_check_all_licenses() {
+function greenshift_edd_check_all_licenses()
+{
 	$licenses = get_option('gspb_edd_licenses');
 	$res = [];
 	foreach ($licenses as $plugin_key => $data) {
-	  $expires = $data['expires'];
-	  $res[$plugin_key] = $data['status'] === 'valid' && !empty($expires) && ($expires === 'lifetime' || (date('Y-m-d') <= date('Y-m-d', strtotime($expires)))) ? 'valid' : 'invalid';
+		$expires = $data['expires'];
+		$res[$plugin_key] = $data['status'] === 'valid' && !empty($expires) && ($expires === 'lifetime' || (date('Y-m-d') <= date('Y-m-d', strtotime($expires)))) ? 'valid' : 'invalid';
 	}
 	return $res;
-  }
-  
-  // if all access key is valid return it, else return addon key
-  function greenshift_edd_get_license_for_addon($addon) {
+}
+
+// if all access key is valid return it, else return addon key
+function greenshift_edd_get_license_for_addon($addon)
+{
 	$licenses = get_option('gspb_edd_licenses');
-  
+
 	foreach ($licenses[$addon]['included_in'] as $key_pack) {
-	  if($licenses[$key_pack]['status'] === 'valid') return $licenses[$key_pack]['license'];
+		if ($licenses[$key_pack]['status'] === 'valid') return $licenses[$key_pack]['license'];
 	}
-  
+
 	return $licenses[$addon]['license'];
-  }
+}
 
 class EddLicensePage
 {
@@ -37,7 +39,7 @@ class EddLicensePage
 			'license' => '',
 			'status' => '',
 			'expires' => '',
-			'license_limit'=> '',
+			'license_limit' => '',
 			'included_in' => [],
 		],
 		'all_in_one_seo' => [
@@ -49,7 +51,7 @@ class EddLicensePage
 			'license' => '',
 			'status' => '',
 			'expires' => '',
-			'license_limit'=> '',
+			'license_limit' => '',
 			'included_in' => [],
 		],
 		'all_in_one_design' => [
@@ -61,7 +63,19 @@ class EddLicensePage
 			'license' => '',
 			'status' => '',
 			'expires' => '',
-			'license_limit'=> '',
+			'license_limit' => '',
+			'included_in' => [],
+		],
+		'all_in_one_woo' => [
+			'plugin_id' => EDD_ALL_IN_ONE_WOO_ADDON_ID,
+			'plugin_name' => EDD_ALL_IN_ONE_WOO_ADDON_NAME,
+			'license_key' => 'edd_license_key_all_in_one_woo',
+			'expires_key' => 'edd_license_expires_all_in_one_woo',
+			'license_status_key' => 'edd_license_status_all_in_one_woo',
+			'license' => '',
+			'status' => '',
+			'expires' => '',
+			'license_limit' => '',
 			'included_in' => [],
 		],
 		'woocommerce_addon' => [
@@ -73,8 +87,8 @@ class EddLicensePage
 			'license' => '',
 			'status' => '',
 			'expires' => '',
-			'license_limit'=> '',
-			'included_in' => ['all_in_one'],
+			'license_limit' => '',
+			'included_in' => ['all_in_one', 'all_in_one_woo'],
 		],
 		'query_addon' => [
 			'plugin_id' => EDD_QUERY_ADDON_ID,
@@ -85,8 +99,8 @@ class EddLicensePage
 			'license' => '',
 			'status' => '',
 			'expires' => '',
-			'license_limit'=> '',
-			'included_in' => ['all_in_one', 'all_in_one_seo', 'all_in_one_design'],
+			'license_limit' => '',
+			'included_in' => ['all_in_one', 'all_in_one_seo', 'all_in_one_design', 'all_in_one_woo'],
 		],
 		'chart_addon' => [
 			'plugin_id' => EDD_CHART_ADDON_ID,
@@ -97,7 +111,7 @@ class EddLicensePage
 			'license' => '',
 			'status' => '',
 			'expires' => '',
-			'license_limit'=> '',
+			'license_limit' => '',
 			'included_in' => ['all_in_one'],
 		],
 		'seo_addon' => [
@@ -109,7 +123,7 @@ class EddLicensePage
 			'license' => '',
 			'status' => '',
 			'expires' => '',
-			'license_limit'=> '',
+			'license_limit' => '',
 			'included_in' => ['all_in_one', 'all_in_one_seo'],
 		],
 		'gsap_addon' => [
@@ -121,7 +135,7 @@ class EddLicensePage
 			'license' => '',
 			'status' => '',
 			'expires' => '',
-			'license_limit'=> '',
+			'license_limit' => '',
 			'included_in' => ['all_in_one', 'all_in_one_design'],
 		],
 	];
@@ -166,6 +180,9 @@ class EddLicensePage
 
 	public function edd_license_page()
 	{
+		if (!current_user_can('manage_options')) {
+			wp_die('Unauthorized user');
+		}
 		add_settings_section(
 			'edd_license_section',
 			__('Manage Licenses', 'greenshift-animation-and-page-builder-blocks'),
@@ -185,157 +202,31 @@ class EddLicensePage
 			);
 		}
 ?>
-		<div class="wrap gspb-edd-settings">
-				<style>
-				#wpcontent {
-					background: #f8fafc;
-					padding: 0;
-				}
+		
+		<div class="wp-block-greenshift-blocks-container alignfull gspb_container gspb_container-gsbp-ead11204-4841" id="gspb_container-id-gsbp-ead11204-4841">
+			<div class="wp-block-greenshift-blocks-container gspb_container gspb_container-gsbp-cbc3fa8c-bb26" id="gspb_container-id-gsbp-cbc3fa8c-bb26">
 
-				.wrap {
-					margin: 0 auto;
-				}
+				<?php $activetab = 'license'; ?>
+				<?php include(GREENSHIFT_DIR_PATH . 'templates/admin/navleft.php'); ?>
 
-				.wrap h2 {
-					font-size: 1.4em;
-					margin-bottom: 1.5em;
-					margin-top: 0;
-					font-weight: bold;
-				}
 
-				.greenshift_form {
-					padding: 25px 25px 25px 25px;
-					background: #fff;
-					margin-top: 15px;
-					box-shadow: 0 0 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
-					overflow: hidden;
-				}
+				<div class="wp-block-greenshift-blocks-container gspb_container gspb_container-gsbp-89d45563-1559" id="gspb_container-id-gsbp-89d45563-1559">
+					<div class="wp-block-greenshift-blocks-container gspb_container gspb_container-gsbp-efb64efe-d083" id="gspb_container-id-gsbp-efb64efe-d083">
+						<h2 id="gspb_heading-id-gsbp-ca0b0ada-6561" class="gspb_heading gspb_heading-id-gsbp-ca0b0ada-6561 "><?php esc_html_e('Plugins License Options'); ?></h2>
+					</div>
 
-				.greenshift_form .form-table {
-					margin-top: 0
-				}
 
-				.gs-introtext {
-					font-size: 14px;
-					line-height: 22.4px;
-					color: rgb(100 116 139);
-					margin-bottom: 30px;
-				}
-
-				.gs-intro-video iframe {
-					box-shadow: 10px 10px 20px rgb(0 0 0 / 15%);
-				}
-
-				.gs-intro-video {
-					margin-bottom: 40px
-				}
-
-				.wrap h1 {
-					text-align: left;
-					padding: 15px 20px;
-					margin: -1px -1px 60px -1px;
-					font-size: 13px;
-					font-weight: bold;
-					text-transform: uppercase;
-					box-shadow: 0 3px 8px rgb(0 0 0 / 5%);
-				}
-
-				.gs-padd {
-					padding: 25px;
-					text-align: left;
-					margin: 1.5em auto;
-					max-width: 900px;
-				}
-
-				.rtl .gs-padd {
-					text-align: right
-				}
-
-				.wp-core-ui .button-primary {
-					background-color: #2184f9
-				}
-
-				.nav-tab {
-					font-size: 16px;
-					border: none;
-					padding: 10px 20px;
-					background: none;
-					border-bottom: 2px solid transparent;
-				}
-
-				.nav-tab-active,
-				.nav-tab-active:focus,
-				.nav-tab-active:focus:active,
-				.nav-tab:hover {
-					border-bottom: 2px solid #2184f9;
-					background: #fff;
-					color: #2184f9;
-				}
-
-				.nav-tab-wrapper {
-					padding-left: 20px;
-					background: white;
-					border-bottom: 1px solid #edeff5;
-				}
-
-				.nav-tab-wrapper>div {
-					margin: 0 auto;
-					max-width: 950px
-				}
-
-				.wrap .fs-notice {
-					margin: 0 25px 35px 25px !important
-				}
-
-				.wrap .fs-plugin-title {
-					display: none !important
-				}
-
-				.gs_main_text {
-					font-size: 15px;
-					margin-bottom: 12px;
-				}
-
-				.gs_main_text a {
-					color: #2184f9
-				}
-
-				.mb30 {
-					margin-bottom: 30px
-				}
-			</style>
-			<nav class="nav-tab-wrapper">
-				<div>
-				<a href="#" class="nav-tab  nav-tab-active">
-						<?php esc_html_e("Licenses", 'greenshift-animation-and-page-builder-blocks'); ?>
-					</a>
-					<a href="?page=greenshift_dashboard" class="nav-tab">
-						<?php esc_html_e("Getting Started", 'greenshift-animation-and-page-builder-blocks'); ?>
-					</a>
-					<a href="?page=greenshift" class="nav-tab">
-						<?php esc_html_e("Settings", 'greenshift-animation-and-page-builder-blocks'); ?>
-					</a>
-					<a href="?page=greenshift_dashboard-addons" class="nav-tab">
-						<?php esc_html_e("Addons", 'greenshift-animation-and-page-builder-blocks'); ?>
-					</a>
-					<a href="?page=greenshift_upgrade" class="nav-tab">
-						<?php esc_html_e("Upgrade", 'greenshift-animation-and-page-builder-blocks'); ?>
-					</a>
-					<a href="?page=greenshift_contact" class="nav-tab">
-						<?php esc_html_e("Contact Us", 'greenshift-animation-and-page-builder-blocks'); ?>
-					</a>
-				</div>
-			</nav>
-			<div class="gs-padd">
-				<h2><?php esc_html_e('Plugins License Options'); ?></h2>
-				<div class="greenshift_form">
-				<form method="post" action="options.php" class="gspb-edd-settings-form">
-				<?php
-					do_settings_sections(EDD_GSPB_PLUGIN_LICENSE_PAGE);
-					settings_fields('edd_license_section');
-					submit_button();
-				?>
-				</form>
+					<div class="wp-block-greenshift-blocks-container gspb_container gspb_container-gsbp-7b4f8e8f-1a69" id="gspb_container-id-gsbp-7b4f8e8f-1a69">
+						<div class="greenshift_form">
+							<form method="post" action="options.php" class="gspb-edd-settings-form">
+								<?php
+								do_settings_sections(EDD_GSPB_PLUGIN_LICENSE_PAGE);
+								settings_fields('edd_license_section');
+								submit_button();
+								?>
+							</form>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -344,13 +235,15 @@ class EddLicensePage
 
 	public function edd_license_key_settings_section()
 	{
-		echo '<p class="gs-introtext">';esc_html_e('This is where you enter your license key. If you have All in one license, you can activate it without activation separate addons', 'greenshift-animation-and-page-builder-blocks');echo '</p>';
+		echo '<p class="gs-introtext">';
+		esc_html_e('This is where you enter your license key. If you have All in one license, you can activate it without activation separate addons', 'greenshift-animation-and-page-builder-blocks');
+		echo '</p>';
 	}
 
 	public function edd_license_key_settings_field($args)
 	{
-		if($args['product'] != 'all_in_one'){
-			if($this->licensesData['all_in_one']['status'] == 'valid'){
+		if ($args['product'] != 'all_in_one') {
+			if ($this->licensesData['all_in_one']['status'] == 'valid') {
 				echo '<p class="description">License: <span style="color: green;">Activated</span></p>';
 				return;
 			}
@@ -358,6 +251,7 @@ class EddLicensePage
 		$license = $this->licensesData[$args['product']]['license'];
 		$status  = $this->licensesData[$args['product']]['status'];
 		$expires = $this->licensesData[$args['product']]['expires'];
+
 	?>
 		<p class="description"><?php esc_html_e('Enter your license key.', 'greenshift-animation-and-page-builder-blocks'); ?></p>
 		<?php
@@ -366,7 +260,7 @@ class EddLicensePage
 				'<input type="password" autocomplete="off" class="regular-text" id="edd_license_key_' . $args['product'] . '" name="edd_license_key_' . $args['product'] . '" value="%s" />',
 				esc_attr($license)
 			);
-		}else{
+		} else {
 			printf(
 				'<input type="text" class="regular-text" value="%s" />',
 				"******************"
@@ -417,10 +311,10 @@ class EddLicensePage
 		register_setting('edd_license_section', 'gspb_edd_licenses', function ($new) {
 
 			foreach ($this->licensesData as $key => $data) {
-				if(isset($_POST[$data['license_key']])){
+				if (isset($_POST[$data['license_key']])) {
 					if ($data['license'] && $data['license'] !== $_POST[$data['license_key']]) {
 						$this->deactivate_license($data['license'], $data['plugin_id'], $data['plugin_name']);
-	
+
 						$this->licensesData[$key]['status'] = '';
 						$this->licensesData[$key]['expires'] = '';
 					}
@@ -456,6 +350,8 @@ class EddLicensePage
 			$dataKey = 'all_in_one_seo';
 		} else if (!empty($_POST['edd_license_activate_all_in_one_design'])) {
 			$dataKey = 'all_in_one_design';
+		} else if (!empty($_POST['edd_license_activate_all_in_one_woo'])) {
+			$dataKey = 'all_in_one_woo';
 		} else {
 			return;
 		}
@@ -593,7 +489,8 @@ class EddLicensePage
 			isset($_POST['edd_license_deactivate_seo_addon']) ||
 			isset($_POST['edd_license_deactivate_gsap_addon']) ||
 			isset($_POST['edd_license_deactivate_all_in_one_seo']) ||
-			isset($_POST['edd_license_deactivate_all_in_one_design'])
+			isset($_POST['edd_license_deactivate_all_in_one_design']) ||
+			isset($_POST['edd_license_deactivate_all_in_one_woo'])
 		) {
 
 			if (!empty($_POST['edd_license_deactivate_query_addon'])) {
@@ -612,6 +509,8 @@ class EddLicensePage
 				$dataKey = 'all_in_one_seo';
 			} else if (!empty($_POST['edd_license_deactivate_all_in_one_design'])) {
 				$dataKey = 'all_in_one_design';
+			} else if (!empty($_POST['edd_license_deactivate_all_in_one_woo'])) {
+				$dataKey = 'all_in_one_woo';
 			}
 
 			// run a quick security check
@@ -680,6 +579,8 @@ class EddLicensePage
 			exit();
 		}
 
+		delete_option('gspb_edd_licenses');
+
 		return $response;
 	}
 
@@ -713,9 +614,8 @@ class EddLicensePage
 
 	public function edd_check_and_update_licenses()
 	{
-
 		foreach ($this->licensesData as $plugin_key => $data) {
-			if (!$data['status']) continue;
+			if (!$data['license']) continue;
 
 			$license_data = $this->edd_check_license($data['license'], $data['plugin_id'], $data['plugin_name']);
 
@@ -723,6 +623,7 @@ class EddLicensePage
 				case 'invalid':
 					$this->licensesData[$plugin_key]['expires'] = '';
 					$this->licensesData[$plugin_key]['status'] = '';
+					$this->licensesData[$plugin_key]['license'] = '';
 					break;
 				case 'expired':
 					$this->licensesData[$plugin_key]['expires'] = $license_data->expires;
@@ -733,8 +634,8 @@ class EddLicensePage
 					$this->licensesData[$plugin_key]['status'] = '';
 					break;
 				case 'disabled':
-					$licenses_data[$plugin_key]['expires'] = $license_data->expires;
-					$licenses_data[$plugin_key]['status'] = $license_data->license;
+					$this->licensesData[$plugin_key]['expires'] = $license_data->expires;
+					$this->licensesData[$plugin_key]['status'] = $license_data->license;
 					break;
 				default:
 					$this->licensesData[$plugin_key]['expires'] = $license_data->expires;
@@ -744,67 +645,69 @@ class EddLicensePage
 		update_option('gspb_edd_licenses', $this->licensesData);
 	}
 
-	static function edd_check_and_update_licenses_static() {
+	static function edd_check_and_update_licenses_static()
+	{
 		$licenses_data = [];
 		$dbOptions = get_option('gspb_edd_licenses');
-	
-		if(empty($dbOptions)) return false;
-	
+
+		if (empty($dbOptions)) return false;
+
 		$licenses_data = $dbOptions;
-	
-		foreach ($licenses_data as $plugin_key => $data){
-		  if(!$data['status']) continue;
-	
-		  $api_params = array(
-			'edd_action'  => 'check_license',
-			'license'     => $data['license'],
-			'item_id'     => $data['plugin_id'],
-			'item_name'   => rawurlencode( $data['plugin_name'] ),
-			'url'         => home_url(),
-			'environment' => function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production',
-		  );
-	
-		  // Call the custom API.
-		  $response = wp_remote_post(
-			EDD_GSPB_STORE_URL,
-			array(
-			  'timeout'   => 15,
-			  'sslverify' => false,
-			  'body'      => $api_params,
-			)
-		  );
-	
-		  if ( is_wp_error( $response ) ) {
-			return false;
-		  }
-	
-		  $license_data = json_decode( wp_remote_retrieve_body( $response ) );
-	
-		  switch ($license_data->license){
-			case 'invalid':
-			  $licenses_data[$plugin_key]['expires'] = '';
-			  $licenses_data[$plugin_key]['status'] = '';
-			  break;
-			case 'expired':
-			  $licenses_data[$plugin_key]['expires'] = $license_data->expires;
-			  $licenses_data[$plugin_key]['status'] = '';
-			  break;
-			case 'inactive':
-			  $licenses_data[$plugin_key]['expires'] = '';
-			  $licenses_data[$plugin_key]['status'] = '';
-			  break;
-			case 'disabled':
-			  $licenses_data[$plugin_key]['expires'] = $license_data->expires;
-			  $licenses_data[$plugin_key]['status'] = $license_data->license;
-			  break;
-			default:
-			  $licenses_data[$plugin_key]['expires'] = $license_data->expires;
-			  break;
-		  }
+
+		foreach ($licenses_data as $plugin_key => $data) {
+			if (!$data['status']) continue;
+
+			$api_params = array(
+				'edd_action'  => 'check_license',
+				'license'     => $data['license'],
+				'item_id'     => $data['plugin_id'],
+				'item_name'   => rawurlencode($data['plugin_name']),
+				'url'         => home_url(),
+				'environment' => function_exists('wp_get_environment_type') ? wp_get_environment_type() : 'production',
+			);
+
+			// Call the custom API.
+			$response = wp_remote_post(
+				EDD_GSPB_STORE_URL,
+				array(
+					'timeout'   => 15,
+					'sslverify' => false,
+					'body'      => $api_params,
+				)
+			);
+
+			if (is_wp_error($response)) {
+				return false;
+			}
+
+			$license_data = json_decode(wp_remote_retrieve_body($response));
+
+			switch ($license_data->license) {
+				case 'invalid':
+					$licenses_data[$plugin_key]['expires'] = '';
+					$licenses_data[$plugin_key]['status'] = '';
+					$licenses_data[$plugin_key]['license'] = '';
+					break;
+				case 'expired':
+					$licenses_data[$plugin_key]['expires'] = $license_data->expires;
+					$licenses_data[$plugin_key]['status'] = '';
+					break;
+				case 'inactive':
+					$licenses_data[$plugin_key]['expires'] = '';
+					$licenses_data[$plugin_key]['status'] = '';
+					break;
+				case 'disabled':
+					$licenses_data[$plugin_key]['expires'] = $license_data->expires;
+					$licenses_data[$plugin_key]['status'] = $license_data->license;
+					break;
+				default:
+					$licenses_data[$plugin_key]['expires'] = $license_data->expires;
+					break;
+			}
 		}
-	
+
 		update_option('gspb_edd_licenses', $licenses_data);
-	  }
+	}
 
 	/**
 	 * This is a means of catching errors from the activation method above and displaying it to the customer
@@ -841,13 +744,15 @@ class EddLicensePage
 //////////////////////////////////////////////////////////////////
 // Schedule events
 //////////////////////////////////////////////////////////////////
-add_action( 'wp', 'greenshift_add_cron_event' );
-add_action( 'greenshift_check_cron_hook', 'greenshift_check_cron_exec' );
-function greenshift_check_cron_exec(){
+add_action('wp', 'greenshift_add_cron_event');
+add_action('greenshift_check_cron_hook', 'greenshift_check_cron_exec');
+function greenshift_check_cron_exec()
+{
 	EddLicensePage::edd_check_and_update_licenses_static();
 }
-function greenshift_add_cron_event(){
-	if ( ! wp_next_scheduled( 'greenshift_check_cron_hook' ) ) {
-		wp_schedule_event( time(), 'daily', 'greenshift_check_cron_hook' );
+function greenshift_add_cron_event()
+{
+	if (!wp_next_scheduled('greenshift_check_cron_hook')) {
+		wp_schedule_event(time(), 'daily', 'greenshift_check_cron_hook');
 	}
 }

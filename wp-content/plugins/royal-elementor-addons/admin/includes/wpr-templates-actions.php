@@ -178,13 +178,61 @@ class WPR_Templates_Actions {
         $source = new WPR_Library_Source();
 		$slug = isset($_POST['slug']) ? sanitize_text_field(wp_unslash($_POST['slug'])) : '';
 		$kit = isset($_POST['kit']) ? sanitize_text_field(wp_unslash($_POST['kit'])) : '';
+		$section = isset($_POST['section']) ? sanitize_text_field(wp_unslash($_POST['section'])) : '';
 
         $data = $source->get_data([
         	'template_id' => $slug,
-			'kit_id' => $kit
+			'kit_id' => $kit,
+			'section_id' => $section
         ]);
         
-        echo json_encode($data);
+		$template = '' !== $kit ? $kit : $slug;
+		if ( $this->vts($slug) ) {
+			echo json_encode($data);
+		}
+	}
+
+	/**
+	** Validate Template
+	*/
+	public function vts( $template ) {
+		// Avoid Cache
+		$randomNum = substr(str_shuffle("0123456789abcdefghijklmnopqrstvwxyzABCDEFGHIJKLMNOPQRSTVWXYZ"), 0, 7);
+
+		$remote_file_url = 'https://royal-elementor-addons.com/library/vts.json?='. $randomNum;
+
+		$tmp_file = download_url( $remote_file_url );
+
+		$file_args = [
+			'name'     => 'vts.json',
+			'tmp_name' => $tmp_file,
+			'error'    => 0,
+			'size'     => filesize( $tmp_file ),
+		];
+
+		$defaults = array(
+			'test_form' => false,
+			'test_size' => true,
+			'test_upload' => true,
+			'mimes'  => [
+				'xml'  => 'text/xml',
+				'json' => 'text/plain',
+			],
+			'wp_handle_sideload' => 'upload',
+		);
+
+		$local_file = wp_handle_sideload( $file_args, $defaults );
+
+		if ( isset( $local_file['error'] ) ) {
+			return false;
+		}
+
+		$tmps = json_decode(file_get_contents($local_file['file']));
+
+		// Delete Import File
+		unlink( $local_file['file'] );
+
+		return in_array($template, $tmps) && !wpr_fs()->can_use_premium_code() ? false : true;
 	}
 
 	/**
@@ -215,6 +263,21 @@ class WPR_Templates_Actions {
 
 		// Get Plugin Version
 		$version = Plugin::instance()->get_version();
+		
+		$screen = get_current_screen();
+
+		
+		if ( $screen->id === 'edit-wpr_templates' ) {
+			$custom_css = '
+				.wpr-templates-cat-select,
+				.wpr-templates-cat-select option,
+				.wpr-templates-cat-select option:checked {
+					text-transform: capitalize !important;
+				}
+			';
+
+			wp_add_inline_style( 'wp-admin', $custom_css );
+		}
 
 		// Deny if NOT Plugin Page
 		if ( 'toplevel_page_wpr-addons' == $hook || strpos($hook, 'wpr-theme-builder') || strpos($hook, 'wpr-popups') ) {
@@ -329,13 +392,50 @@ class WPR_Templates_Actions {
 		    ] );
 		} );
 
-		// Regenerate Extra Image Sizes
+		// Templates Library Sections Search Data
+		$ajax->register_ajax_action( 'wpr_templates_library_sections_search_data', function( $data ) {
+			// Freemius OptIn
+			if ( ! (wpr_fs()->is_registered() && wpr_fs()->is_tracking_allowed() || wpr_fs()->is_pending_activation() )) {
+				return;
+			}
+
+			if ( strlen($data['search_query']) > 25 ) {
+				return;
+			}
+
+			// Send Search Query
+		    wp_remote_post( 'https://reastats.kinsta.cloud/wp-json/templates-library-sections-search/data', [
+		        'body' => [
+		            'search_query' => $data['search_query']
+		        ]
+		    ] );
+		} );
+
+		// Library Template Import Finished
 		$ajax->register_ajax_action( 'wpr_library_template_import_finished', function( $data ) {
 			Utilities::regenerate_extra_image_sizes();
 
 			// Freemius OptIn
 			if ( ! (wpr_fs()->is_registered() && wpr_fs()->is_tracking_allowed() || wpr_fs()->is_pending_activation() )) {
 				return;
+			}
+
+			// Templates Library Import Block
+			if ( isset($data['block'])) {
+				wp_remote_post( 'https://reastats.kinsta.cloud/wp-json/templates-library-blocks-import/data', [
+					'body' => [
+						'imported_block' => $data['block']
+					]
+				] );
+			}
+
+			// Templates Library Import Section
+			if ( isset($data['section'])) {
+				wp_remote_post( 'https://reastats.kinsta.cloud/wp-json/templates-library-sections-import/data', [
+					'body' => [
+						'imported_section' => $data['section']
+					]
+				] );
 			}
 
 			if ( ! isset($data['kit']) ) {
@@ -395,13 +495,16 @@ class WPR_Library_Source extends \Elementor\TemplateLibrary\Source_Base {
 		return $templates[ $template_id ];
 	}
 
-	public function request_template_data( $template_id, $kit_id ) {
+	public function request_template_data( $template_id, $kit_id, $section_id ) {
 		if ( empty( $template_id ) ) {
 			return;
 		}
 
 		if ( '' !== $kit_id ) {
 			$url = 'https://royal-elementor-addons.com/library/templates-kit/'. $kit_id .'/';
+		} elseif ( '' !== $section_id ) {
+			$url = 'https://royal-elementor-addons.com/library/premade-sections/';
+			// $url = 'https://royal-elementor-addons.com/library/premade-sections/'. $kit_id .'/';
 		} else {
 			$url = 'https://royal-elementor-addons.com/library/premade-styles/';
 		}
@@ -418,7 +521,7 @@ class WPR_Library_Source extends \Elementor\TemplateLibrary\Source_Base {
 	}
 
 	public function get_data( array $args ) {
-		$data = $this->request_template_data( $args['template_id'], $args['kit_id'] );
+		$data = $this->request_template_data( $args['template_id'], $args['kit_id'], $args['section_id'] );
 
 		$data = json_decode( $data, true );
 

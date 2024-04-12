@@ -36,7 +36,7 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 		/**
 		 * Edit repeater field initial count
 		 *
-		 * @since  x.x.x
+		 * @since  1.0.0
 		 * @var (string) $edit_repeater_field_count
 		 */
 		protected static $edit_repeater_field_count = 0;
@@ -62,9 +62,6 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 		 * @since  1.0.0
 		 */
 		public function __construct() {
-			add_action( 'admin_menu', array( $this, 'register_custom_fonts_menu' ), 101 );
-			add_action( 'admin_head', array( $this, 'custom_fonts_menu_highlight' ) );
-
 			add_filter( 'manage_edit-' . Bsf_Custom_Fonts_Taxonomy::$register_taxonomy_slug . '_columns', array( $this, 'manage_columns' ) );
 
 			add_action( Bsf_Custom_Fonts_Taxonomy::$register_taxonomy_slug . '_add_form_fields', array( $this, 'add_new_taxonomy_data' ) );
@@ -72,51 +69,6 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 
 			add_action( 'edited_' . Bsf_Custom_Fonts_Taxonomy::$register_taxonomy_slug, array( $this, 'save_metadata' ) );
 			add_action( 'create_' . Bsf_Custom_Fonts_Taxonomy::$register_taxonomy_slug, array( $this, 'save_metadata' ) );
-
-			add_filter( 'upload_mimes', array( $this, 'add_fonts_to_allowed_mimes' ) );
-			add_filter( 'wp_check_filetype_and_ext', array( $this, 'update_mime_types' ), 10, 3 );
-		}
-
-		/**
-		 * Register custom font menu
-		 *
-		 * @since 1.0.0
-		 */
-		public function register_custom_fonts_menu() {
-
-			$title = apply_filters( 'bsf_custom_fonts_menu_title', __( 'Custom Fonts', 'custom-fonts' ) );
-			add_submenu_page(
-				$this->parent_menu_slug,
-				$title,
-				$title,
-				Bsf_Custom_Fonts_Taxonomy::$capability,
-				'edit-tags.php?taxonomy=' . Bsf_Custom_Fonts_Taxonomy::$register_taxonomy_slug
-			);
-
-		}
-
-		/**
-		 * Highlight custom font menu
-		 *
-		 * @since 1.0.0
-		 */
-		public function custom_fonts_menu_highlight() {
-			global $parent_file, $submenu_file;
-
-			if ( 'edit-tags.php?taxonomy=' . Bsf_Custom_Fonts_Taxonomy::$register_taxonomy_slug === $submenu_file ) {
-				$parent_file = $this->parent_menu_slug; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			}
-			if ( get_current_screen()->id != 'edit-' . Bsf_Custom_Fonts_Taxonomy::$register_taxonomy_slug ) {
-				return;
-			}
-
-			?><style>#addtag div.form-field.term-slug-wrap, #edittag tr.form-field.term-slug-wrap { display: none; }
-				#addtag div.form-field.term-description-wrap, #edittag tr.form-field.term-description-wrap { display: none; }</style>
-				<script>jQuery( document ).ready( function( $ ) {
-					var $wrapper = $( '#addtag, #edittag' );
-					$wrapper.find( 'tr.form-field.term-name-wrap p, div.form-field.term-name-wrap > p' ).text( '<?php esc_html_e( 'The name of the font as it appears in the customizer options.', 'custom-fonts' ); ?>' );
-				} );</script>
-				<?php
 		}
 
 		/**
@@ -153,7 +105,7 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 			echo '
 			<div id="repeater">
                 <!-- Repeater Heading -->
-                
+
                 <div class="clearfix"></div>
                 <!-- Repeater Items -->
                 <div id="item-0" class="cf-bsf-items" data-group="font-weight-type">
@@ -170,7 +122,7 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
                     <div class="repeater-remove-btn">
                         <div class="button button-primary disabled remove-btn">
                             Remove
-						</div>              
+						</div>
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -297,7 +249,7 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 		/**
 		 * Edit Taxonomy data
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 * @param string $key Font array repeater fields key.
 		 * @param string $value Font array repeater fields value.
 		 */
@@ -361,7 +313,7 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 		/**
 		 * Add font fallback field
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 * @param int    $id current term id.
 		 * @param string $title font type title.
 		 * @param string $description title font type description.
@@ -426,7 +378,7 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 		/**
 		 * Select default repeater edit field.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 *
 		 * @param string $id Id of the field.
 		 * @param string $title Title of the field.
@@ -536,7 +488,7 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 		/**
 		 * Add Taxonomy data field
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 * @param int    $id current term id.
 		 * @param string $title font type title.
 		 * @param string $description title font type description.
@@ -577,49 +529,6 @@ if ( ! class_exists( 'Bsf_Custom_Fonts_Admin' ) ) :
 				Bsf_Custom_Fonts_Taxonomy::update_font_links( $value, $term_id );
 			}
 		}
-
-		/**
-		 * Allowed mime types and file extensions
-		 *
-		 * @since 1.0.0
-		 * @param array $mimes Current array of mime types.
-		 * @return array $mimes Updated array of mime types.
-		 */
-		public function add_fonts_to_allowed_mimes( $mimes ) {
-			$mimes['woff']  = 'application/x-font-woff';
-			$mimes['woff2'] = 'application/x-font-woff2';
-			$mimes['ttf']   = 'application/x-font-ttf';
-			$mimes['svg']   = 'image/svg+xml';
-			$mimes['eot']   = 'application/vnd.ms-fontobject';
-			$mimes['otf']   = 'font/otf';
-
-			return $mimes;
-		}
-
-		/**
-		 * Correct the mome types and extension for the font types.
-		 *
-		 * @param array  $defaults File data array containing 'ext', 'type', and
-		 *                                          'proper_filename' keys.
-		 * @param string $file                      Full path to the file.
-		 * @param string $filename                  The name of the file (may differ from $file due to
-		 *                                          $file being in a tmp directory).
-		 * @return Array File data array containing 'ext', 'type', and
-		 */
-		public function update_mime_types( $defaults, $file, $filename ) {
-			if ( 'ttf' === pathinfo( $filename, PATHINFO_EXTENSION ) ) {
-				$defaults['type'] = 'application/x-font-ttf';
-				$defaults['ext']  = 'ttf';
-			}
-
-			if ( 'otf' === pathinfo( $filename, PATHINFO_EXTENSION ) ) {
-				$defaults['type'] = 'application/x-font-otf';
-				$defaults['ext']  = 'otf';
-			}
-
-			return $defaults;
-		}
-
 	}
 
 	/**

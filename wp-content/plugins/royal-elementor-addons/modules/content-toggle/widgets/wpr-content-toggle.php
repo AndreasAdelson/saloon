@@ -7,10 +7,10 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Css_Filter;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Icons;
@@ -156,6 +156,9 @@ class Wpr_Content_Toggle extends Widget_Base {
 			[
 				'label' => esc_html__( 'Label', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Annual',
 				'condition' => [
 					'switcher_style' => ['dual', 'pro-ml'],
@@ -255,6 +258,9 @@ class Wpr_Content_Toggle extends Widget_Base {
 			[
 				'label' => esc_html__( 'Label', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Lifetime',
 				'condition' => [
 					'switcher_style' => ['dual', 'pro-ml'],
@@ -629,7 +635,6 @@ class Wpr_Content_Toggle extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'switcher_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-switcher-label',
 			]
 		);
@@ -991,7 +996,6 @@ class Wpr_Content_Toggle extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} '. $css_selector['content_list'],
 			]
 		);
@@ -1116,6 +1120,14 @@ class Wpr_Content_Toggle extends Widget_Base {
 			return '';
 		}
 
+		if ( defined('ICL_LANGUAGE_CODE') ) {
+			$default_language_code = apply_filters('wpml_default_language', null);
+
+			if ( ICL_LANGUAGE_CODE !== $default_language_code ) {
+				$id = icl_object_id($id, 'elementor_library', false, ICL_LANGUAGE_CODE);
+			}
+		}
+		
 		$edit_link = '<span class="wpr-template-edit-btn" data-permalink="'. esc_url(get_permalink( $id )) .'">Edit Template</span>';
 		
 		$type = get_post_meta(get_the_ID(), '_wpr_template_type', true);

@@ -91,6 +91,7 @@ class WPR_Render_Templates {
     	} else {
     		$conditions = json_decode( get_option('wpr_'. $type .'_conditions', '[]'), true );
     		$template = WPR_Conditions_Manager::header_footer_display_conditions( $conditions );
+
     		return (!empty( $conditions ) && !is_null($template)) ? true : false;
     	}
 	}
@@ -122,9 +123,19 @@ class WPR_Render_Templates {
 	    	$conditions = json_decode( get_option('wpr_header_conditions', '[]'), true );
 			$template_slug = WPR_Conditions_Manager::header_footer_display_conditions($conditions);
 			$template_id = Utilities::get_template_id($template_slug);
+
+			if ( defined('ICL_LANGUAGE_CODE') ) {
+				$default_language_code = apply_filters('wpml_default_language', null);
+
+				IF ( ICL_LANGUAGE_CODE !== $default_language_code ) {
+					$template_id = apply_filters('wpml_object_id', $template_id, 'wpr_templates', true, $default_language_code);
+				}
+			}
+
 			$show_on_canvas = get_post_meta($template_id, 'wpr_header_show_on_canvas', true);
 
-			if ( !empty($show_on_canvas) && 'true' === $show_on_canvas && 0 === strpos($template_slug, 'user-header-') ) {
+			// if ( !empty($show_on_canvas) && 'true' === $show_on_canvas && 0 === strpos($template_slug, 'user-header-') ) {
+			if ( !empty($show_on_canvas) && 'true' === $show_on_canvas && !is_null($template_slug) ) {
 				Utilities::render_elementor_template($template_slug);
 			}
 		}
@@ -157,9 +168,20 @@ class WPR_Render_Templates {
 	    	$conditions = json_decode( get_option('wpr_footer_conditions', '[]'), true );
 			$template_slug = WPR_Conditions_Manager::header_footer_display_conditions($conditions);
 			$template_id = Utilities::get_template_id($template_slug);
+
+			if ( defined('ICL_LANGUAGE_CODE') ) {
+				$default_language_code = apply_filters('wpml_default_language', null);
+
+				IF ( ICL_LANGUAGE_CODE !== $default_language_code ) {
+				
+					$template_id = apply_filters('wpml_object_id', $template_id, 'wpr_templates', true, $default_language_code);
+				}
+			}
+
 			$show_on_canvas = get_post_meta($template_id, 'wpr_footer_show_on_canvas', true);
 
-			if ( !empty($show_on_canvas) && 'true' === $show_on_canvas && 0 === strpos($template_slug, 'user-footer-') ) {
+			// if ( !empty($show_on_canvas) && 'true' === $show_on_canvas && 0 === strpos($template_slug, 'user-footer-') ) {
+			if ( !empty($show_on_canvas) && 'true' === $show_on_canvas && !is_null($template_slug) ) {
 				Utilities::render_elementor_template($template_slug);
 			}
 		}
@@ -208,7 +230,8 @@ class WPR_Render_Templates {
 
 		// Load Header Template CSS File
 		$heder_conditions = json_decode( get_option('wpr_header_conditions', '[]'), true );
-		$header_template_id = Utilities::get_template_id(WPR_Conditions_Manager::header_footer_display_conditions($heder_conditions));
+		$heder_template = WPR_Conditions_Manager::header_footer_display_conditions($heder_conditions);
+		$header_template_id = !is_null($heder_template) ? Utilities::get_template_id($heder_template) : false;
 
 		if ( false !== $header_template_id ) {
 			if ( class_exists( '\Elementor\Core\Files\CSS\Post' ) ) {
@@ -222,7 +245,8 @@ class WPR_Render_Templates {
 
 		// Load Footer Template CSS File
 		$footer_conditions = json_decode( get_option('wpr_footer_conditions', '[]'), true );
-		$footer_template_id = Utilities::get_template_id(WPR_Conditions_Manager::header_footer_display_conditions($footer_conditions));
+		$footer_template = WPR_Conditions_Manager::header_footer_display_conditions($footer_conditions);
+		$footer_template_id = !is_null($footer_template) ? Utilities::get_template_id($footer_template) : false;
 
 		if ( false !== $footer_template_id ) {
 			if ( class_exists( '\Elementor\Core\Files\CSS\Post' ) ) {
@@ -235,7 +259,8 @@ class WPR_Render_Templates {
 		}
 
 		// Load Canvas Content Template CSS File
-		$canvas_template_id = Utilities::get_template_id(WPR_Conditions_Manager::canvas_page_content_display_conditions());
+		$canvas_conditions = WPR_Conditions_Manager::canvas_page_content_display_conditions();
+		$canvas_template_id = !empty($canvas_conditions) ? Utilities::get_template_id($canvas_conditions) : false;
 
 		if ( false !== $canvas_template_id ) {
 			if ( class_exists( '\Elementor\Core\Files\CSS\Post' ) ) {

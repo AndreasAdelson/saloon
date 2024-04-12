@@ -5,14 +5,13 @@ namespace WprAddons\Modules\DataTable\Widgets;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Icons_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Repeater;
 use Elementor\Group_Control_Image_Size;
 use WprAddons\Classes\Utilities;
@@ -43,7 +42,7 @@ class Wpr_Data_Table extends Widget_Base {
 	}
 
 	public function get_script_depends() {
-		return ['wpr-table-to-excel-js'];
+		return ['wpr-table-to-excel-js', 'wpr-perfect-scroll-js'];
 	}
 
     public function get_custom_help_url() {
@@ -356,6 +355,9 @@ class Wpr_Data_Table extends Widget_Base {
 			'table_th', [
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'Table Title' , 'wpr-addons' ),
 				'label_block' => true
 			]
@@ -375,7 +377,7 @@ class Wpr_Data_Table extends Widget_Base {
 		$repeater->add_control(
 			'header_icon_type',
 			[
-				'label' => esc_html__('Media Type'),
+				'label' => esc_html__('Media Type', 'wpr-addons'),
 				'type' => Controls_Manager::SELECT,
 				'label_block' => false,
 				'default' => 'icon',
@@ -392,7 +394,7 @@ class Wpr_Data_Table extends Widget_Base {
 		$repeater->add_control(
 			'header_icon_position',
 			[
-				'label' => esc_html__('Media Position'),
+				'label' => esc_html__('Media Position', 'wpr-addons'),
 				'type' => Controls_Manager::SELECT,
 				'label_block' => false,
 				'default' => 'left',
@@ -432,6 +434,9 @@ class Wpr_Data_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons'),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'header_icon_type'	=> 'image'
 				]
@@ -487,7 +492,8 @@ class Wpr_Data_Table extends Widget_Base {
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'default' => '#fff',
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}} i' => 'color: {{VALUE}}'
+					'{{WRAPPER}} {{CURRENT_ITEM}} i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} {{CURRENT_ITEM}} svg' => 'fill: {{VALUE}}'
 				],
 				'condition' => [
 					'header_icon' => 'yes',
@@ -616,6 +622,9 @@ class Wpr_Data_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Content', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'Content' , 'wpr-addons' ),
 				'show_label' => true,
 				'separator' => 'before',
@@ -630,6 +639,9 @@ class Wpr_Data_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Content URL', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'show_external' => true,
 				'default' => [
@@ -659,7 +671,7 @@ class Wpr_Data_Table extends Widget_Base {
 		$repeater->add_control(
 			'td_icon_type',
 			[
-				'label' => esc_html__('Media Type'),
+				'label' => esc_html__('Media Type', 'wpr-addons'),
 				'type' => Controls_Manager::SELECT,
 				'label_block' => false,
 				'default' => 'icon',
@@ -676,7 +688,7 @@ class Wpr_Data_Table extends Widget_Base {
 		$repeater->add_control(
 			'td_icon_position',
 			[
-				'label' => esc_html__('Media Position'),
+				'label' => esc_html__('Media Position', 'wpr-addons'),
 				'type' => Controls_Manager::SELECT,
 				'label_block' => false,
 				'default' => 'left',
@@ -716,6 +728,9 @@ class Wpr_Data_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons'),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'td_icon' => 'yes',
 					'td_icon_type!'	=> ['none', 'icon']
@@ -797,7 +812,8 @@ class Wpr_Data_Table extends Widget_Base {
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'default' => '#7A7A7A',
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}} i' => 'color: {{VALUE}}'
+					'{{WRAPPER}} {{CURRENT_ITEM}} i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} {{CURRENT_ITEM}} svg' => 'fill: {{VALUE}}'
 				],
 				'condition' 	=> [
 					'table_content_row_type' => 'col',
@@ -1133,9 +1149,11 @@ class Wpr_Data_Table extends Widget_Base {
 					'{{WRAPPER}} .wpr-table-th' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size',
 					'{{WRAPPER}} .wpr-table-th-pag' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size',
 					'{{WRAPPER}} .wpr-table-th i' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size',
+					'{{WRAPPER}} .wpr-table-th svg' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size',
 					'{{WRAPPER}} .wpr-table-td' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size',
 					'{{WRAPPER}} .wpr-table-td-pag' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size',
 					'{{WRAPPER}} .wpr-table-td i' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size',
+					'{{WRAPPER}} .wpr-table-td svg' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size',
 					'{{WRAPPER}} .wpr-table-text' => '-webkit-transition-duration:  {{VALUE}}s; transition-duration:  {{VALUE}}s; transition-property: background-color color font-size'
 				],
 				'separator' => 'before'
@@ -1261,7 +1279,6 @@ class Wpr_Data_Table extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'th_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} th',
 				'fields_options' => [
 					'typography'      => [
@@ -1314,6 +1331,7 @@ class Wpr_Data_Table extends Widget_Base {
                 ],
                 'selectors'  => [
                     '{{WRAPPER}} .wpr-data-table thead .wpr-sorting-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .wpr-data-table thead .wpr-sorting-icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
 				'condition' => [
 					'enable_table_sorting' => 'yes'
@@ -1391,7 +1409,8 @@ class Wpr_Data_Table extends Widget_Base {
 					],
 				],
                 'selectors'             => [
-					'{{WRAPPER}} .wpr-data-table th i' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'
+					'{{WRAPPER}} .wpr-data-table th i' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-data-table th svg' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'
 				],
             ]
 		);
@@ -1559,6 +1578,7 @@ class Wpr_Data_Table extends Widget_Base {
 					'{{WRAPPER}} tbody tr:nth-child(odd) td:hover span' => 'color: {{VALUE}} !important',
 					'{{WRAPPER}} tbody tr:nth-child(odd) td:hover.wpr-table-text' => 'color: {{VALUE}} !important',
 					'{{WRAPPER}} tbody tr:nth-child(odd) td:hover i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} tbody tr:nth-child(odd) td:hover svg' => 'fill: {{VALUE}}',
 				],
 			]
 		);
@@ -1599,6 +1619,7 @@ class Wpr_Data_Table extends Widget_Base {
 					'{{WRAPPER}} tbody tr:nth-child(even) td:hover.wpr-table-text' => 'color: {{VALUE}}',
 					'{{WRAPPER}} tbody tr:nth-child(even) td:hover a .wpr-table-text' => 'color: {{VALUE}} !important',
 					'{{WRAPPER}} tbody tr:nth-child(even) td:hover i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} tbody tr:nth-child(even) td:hover svg' => 'fill: {{VALUE}}'
 				],
 			]
 		);
@@ -1632,7 +1653,6 @@ class Wpr_Data_Table extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'td_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} td, {{WRAPPER}} i.fa-question-circle',
 				'fields_options' => [
 					'typography'      => [
@@ -1776,7 +1796,8 @@ class Wpr_Data_Table extends Widget_Base {
 					],
 				],
                 'selectors'             => [
-					'{{WRAPPER}} .wpr-data-table td i' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'
+					'{{WRAPPER}} .wpr-data-table td i' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-data-table td svg' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'
 				],
             ]
 		);
@@ -1848,10 +1869,13 @@ class Wpr_Data_Table extends Widget_Base {
 	protected function wpr_parse_csv_to_table($filename, $settings, $custom_pagination, $sorting_icon ) {
 
 		$handle = fopen($filename, "r");
+		
+		// Determine the delimiter
+		$delimiter = $this->detect_csv_delimiter($filename);
 		//display header row if true
 		echo '<table class="wpr-append-to-scope wpr-data-table">';
 		if ( 'yes' === $settings['display_header'] ) {
-			$csvcontents = fgetcsv($handle);
+			$csvcontents = fgetcsv($handle, 0, $delimiter);
 			echo '<thead><tr class="wpr-table-head-row wpr-table-row">';
 			foreach ($csvcontents as $headercolumn) {
 				echo "<th class='wpr-table-th wpr-table-text'>$headercolumn  $sorting_icon</th>";
@@ -1863,7 +1887,7 @@ class Wpr_Data_Table extends Widget_Base {
 		// displaying contents
 		$countRows = 0;
 		$oddEven = '';
-		while ($csvcontents = fgetcsv($handle)) {
+		while ($csvcontents = fgetcsv($handle, 0, $delimiter)) {
 				$countRows++;
 				$oddEven = $countRows % 2 == 0 ? 'wpr-even' : 'wpr-odd';
 				echo '<tr class="wpr-table-row  '. esc_attr($oddEven) .'">';
@@ -1881,6 +1905,30 @@ class Wpr_Data_Table extends Widget_Base {
 		} 
 
 		fclose($handle);
+	}
+
+	protected function detect_csv_delimiter($filename) {
+		$delimiters = [',', ';'];
+		$counts = [];
+		$maxCount = 0;
+		$bestDelimiter = ',';
+	
+		$handle = fopen($filename, "r");
+		$firstLine = fgets($handle);
+		fclose($handle);
+	
+		foreach ($delimiters as $delimiter) {
+			$counts[$delimiter] = count(str_getcsv($firstLine, $delimiter));
+		}
+	
+		foreach ($counts as $delimiter => $count) {
+			if ($count > $maxCount) {
+				$maxCount = $count;
+				$bestDelimiter = $delimiter;
+			}
+		}
+	
+		return $bestDelimiter;
 	}
 
 	public function render_th_icon($item) {
@@ -1998,7 +2046,7 @@ class Wpr_Data_Table extends Widget_Base {
 					$last_key = end( $table_tr_keys );
 
 					$table_td[] = [
-						'row_id' => $table_tr[$last_key]['id'],
+						'row_id' => isset($table_tr[$last_key]['id']) ? $table_tr[$last_key]['id'] : '',
 						'type' => $content_row['table_content_row_type'],
 						'content' => $content_row['table_td'],
 						'colspan' => $content_row['table_content_row_colspan'],

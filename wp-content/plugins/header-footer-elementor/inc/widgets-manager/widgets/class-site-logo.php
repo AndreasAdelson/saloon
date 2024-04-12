@@ -163,15 +163,15 @@ class Site_Logo extends Widget_Base {
 				'options'            => [
 					'left'   => [
 						'title' => __( 'Left', 'header-footer-elementor' ),
-						'icon'  => 'fa fa-align-left',
+						'icon'  => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'header-footer-elementor' ),
-						'icon'  => 'fa fa-align-center',
+						'icon'  => 'eicon-text-align-center',
 					],
 					'right'  => [
 						'title' => __( 'Right', 'header-footer-elementor' ),
-						'icon'  => 'fa fa-align-right',
+						'icon'  => 'eicon-text-align-right',
 					],
 				],
 				'default'            => 'center',
@@ -746,7 +746,7 @@ class Site_Logo extends Widget_Base {
 			$class = 'elementor-clickable';
 		}
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 		<?php if ( $has_caption ) : ?>
 				<figure class="wp-caption">
 		<?php endif; ?>
@@ -756,7 +756,7 @@ class Site_Logo extends Widget_Base {
 						$class = 'elementor-non-clickable';
 					}
 					?>
-				<a data-elementor-open-lightbox="<?php echo esc_attr( $settings['open_lightbox'] ); ?>"  class='<?php echo  esc_attr( $class ); ?>' <?php echo $this->get_render_attribute_string( 'link' ); ?>>
+				<a data-elementor-open-lightbox="<?php echo esc_attr( $settings['open_lightbox'] ); ?>"  class='<?php echo  esc_attr( $class ); ?>' <?php $this->print_render_attribute_string( 'link' ); ?>>
 		<?php endif; ?>
 		<?php
 		if ( empty( $site_image ) ) {
@@ -830,7 +830,11 @@ class Site_Logo extends Widget_Base {
 		?>
 			<div class="hfe-site-logo-set">           
 				<div class="hfe-site-logo-container">
-					<img class="hfe-site-logo-img <?php echo esc_attr( $class_animation ); ?>"  src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( Control_Media::get_image_alt( $settings['custom_image'] ) ); ?>"/>
+				<?php
+					$alt_text = Control_Media::get_image_alt( $settings['custom_image'] );
+					$alt_text = empty( $alt_text ) ? 'default-logo' : esc_attr( $alt_text );
+				?>
+					<img class="hfe-site-logo-img <?php echo esc_attr( $class_animation ); ?>"  src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $alt_text ); ?>"/>
 				</div>
 			</div>
 		<?php if ( $link ) : ?>

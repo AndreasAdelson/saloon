@@ -83,7 +83,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 		$this->start_controls_section(
 			'section_anchor',
 			[
-				'label' => esc_html__( 'Anchor', 'elementor' ),
+				'label' => esc_html__( 'Menu Anchor', 'elementor' ),
 			]
 		);
 
@@ -92,6 +92,9 @@ class Widget_Menu_Anchor extends Widget_Base {
 			[
 				'label' => esc_html__( 'The ID of Menu Anchor.', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
 				'placeholder' => esc_html__( 'For Example: About', 'elementor' ),
 				'description' => esc_html__( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'label_block' => true,
@@ -104,13 +107,13 @@ class Widget_Menu_Anchor extends Widget_Base {
 		$this->add_control(
 			'anchor_note',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => sprintf(
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'warning',
+				'content' => sprintf(
 					/* translators: %s: Accepted chars. */
 					esc_html__( 'Note: The ID link ONLY accepts these chars: %s', 'elementor' ),
 					'`A-Z, a-z, 0-9, _ , -`'
 				),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
 

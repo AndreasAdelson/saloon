@@ -3,7 +3,7 @@ namespace WprAddons\Modules\ThemeBuilder\Woocommerce\ProductStock\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Box_Shadow;
 use WprAddons\Classes\Utilities;
@@ -56,6 +56,9 @@ class Wpr_Product_Stock extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'In Stock', 'wpr-addons' ),
 				'default' => esc_html__( 'In Stock', 'wpr-addons' ),
 			]
@@ -83,6 +86,7 @@ class Wpr_Product_Stock extends Widget_Base {
 				'default'   => '#333333',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-product-stock .in-stock i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-product-stock .in-stock svg' => 'fill: {{VALUE}};'
 				],
 			]
 		);
@@ -127,6 +131,9 @@ class Wpr_Product_Stock extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'Out of Stock', 'wpr-addons' ),
 				'default' => esc_html__( 'Out of Stock', 'wpr-addons' ),
 			]
@@ -140,6 +147,7 @@ class Wpr_Product_Stock extends Widget_Base {
 				'default'   => '#605BE5',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-product-stock .out-of-stock i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-product-stock .out-of-stock svg' => 'fill: {{VALUE}};'
 				],
 			]
 		);
@@ -170,6 +178,9 @@ class Wpr_Product_Stock extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'On Backorder', 'wpr-addons' ),
 				'default' => esc_html__( 'On Backorder', 'wpr-addons' ),
 			]
@@ -197,6 +208,7 @@ class Wpr_Product_Stock extends Widget_Base {
 				'default'   => '#FF4F40',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-product-stock .available-on-backorder i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-product-stock .available-on-backorder svg' => 'fill: {{VALUE}};'
 				],
 			]
 		);
@@ -210,6 +222,29 @@ class Wpr_Product_Stock extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .wpr-product-stock .available-on-backorder' => 'color: {{VALUE}};',
 				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'product_svg_size',
+			[
+				'type' => Controls_Manager::SLIDER,
+				'label' => esc_html__( 'SVG Size', 'wpr-addons' ),
+				'size_units' => [ 'px' ],
+                'separator' => 'before',
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 50,
+					]
+				],
+				'default' => [
+					'unit' => 'px',
+					'size' => 13,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .wpr-product-stock svg' => 'width: {{SIZE}}px; height: {{SIZE}}px;',
+				]
 			]
 		);
 
@@ -234,6 +269,7 @@ class Wpr_Product_Stock extends Widget_Base {
 					'{{WRAPPER}} .wpr-product-stock .in-stock i' => 'margin-right: {{SIZE}}px;',
 					'{{WRAPPER}} .wpr-product-stock .out-of-stock i' => 'margin-right: {{SIZE}}px;',
 					'{{WRAPPER}} .wpr-product-stock .available-on-backorder i' => 'margin-right: {{SIZE}}px;',
+					'{{WRAPPER}} .wpr-product-stock svg' => 'margin-right: {{SIZE}}px;',
 				]
 			]
 		);

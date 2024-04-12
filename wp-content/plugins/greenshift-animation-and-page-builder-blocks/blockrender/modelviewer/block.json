@@ -1,5 +1,6 @@
 {
 	"name": "greenshift-blocks/modelviewer",
 	"title": "3D Model Viewer",
-	"category":"GreenShift"
+	"category":"GreenShift",
+	"apiVersion": 3
 }

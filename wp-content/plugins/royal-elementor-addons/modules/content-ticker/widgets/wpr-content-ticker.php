@@ -7,11 +7,10 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Css_Filter;
-use Elementor\Core\Responsive\Responsive;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Icons;
 use Elementor\Utils;
@@ -146,8 +145,8 @@ class Wpr_Content_Ticker extends Widget_Base {
 				continue;
 			}
 
-			if ( Utilities::is_new_free_user2() ) {
-				$this->post_types['pro-'. substr($slug, 0, 2)] = esc_html( $title ) .' (Pro)';
+			if ( !wpr_fs()->can_use_premium_code() ) {
+				$this->post_types['pro-'. substr($slug, 0, 2)] = esc_html( $title ) .' (Expert)';
 			} else {
 				$this->post_types[$slug] = esc_html( $title );
 			}
@@ -166,7 +165,6 @@ class Wpr_Content_Ticker extends Widget_Base {
 				'options' => $this->post_types,
 			]
 		);
-
 	}
 
 	protected function register_controls() {
@@ -222,6 +220,20 @@ class Wpr_Content_Ticker extends Widget_Base {
 
 		// Upgrade to Pro Notice
 		Utilities::upgrade_pro_notice( $this, Controls_Manager::RAW_HTML, 'content-ticker', 'query_source', ['pro-pd', 'pro-ft', 'pro-sl'] );
+
+		if ( !wpr_fs()->is_plan( 'expert' ) ) {
+			$this->add_control(
+				'query_source_cpt_pro_notice',
+				[
+					'raw' => 'This option is available<br> in the <strong><a href="https://royal-elementor-addons.com/?ref=rea-plugin-panel-grid-upgrade-expert#purchasepro" target="_blank">Expert version</a></strong>',
+					'type' => Controls_Manager::RAW_HTML,
+					'content_classes' => 'wpr-pro-notice',
+					'condition' => [
+						'query_source!' => ['post','page','pro-pd', 'pro-ft', 'pro-sl', 'product', 'featured', 'sale'],
+					]
+				]
+			);
+		}
 		
 		// Get Available Taxonomies
 		$post_taxonomies = Utilities::get_custom_types_of( 'tax', false );
@@ -435,6 +447,9 @@ class Wpr_Content_Ticker extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Hot News',
 			]
 		);
@@ -704,6 +719,9 @@ class Wpr_Content_Ticker extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'wpr-addons' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://www.your-link.com', 'wpr-addons' ),
 				'separator' => 'before',
 				
@@ -1045,10 +1063,10 @@ class Wpr_Content_Ticker extends Widget_Base {
 		// Section: Pro Features
 		Utilities::pro_features_list_section( $this, '', Controls_Manager::RAW_HTML, 'content-ticker', [
 			'Add Custom Ticker Items (Instead of loading Dynamically)',
-			'Custom Post Types Support',
 			'Marquee Animation - a Smooth Animation with Direction option',
 			'Slider Animation options - Typing, Fade & Vertical Slide',
 			'Heading Icon Type - Animated Circle',
+			'Custom Post Types Support (Expert)',
 		] );
 		
 		// Styles
@@ -1219,7 +1237,6 @@ class Wpr_Content_Ticker extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'heading_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-ticker-heading-text',
 				'separator' => 'before',
 			]
@@ -1466,7 +1483,6 @@ class Wpr_Content_Ticker extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-ticker-title',
 			]
 		);
@@ -2032,7 +2048,7 @@ class Wpr_Content_Ticker extends Widget_Base {
 
 			$heading_element = 'a';
 
-			$this->add_render_attribute( 'heading_attribute', 'href', $settings['heading_link']['url'] );
+			$this->add_render_attribute( 'heading_attribute', 'href', esc_url( $settings['heading_link']['url'] ) );
 
 			if ( $settings['heading_link']['is_external'] ) {
 				$this->add_render_attribute( 'heading_attribute', 'target', '_blank' );

@@ -6,11 +6,11 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Css_Filter;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Icons;
 use Elementor\Utils;
@@ -141,6 +141,9 @@ class Wpr_Flip_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'front_icon_type' => 'image',
 				],
@@ -180,6 +183,9 @@ class Wpr_Flip_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' =>  esc_html__( 'Frontend Content', 'wpr-addons' ),
 				'separator' => 'before',
 			]
@@ -205,6 +211,9 @@ class Wpr_Flip_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Frontend Button', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Click Me',
 				'condition' => [
 					'front_trigger' => 'btn',
@@ -255,6 +264,9 @@ class Wpr_Flip_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'back_icon_type' => 'image',
 				],
@@ -294,6 +306,9 @@ class Wpr_Flip_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Backend Content', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Title',
 				'separator' => 'before',
 			]
@@ -318,6 +333,9 @@ class Wpr_Flip_Box extends Widget_Base {
 			'back_link',
 			[
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'label' => esc_html__( 'Link', 'wpr-addons' ),
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'default' => [
@@ -335,6 +353,9 @@ class Wpr_Flip_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Backend Button',
 				'separator' => 'before',
 				'condition' => [
@@ -845,7 +866,6 @@ class Wpr_Flip_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'front_title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-flip-box-front .wpr-flip-box-title',
 			]
 		);
@@ -898,7 +918,6 @@ class Wpr_Flip_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'front_description_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-flip-box-front .wpr-flip-box-description',
 			]
 		);
@@ -1272,7 +1291,6 @@ class Wpr_Flip_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'back_title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-flip-box-back .wpr-flip-box-title',
 			]
 		);
@@ -1325,7 +1343,6 @@ class Wpr_Flip_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'back_description_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-flip-box-back .wpr-flip-box-description',
 			]
 		);
@@ -1499,7 +1516,6 @@ class Wpr_Flip_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'front_btn_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-flip-box-front .wpr-flip-box-btn',
 				'separator' => 'before',
 			]
@@ -1733,7 +1749,6 @@ class Wpr_Flip_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'back_btn_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-flip-box-back .wpr-flip-box-btn',
 				'separator' => 'before',
 			]
@@ -1832,10 +1847,22 @@ class Wpr_Flip_Box extends Widget_Base {
 			$front_image_src = $settings['front_image']['url'];
 		}
 
+		if ( isset($settings['front_image']['alt']) ) {
+			$front_alt_text = $settings['front_image']['alt'];
+		} else {
+			$front_alt_text = '';
+		}
+
 		$back_image_src = Group_Control_Image_Size::get_attachment_image_src( $settings['back_image']['id'], 'back_image_size', $settings );
 
 		if ( ! $back_image_src ) {
 			$back_image_src = $settings['back_image']['url'];
+		}
+
+		if ( isset($settings['back_image']['alt']) ) {
+			$back_alt_text = $settings['back_image']['alt'];
+		} else {
+			$back_alt_text = '';
 		}
 
 		$back_btn_element = 'div';
@@ -1846,7 +1873,7 @@ class Wpr_Flip_Box extends Widget_Base {
 
 			$back_btn_element = 'a';
 
-			$this->add_render_attribute( 'link_attribute', 'href', $settings['back_link']['url'] );
+			$this->add_render_attribute( 'link_attribute', 'href', esc_url( $settings['back_link']['url'] ) );
 
 			if ( $settings['back_link']['is_external'] ) {
 				$this->add_render_attribute( 'link_attribute', 'target', '_blank' );
@@ -1873,7 +1900,7 @@ class Wpr_Flip_Box extends Widget_Base {
 					</div>
 					<?php elseif ( 'image' === $settings['front_icon_type'] && $front_image_src ) : ?>
 					<div class="wpr-flip-box-image">
-						<img src="<?php echo esc_url( $front_image_src ); ?>" >
+						<img alt="<?php echo $front_alt_text; ?>" src="<?php echo esc_url( $front_image_src ); ?>" >
 					</div>
 					<?php endif; ?>
 					
@@ -1920,7 +1947,7 @@ class Wpr_Flip_Box extends Widget_Base {
 					</div>
 					<?php elseif ( 'image' === $settings['back_icon_type'] && $back_image_src ) : ?>
 						<div class="wpr-flip-box-image">
-							<img src="<?php echo esc_url( $back_image_src ); ?>" >
+							<img alt="<?php echo $back_alt_text; ?>" src="<?php echo esc_url( $back_image_src ); ?>" >
 						</div>
 					<?php endif; ?>
 					

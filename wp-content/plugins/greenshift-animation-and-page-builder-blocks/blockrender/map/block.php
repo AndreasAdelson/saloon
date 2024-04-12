@@ -71,7 +71,11 @@ class GspbMap
 		'center_index' => array(
 			'type' => 'number',
 			'default' => 0
-		)
+		),
+		'mapstyleJSON' => array(
+			'type' => 'string',
+			'default' => ''
+		),
 	);
 
 	public function render_block($settings = array(), $inner_content = '')
@@ -79,8 +83,14 @@ class GspbMap
 		extract($settings);
 
 		$blockId = 'gspb_id-' . $id;
-		$blockClassName = '' . $blockId . ' ' . (!empty($className) ? $className : '') . ' ';
+		$blockClassName = $blockId;
 		$blockMapId = 'gspb_map-' . $id;
+
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'class' => $blockClassName,
+			)
+		);
 
 		$markers = !empty($settings['markers']) ? $settings['markers'] : array();
 
@@ -93,19 +103,33 @@ class GspbMap
 			foreach ($markers as $key => $marker) {
 				if (!empty($marker['dynamicEnable']) && !empty($marker['dynamicField']) && $postid) {
 					$field = esc_attr($marker['dynamicField']);
-					$result = GSPB_get_custom_field_value($postid, $field, 'flat');
+					$result = GSPB_get_custom_field_value($postid, $field, 'flatarray');
+					if(is_string($result) && is_array(json_decode($result, true))){
+						$result = json_decode($result, true);
+					}
 					if (is_array($result)) {
 						if (isset($result['location']) && isset($result['location']['lat']) && isset($result['location']['lng'])) {
 							$markers[$key]['lat'] = $result['location']['lat'];
 							$markers[$key]['lng'] = $result['location']['lng'];
+							$markers[$key]['lang'] = $result['location']['lng'];
 							$markers[$key]['title'] = !empty($result['title']) ? $result['title'] : '';
-							$markers[$key]['description'] = !empty($result['description']) ? $result['description'] : '';
+							$description = !empty($result['description']) ? $result['description'] : '';
+							$address = !empty($result['address']) ? $result['address'] : '';
+							$markers[$key]['description'] = $description ? $result['description'] : $address;
 						} else if (isset($result['lat']) && isset($result['lng'])) {
 							$markers[$key]['lat'] = $result['lat'];
 							$markers[$key]['lng'] = $result['lng'];
+							$markers[$key]['lang'] = $result['lng'];
+							$description = !empty($result['description']) ? $result['description'] : '';
+							$address = !empty($result['address']) ? $result['address'] : '';
+							$markers[$key]['description'] = $description ? $result['description'] : $address;
 						} else if (isset($result['latitude']) && isset($result['longitude'])) {
 							$markers[$key]['lat'] = $result['latitude'];
 							$markers[$key]['lng'] = $result['longitude'];
+							$markers[$key]['lang'] = $result['longitude'];
+							$description = !empty($result['description']) ? $result['description'] : '';
+							$address = !empty($result['address']) ? $result['address'] : '';
+							$markers[$key]['description'] = $description ? $result['description'] : $address;
 						}
 					}
 				}
@@ -118,11 +142,15 @@ class GspbMap
 			'center_index' => $settings['center_index'],
 		);
 
+		if(!empty($settings['mapstyleJSON'])){
+			$localizeArray['styles'] = json_decode($settings['mapstyleJSON']);
+		}
+
 		$maptype = $settings['maptype'];
 
 		wp_localize_script('gspb_map', str_replace('-', '_', $blockId), $localizeArray);
 
-		$out = '<div  class="' . $blockClassName . '"' . gspb_AnimationRenderProps($animation) . '>';
+		$out = '<div ' . $wrapper_attributes . '' . gspb_AnimationRenderProps($animation) . '>';
 		$out .= '<div data-key="' . str_replace('-', '_', $blockId) . '" class="gspb_map-wrapper gspb_' . $maptype . '" id=' . $blockMapId . '></div>';
 		$out .= '</div>';
 

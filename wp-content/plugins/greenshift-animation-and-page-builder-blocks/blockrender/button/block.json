@@ -1,5 +1,6 @@
 {
 	"name": "greenshift-blocks/button",
 	"title": "Button",
-	"category":"GreenShift"
+	"category":"GreenShift",
+	"apiVersion": 3
 }

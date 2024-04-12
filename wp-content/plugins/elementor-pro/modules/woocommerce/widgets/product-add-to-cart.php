@@ -202,9 +202,10 @@ class Product_Add_To_Cart extends Base_Widget {
 		$this->add_control(
 			'wc_style_warning',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'The style of this widget is often affected by your theme and plugins. If you experience any such issue, try to switch to a basic theme and deactivate related plugins.', 'elementor-pro' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				// TODO: Remove define() with the release of Elementor 3.22
+				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
+				'alert_type' => 'info',
+				'content' => esc_html__( 'The style of this widget is often affected by your theme and plugins. If you experience any such issue, try to switch to a basic theme and deactivate related plugins.', 'elementor-pro' ),
 			]
 		);
 
@@ -257,7 +258,7 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .cart button, {{WRAPPER}} .cart .button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -269,7 +270,7 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .cart button, {{WRAPPER}} .cart .button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -361,14 +362,15 @@ class Product_Add_To_Cart extends Base_Widget {
 		$this->add_control(
 			'button_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.2,
 				],
 				'range' => [
 					'px' => [
-						'max' => 2,
+						'min' => 0,
+						'max' => 3,
 						'step' => 0.1,
 					],
 				],
@@ -418,17 +420,16 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 50,
-						'step' => 1,
+						'max' => 100,
 					],
 					'em' => [
-						'min' => 0,
-						'max' => 3.5,
-						'step' => 0.1,
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -466,7 +467,18 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--button-spacing: {{SIZE}}{{UNIT}};',
 				],
@@ -504,7 +516,7 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .quantity .qty' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -519,7 +531,7 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .quantity .qty' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -620,14 +632,15 @@ class Product_Add_To_Cart extends Base_Widget {
 		$this->add_control(
 			'quantity_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.2,
 				],
 				'range' => [
 					'px' => [
-						'max' => 2,
+						'min' => 0,
+						'max' => 3,
 						'step' => 0.1,
 					],
 				],
@@ -656,7 +669,7 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -671,6 +684,18 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
+				],
 				'selectors' => [
 					'.woocommerce {{WRAPPER}} form.cart .variations' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],
@@ -682,6 +707,18 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Space Between', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
+				],
 				'selectors' => [
 					'.woocommerce {{WRAPPER}} form.cart table.variations tr th, .woocommerce {{WRAPPER}} form.cart table.variations tr td' => 'padding-top: calc( {{SIZE}}{{UNIT}}/2 ); padding-bottom: calc( {{SIZE}}{{UNIT}}/2 );',
 				],
@@ -771,7 +808,7 @@ class Product_Add_To_Cart extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'.woocommerce {{WRAPPER}} form.cart table.variations td.value select, .woocommerce {{WRAPPER}} form.cart table.variations td.value:before' => 'border-radius: {{SIZE}}{{UNIT}}',
 				],

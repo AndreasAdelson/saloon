@@ -44,7 +44,7 @@ if (!defined('ABSPATH')) {
           />
           <input class="current-file-hidden-input" type="hidden" name="<?php echo esc_attr($ext)?>[]" value="<?php echo !empty($options[$ext]) ? $options[$ext] : ''?>">
           <div class="input-desc">
-            <?php echo sprintf(__("Upload .%s font file", 'greenshift-animation-and-page-builder-blocks'), $ext); ?>
+            <?php echo sprintf(esc_html__("Upload .%s font file", 'greenshift-animation-and-page-builder-blocks'), $ext); ?>
           </div>
           <?php if(!empty($options[$ext])):?>
             <div class="current-file" style="margin-top: 5px;">
@@ -60,5 +60,18 @@ if (!defined('ABSPATH')) {
         </td>
       </tr>
     <?php endforeach;?>
+    <tr>
+      <td class="label-td">
+        <label for="font_family_preload_<?php echo esc_attr($i)?>">
+          <?php esc_html_e("Font Preloaded", 'greenshift-animation-and-page-builder-blocks'); ?>
+        </label>
+      </td>
+      <td>
+      <input type="checkbox" name="font_family_preload[]" id="font_family_preload_<?php echo esc_attr($i)?>" <?php echo (isset($options['preloaded']) && $options['preloaded'] == 'on') ? 'checked' : ''; ?> />
+        <div class="input-desc">
+          <?php esc_html_e("Use only for fonts which are attached to global elements", 'greenshift-animation-and-page-builder-blocks'); ?>
+        </div>
+      </td>
+    </tr>
   </tbody>
 </table>

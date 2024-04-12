@@ -3,11 +3,11 @@ namespace WprAddons\Modules\PromoBox\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Css_Filter;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
@@ -149,6 +149,9 @@ class Wpr_Promo_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
@@ -194,6 +197,9 @@ class Wpr_Promo_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'content_icon_type' => 'image',
 				],
@@ -229,6 +235,9 @@ class Wpr_Promo_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Banner Title',
 				'separator' => 'before',
 			]
@@ -285,6 +294,9 @@ class Wpr_Promo_Box extends Widget_Base {
 			'content_link',
 			[
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'label' => esc_html__( 'Link', 'wpr-addons' ),
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'default' => [
@@ -302,6 +314,9 @@ class Wpr_Promo_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Click here',
 				'separator' => 'before',
 				'condition' => [
@@ -749,6 +764,7 @@ class Wpr_Promo_Box extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .wpr-promo-box-content' => '-webkit-transition-duration: {{VALUE}}s; transition-duration: {{VALUE}}s;',
 					'{{WRAPPER}} .wpr-promo-box-icon i' => '-webkit-transition-duration: {{VALUE}}s; transition-duration: {{VALUE}}s;',
+					'{{WRAPPER}} .wpr-promo-box-icon svg' => '-webkit-transition-duration: {{VALUE}}s; transition-duration: {{VALUE}}s;',
 					'{{WRAPPER}} .wpr-promo-box-title span' => '-webkit-transition-duration: {{VALUE}}s; transition-duration: {{VALUE}}s;',
 					'{{WRAPPER}} .wpr-promo-box-title a' => '-webkit-transition-duration: {{VALUE}}s; transition-duration: {{VALUE}}s;',
 					'{{WRAPPER}} .wpr-promo-box-description p' => '-webkit-transition-duration: {{VALUE}}s; transition-duration: {{VALUE}}s;',
@@ -1029,7 +1045,6 @@ class Wpr_Promo_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-promo-box-title',
 			]
 		);
@@ -1078,7 +1093,6 @@ class Wpr_Promo_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_description_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-promo-box-description',
 			]
 		);
@@ -1261,7 +1275,6 @@ class Wpr_Promo_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'btn_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-promo-box-btn',
 				'separator' => 'before',
 			]
@@ -1504,7 +1517,7 @@ class Wpr_Promo_Box extends Widget_Base {
 
 			$content_btn_element = 'a';
 
-			$this->add_render_attribute( 'link_attribute', 'href', $settings['content_link']['url'] );
+			$this->add_render_attribute( 'link_attribute', 'href', esc_url( $settings['content_link']['url'] ) );
 
 			if ( $settings['content_link']['is_external'] ) {
 				$this->add_render_attribute( 'link_attribute', 'target', '_blank' );

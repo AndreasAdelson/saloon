@@ -9,7 +9,7 @@ use WprAddons\Classes\Utilities;
 
 // Register Menus
 function wpr_addons_add_popups_menu() {
-	add_submenu_page( 'wpr-addons', 'Popups', 'Popups', 'manage_options', 'wpr-popups', 'wpr_addons_popups_page' );
+	add_submenu_page( 'wpr-addons', 'Popup Builder', 'Popup Builder', 'manage_options', 'wpr-popups', 'wpr_addons_popups_page' );
 }
 add_action( 'admin_menu', 'wpr_addons_add_popups_menu' );
 
@@ -66,6 +66,17 @@ function wpr_addons_popups_page() {
             <?php esc_html_e( 'Popups', 'wpr-addons' ); ?>
         </a>
     </div>
+
+    
+    <?php
+        if ( is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) ) {
+            $url = '';
+            $url = admin_url( 'edit.php?s&post_status=all&post_type=wpr_templates&wpr_template_type=popup&filter_action=Filter' );
+            
+            echo '<a href="' . esc_url( $url ) . '" class="button button-primary wpr-translate-templates wpr-options-button"><span class="dashicons dashicons-admin-site"></span><span>Translate WPML Templates</span></a>';
+            echo '<a href="https://www.youtube.com/watch?v=y7yjItsMBmw" class="button button-primary wpr-translate-templates wpr-options-button tutorial">'. esc_html__("Video Tutorial") .'</a>';
+        }
+    ?>
 
     <?php if ( $active_tab == 'wpr_tab_popups' ) : ?>
 

@@ -102,11 +102,19 @@ abstract class Base extends Base_Widget {
 			[
 				'type' => Controls_Manager::SLIDER,
 				'label' => esc_html__( 'Height', 'elementor-pro' ),
-				'size_units' => [ 'px', 'vh' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 100,
 						'max' => 1000,
+					],
+					'em' => [
+						'min' => 10,
+						'max' => 100,
+					],
+					'rem' => [
+						'min' => 10,
+						'max' => 100,
 					],
 					'vh' => [
 						'min' => 20,
@@ -123,6 +131,7 @@ abstract class Base extends Base_Widget {
 			[
 				'type' => Controls_Manager::SLIDER,
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 100,
@@ -132,7 +141,6 @@ abstract class Base extends Base_Widget {
 						'min' => 50,
 					],
 				],
-				'size_units' => [ '%', 'px' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -336,9 +344,9 @@ abstract class Base extends Base_Widget {
 		$this->add_control(
 			'slide_border_size',
 			[
-				'label' => esc_html__( 'Border Size', 'elementor-pro' ),
+				'label' => esc_html__( 'Border Width', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-main-swiper .swiper-slide' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
@@ -350,7 +358,7 @@ abstract class Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'%' => [
 						'max' => 50,
@@ -378,7 +386,7 @@ abstract class Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-main-swiper .swiper-slide' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
@@ -401,21 +409,27 @@ abstract class Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Arrows', 'elementor-pro' ),
 				'type' => Controls_Manager::HEADING,
-				'separator' => 'none',
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'arrows_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 20,
 				],
 				'range' => [
 					'px' => [
-						'min' => 10,
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -466,14 +480,21 @@ abstract class Base extends Base_Widget {
 
 		$swiper_class = Plugin::elementor()->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container';
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'pagination_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'max' => 20,
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -552,11 +573,11 @@ abstract class Base extends Base_Widget {
 						<div class="swiper-pagination"></div>
 					<?php endif; ?>
 					<?php if ( $settings['show_arrows'] ) : ?>
-						<div class="elementor-swiper-button elementor-swiper-button-prev">
+						<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
 							<?php $this->render_swiper_button( 'previous' ); ?>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Previous', 'elementor-pro' ); ?></span>
 						</div>
-						<div class="elementor-swiper-button elementor-swiper-button-next">
+						<div class="elementor-swiper-button elementor-swiper-button-next" role="button" tabindex="0">
 							<?php $this->render_swiper_button( 'next' ); ?>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Next', 'elementor-pro' ); ?></span>
 						</div>

@@ -3,7 +3,7 @@ namespace WprAddons\Modules\ThemeBuilder\Woocommerce\ProductSalesBadge\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Box_Shadow;
 use WprAddons\Classes\Utilities;
@@ -46,6 +46,9 @@ class Wpr_Product_SalesBadge extends Widget_Base {
 			'sales_badge_text',
 			[
 				'type'        => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'label'       => esc_html__( 'Sale Badge Text', 'wpr-addons' ),
 				'default'     => 'Sale!',
 			]

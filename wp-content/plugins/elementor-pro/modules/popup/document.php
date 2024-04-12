@@ -165,17 +165,25 @@ class Document extends Theme_Section_Document {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ], // Only CSS `<length>` data-type is allowed, not `<percentage>`.
 				'range' => [
 					'px' => [
 						'min' => 100,
 						'max' => 1000,
+					],
+					'em' => [
+						'min' => 10,
+						'max' => 100,
+					],
+					'rem' => [
+						'min' => 10,
+						'max' => 100,
 					],
 					'vh' => [
 						'min' => 10,
 						'max' => 100,
 					],
 				],
-				'size_units' => [ 'px', 'vw' ],
 				'default' => [
 					'size' => 640,
 				],
@@ -210,6 +218,7 @@ class Document extends Theme_Section_Document {
 			[
 				'label' => esc_html__( 'Custom Height', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 100,
@@ -220,7 +229,6 @@ class Document extends Theme_Section_Document {
 						'max' => 100,
 					],
 				],
-				'size_units' => [ 'px', 'vh' ],
 				'condition' => [
 					'height_type' => 'custom',
 				],
@@ -380,7 +388,7 @@ class Document extends Theme_Section_Document {
 		$this->add_control(
 			'entrance_animation_duration',
 			[
-				'label' => esc_html__( 'Animation Duration', 'elementor-pro' ) . ' (sec)',
+				'label' => esc_html__( 'Animation Duration', 'elementor-pro' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'frontend_available' => true,
 				'default' => [
@@ -388,7 +396,7 @@ class Document extends Theme_Section_Document {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0.1,
+						'min' => 0,
 						'max' => 5,
 						'step' => 0.1,
 					],
@@ -447,7 +455,7 @@ class Document extends Theme_Section_Document {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .dialog-widget-content' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
@@ -537,16 +545,19 @@ class Document extends Theme_Section_Document {
 			[
 				'label' => esc_html__( 'Vertical Position', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
-					'%' => [
-						'max' => 100,
-						'min' => 0,
-						'step' => 0.1,
-					],
 					'px' => [
-						'max' => 500,
 						'min' => -500,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => -50,
+						'max' => 50,
+					],
+					'rem' => [
+						'min' => -50,
+						'max' => 50,
 					],
 				],
 				'default' => [
@@ -569,16 +580,19 @@ class Document extends Theme_Section_Document {
 			[
 				'label' => esc_html__( 'Horizontal Position', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
-					'%' => [
-						'max' => 100,
-						'min' => 0,
-						'step' => 0.1,
-					],
 					'px' => [
-						'max' => 500,
 						'min' => -500,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => -50,
+						'max' => 50,
+					],
+					'rem' => [
+						'min' => -50,
+						'max' => 50,
 					],
 				],
 				'default' => [
@@ -670,6 +684,7 @@ class Document extends Theme_Section_Document {
 			[
 				'label' => esc_html__( 'Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .dialog-close-button' => 'font-size: {{SIZE}}{{UNIT}}',
 				],
@@ -773,6 +788,9 @@ class Document extends Theme_Section_Document {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -781,7 +799,7 @@ class Document extends Theme_Section_Document {
 			[
 				'label' => esc_html__( 'Margin', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}} .dialog-widget-content' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -794,7 +812,7 @@ class Document extends Theme_Section_Document {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .dialog-message' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -807,6 +825,9 @@ class Document extends Theme_Section_Document {
 				'label' => esc_html__( 'CSS Classes', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor-pro' ),
+				'ai' => [
+					'active' => false,
+				],
 				'frontend_available' => true,
 			]
 		);

@@ -5,15 +5,14 @@ namespace WprAddons\Modules\DualColorHeading\Widgets;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Scheme_Color;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Icons_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use WprAddons\Classes\Utilities;
 
 
@@ -73,7 +72,7 @@ class Wpr_Dual_Color_Heading extends Widget_Base {
 					'h6' => 'H6',
 					'div' => 'div',
 					'span' => 'span',
-					'P' => 'p'
+					'p' => 'p'
 				],
 				'default' => 'h2'
 			]
@@ -264,7 +263,6 @@ class Wpr_Dual_Color_Heading extends Widget_Base {
 			[
 				'name' => 'primary_heading_typography',
 				'label' => __('Typography', 'wpr-addons'),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-dual-title .first',
 				'fields_options' => [
 					'typography' => [
@@ -461,7 +459,6 @@ class Wpr_Dual_Color_Heading extends Widget_Base {
 			[
 				'name' => 'secondary_heading_typography',
 				'label' => __('Typography', 'wpr-addons'),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-dual-title .second',
 				'fields_options' => [
 					'typography' => [
@@ -592,7 +589,6 @@ class Wpr_Dual_Color_Heading extends Widget_Base {
 			[
 				'name' => 'description_typography',
 				'label' => __('Typography', 'wpr-addons'),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-dual-heading-description',
 				'fields_options' => [
 					'typography' => [
@@ -712,11 +708,19 @@ class Wpr_Dual_Color_Heading extends Widget_Base {
 		$this->add_inline_editing_attributes('title', 'none');
 		$this->add_inline_editing_attributes('description', 'basic');
 		$this->add_inline_editing_attributes('content', 'advanced');
+		
+		$tags_whitelist = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'span', 'p'];
+
+		$dual_heading_tag = $settings['dual_heading_tag'];
+
+		if ( !in_array( $dual_heading_tag, $tags_whitelist ) ) {
+			$dual_heading_tag = 'h2';
+		}
 
         ?>
 			<div class="wpr-dual-heading-wrap">
 				<div class="wpr-dual-title-wrap">
-					<<?php echo esc_attr($settings['dual_heading_tag']); ?> class="wpr-dual-title">
+					<<?php echo esc_attr($dual_heading_tag); ?> class="wpr-dual-title">
 					<?php if (!empty($settings['primary_heading'])) : ?>
 						<span class="first"><?php echo esc_html($settings['primary_heading']); ?></span>
 					<?php endif; ?>
@@ -724,7 +728,7 @@ class Wpr_Dual_Color_Heading extends Widget_Base {
 					<?php if (!empty($settings['secondary_heading'])) : ?>
 						<span class="second"><?php echo esc_html($settings['secondary_heading']); ?></span>
 					<?php endif; ?>
-					</<?php echo esc_attr($settings['dual_heading_tag']); ?>>
+					</<?php echo esc_attr($dual_heading_tag); ?>>
 				</div>
 				
 				<?php if ('yes' == $settings['show_description']) { ?>

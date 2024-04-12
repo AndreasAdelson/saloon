@@ -1,5 +1,6 @@
 {
 	"name": "greenshift-blocks/infobox",
 	"title": "Infobox",
-	"category":"GreenShift"
+	"category":"GreenShift",
+	"apiVersion": 3
 }

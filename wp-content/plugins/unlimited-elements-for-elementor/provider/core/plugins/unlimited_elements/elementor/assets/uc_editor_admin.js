@@ -7,8 +7,10 @@ function UniteCreatorElementorEditorAdmin(){
 	var g_objSettingsPanel;
 	var g_objAddonParams, g_objAddonParamsItems, g_lastAddonName;
 	var g_numRepeaterItems = 0;
-	var g_windowFront, g_searchDataID, g_searchData, g_frontAPI; 
-	var g_temp = {};
+	var g_windowFront, g_searchDataID, g_searchData, g_frontAPI, g_objBody; 
+	var g_temp = {
+		startTime:0
+	};
 	
 	
 	/**
@@ -149,6 +151,11 @@ function UniteCreatorElementorEditorAdmin(){
 		selectPostTaxonomy.attr("multiple", true);
 		selectPostTaxonomy.css("height", "50px");
 		
+		//remove the tip
+		var objInputWrapper = selectPostTaxonomy.parents(".elementor-control-input-wrapper");
+		objInputWrapper.addClass("uc-notip");
+		
+		
 		var postType = selectPostType.val();
 		var selectedTax = selectPostTaxonomy.val();
 		
@@ -168,7 +175,8 @@ function UniteCreatorElementorEditorAdmin(){
 		//hide not relevant select options
 		var objOptions = selectPostTaxonomy.find("option");
 		var firstVisibleOption = null;
-		
+				
+		var numVisible = 0;
 		jQuery.each(objOptions, function(index, option){
 			
 			var objOption = jQuery(option);
@@ -179,12 +187,17 @@ function UniteCreatorElementorEditorAdmin(){
 			if(taxFound == true && firstVisibleOption == null)
 				firstVisibleOption = optionTax;
 			
-			if(taxFound == true)
+			if(taxFound == true){
 				objOption.show();
+				numVisible++;
+			}
 			else
 				objOption.hide();
 							
 		});
+		
+		if(numVisible > 4)
+			selectPostTaxonomy.css("height", "80px");
 		
 		//check and change current tax
 		
@@ -205,7 +218,7 @@ function UniteCreatorElementorEditorAdmin(){
 	/**
 	 * fill category select
 	 */
-	function onPostTypeSelectChange_fillCategorySelect(objSelectPostCategory, selectPostType, dataPostTypes, placeholder){
+	function onPostTypeSelectChange_fillCategorySelect(objSelectPostCategory, selectPostType, dataPostTypes, placeholder, isInit){
 		
 		var arrPostTypes = selectPostType.val();
 		
@@ -213,9 +226,23 @@ function UniteCreatorElementorEditorAdmin(){
 		if(jQuery.isArray(arrPostTypes) == false){
 			arrPostTypes = [arrPostTypes];
 		}
-		 
+		
 		var selectedCatID = objSelectPostCategory.select2("val");
 		
+		//try to set init vals from the data if available
+		if(isInit == true){
+			
+			var widgetSettings = getLastOpenedWidgetSettings();
+			var settingName = objSelectPostCategory.data("setting");
+			
+			var initValues = getVal(widgetSettings, settingName);
+			
+			if(initValues && Array.isArray(initValues) && initValues.length != selectedCatID.length){
+				selectedCatID = initValues;
+			}
+			
+		}
+				
 		var options = [];
 		
 		for(var index in arrPostTypes){
@@ -246,7 +273,7 @@ function UniteCreatorElementorEditorAdmin(){
 			data:options,
 			placeholder:placeholder
 		});
-				
+		
 		if(jQuery.isEmptyObject(selectedCatID) == false){
 			
 			objSelectPostCategory.val(selectedCatID);
@@ -256,15 +283,20 @@ function UniteCreatorElementorEditorAdmin(){
 			objSelectPostCategory.trigger("change");
 			
 		}
+		
 	}
 	
 	/**
 	 * on post type select change
 	 */
 	function onPostTypeSelectChange(event, paramSelect){
-				
-		if(paramSelect && event == null)
+		
+		var isInit = false;
+		
+		if(paramSelect && event == null){
 			var selectPostType = paramSelect;
+			isInit = true;
+		}
 		else
 			var selectPostType = jQuery(this);
 		
@@ -289,9 +321,9 @@ function UniteCreatorElementorEditorAdmin(){
 		var objSelectPostCategory = objPanel.find("select[data-setting='"+prefix+"_category']");
 		var objSelectExcludeTerms = objPanel.find("select[data-setting='"+prefix+"_exclude_terms']");
 		
-		onPostTypeSelectChange_fillCategorySelect(objSelectPostCategory, selectPostType, dataPostTypes, "All Terms");
+		onPostTypeSelectChange_fillCategorySelect(objSelectPostCategory, selectPostType, dataPostTypes, "All Terms", isInit);
 		
-		onPostTypeSelectChange_fillCategorySelect(objSelectExcludeTerms, selectPostType, dataPostTypes, "Select Terms To Exclude");
+		onPostTypeSelectChange_fillCategorySelect(objSelectExcludeTerms, selectPostType, dataPostTypes, "Select Terms To Exclude", isInit);
 		
 	}
 	
@@ -327,14 +359,14 @@ function UniteCreatorElementorEditorAdmin(){
 		setTimeout(function(){
 			
 			onPostTypeSelectChange(null, objSetting);
-						
+			
 		}, 500);
 		
 	}
 	
 	
 	
-	function a________CONSOLIDATION_________(){}
+	function a________SPECIAL_SELECTS_________(){}
 		
 	
 	/**
@@ -345,123 +377,8 @@ function UniteCreatorElementorEditorAdmin(){
 		return rawurldecode(base64_decode(value));
 	}
 	
-	
-	/**
-	 * hide all controls except the needed ones
-	 */
-	function hideAllControls(){
-				
-		var objWrapper = jQuery("#elementor-controls");
 		
-		var objControls = objWrapper.find(".elementor-control").not(".elementor-control-type-section.elementor-control-section_general").not(".elementor-control-uc_addon_name");
-		objControls.hide();
 		
-	}
-	
-	
-	/**
-	 * show controls by names
-	 */
-	function showControlsByNames(arrNames){
-				
-		var objWrapper = jQuery("#elementor-controls");
-		
-		jQuery(arrNames).each(function(index, name){
-			objWrapper.find(".elementor-control-"+name).show();
-		});
-		
-	}
-	
-	/**
-	 * show the right repeater fields
-	 */
-	function showRepeaterFields(){
-		
-		//hide repeater items
-		var objRepeater = jQuery(".elementor-control-uc_items.elementor-control-type-repeater");
-		if(objRepeater.length == 0)
-			return(false);
-		
-		if(typeof g_objAddonParamsItems == "undefined")
-			return(false);
-		
-		if(!g_objAddonParamsItems)
-			return(false);
-				
-		if(!g_objAddonParamsItems.length)
-			return(false);
-		
-		if(g_objAddonParamsItems.hasOwnProperty(g_lastAddonName) == false)
-			return(false);
-		
-		var arrItemControls = g_objAddonParamsItems[g_lastAddonName];
-		
-		//hide all repeater controls
-		objRepeater.find(".elementor-control").hide();
-		
-		//show only relevant controls
-		jQuery.each(arrItemControls,function(index, controlName){
-			
-			var objControl = objRepeater.find(".elementor-control.elementor-control-"+controlName);
-			objControl.show();
-		});
-		
-	}
-	
-	
-	/**
-	 * hide all items controls
-	 */
-	function hideAllItemsControls(){
-		
-		var objSection = jQuery(".elementor-control.elementor-control-section_uc_items_consolidation");
-		
-		if(objSection.length)
-			objSection.hide();
-		
-	}
-	
-	
-	/**
-	 * show active controls
-	 */
-	function showActiveControls(){
-		
-		var objAddonSelector = jQuery(this);
-		
-		var addonName = objAddonSelector.val();
-		
-		g_lastAddonName = addonName;
-		
-		var arrParamNames = g_objAddonParams[addonName];
-		
-		hideAllControls();
-		showControlsByNames(arrParamNames);
-		
-	}
-	
-	
-	/**
-	 * show active item controls
-	 */
-	function showActiveItemsControls(){
-		
-		if(!g_lastAddonName)
-			return(false);
-		
-		if(g_objAddonParamsItems.hasOwnProperty(g_lastAddonName) == false)
-			return(false);
-		
-		//show section
-		var objSection = jQuery(".elementor-control.elementor-control-section_uc_items_consolidation");
-		objSection.show();
-		
-		if(objSection.length == 0)
-			return(false);
-		
-		showRepeaterFields();
-		
-	}
 	
 	/**
 	 * get select 2 ajax options
@@ -553,7 +470,7 @@ function UniteCreatorElementorEditorAdmin(){
 				
 		var type = objSelect.data("datatype");
 		
-		if(type == "terms")
+		if(type == "terms" || type == "users")
 			return(false);
 		
 		var objWrapper = objSelect.parents(".elementor-control-input-wrapper");
@@ -573,7 +490,7 @@ function UniteCreatorElementorEditorAdmin(){
 		
 		if(typeof g_ucAdminUrl == "undefined")
 			return(false);
-				
+		
 		//append the new button
 		
 		switch(type){
@@ -593,21 +510,6 @@ function UniteCreatorElementorEditorAdmin(){
 		objWrapper.append(htmlButton);
 		
 		
-		/*
-		var dataType = getVal(data, "dataType");
-		var isSingle = getVal(data,"issingle");
-		
-		trace(dataType);
-		trace(isSingle);
-		
-		if(dataType == "terms")
-			return(false);
-		
-		if(isSingle == false)
-			return(false);
-		
-		trace("check init data");
-		*/
 	}
 	
 	
@@ -629,10 +531,17 @@ function UniteCreatorElementorEditorAdmin(){
 		if(type == "elementor_template")
 			postType = "elementor_template";
 		
+		
 		//get terms
 		var action = "get_posts_list_forselect";
+		
 		if(type == "terms"){
 			action = "get_terms_list_forselect";
+		}
+		
+		if(type == "users"){
+			action = "get_users_list_forselect";
+			
 		}
 		
 		var taxonomyName = objSelect.data("taxonomyname");
@@ -695,7 +604,7 @@ function UniteCreatorElementorEditorAdmin(){
 	function initPostIDsSelect(objSelect){
 				
 		var widgetSettings = getLastOpenedWidgetSettings();
-				
+		
 		var settingName = objSelect.data("setting");
 		var isSingle = objSelect.data("issingle");
 		var dataType = objSelect.data("datatype");
@@ -737,8 +646,12 @@ function UniteCreatorElementorEditorAdmin(){
 		};
 		
 		var action = "get_select2_post_titles";
+		
 		if(dataType == "terms")
 			action = "get_select2_terms_titles";
+		
+		if(dataType == "users")
+			action = "get_select2_users_titles";
 		
 		ajaxRequest(action, ajaxData, function(response){
 			
@@ -751,6 +664,55 @@ function UniteCreatorElementorEditorAdmin(){
 		});
 		
 	}
+	
+	/**
+	 * set the template button
+	 */
+	function templateButtonSet(objButton, objSelectTemplate){
+		
+		var value = objSelectTemplate.val();
+		
+		if(value == "" || value == "__none__"){
+			objButton.hide();
+			return(false);
+		}
+		
+		if(!g_ucAdminUrl)
+			return(false);
+		
+		objButton.show();
+		
+		value = value.replace("jet_","");
+		
+		var urlEdit = g_ucAdminUrl+"post.php?post="+value+"&action=elementor";
+		
+		objButton.attr("href", urlEdit);
+		
+	}
+	
+	
+	/**
+	 * init template button
+	 */
+	function initTemplateButton(objButton){
+		
+		var selectID = objButton.data("selectid");
+		
+		var objPanel = getObjElementorPanel();
+		
+		var objSelectTemplate = objPanel.find("select[data-setting='"+selectID+"']");
+		
+		if(objSelectTemplate.length == 0)
+			return(false);
+		
+		templateButtonSet(objButton, objSelectTemplate);
+		
+		objSelectTemplate.on("change", function(){
+			templateButtonSet(objButton, objSelectTemplate);
+		});
+		
+	}
+
 	
 	/**
 	 * init the addons selector
@@ -776,6 +738,9 @@ function UniteCreatorElementorEditorAdmin(){
 				case "post_ids":
 					initPostIDsSelect(objSelect);
 				break;
+				case "template_button":
+					initTemplateButton(objSelect);
+				break;
 			}
 			
 		});
@@ -783,108 +748,21 @@ function UniteCreatorElementorEditorAdmin(){
 	}
 	
 	
-	/**
-	 * indicate init control
-	 */
-	function indicateInitControl(sectionType){
-		
-		switch(sectionType){
-			case "style":
-				var selector = ".elementor-control.elementor-control-type-section.elementor-control-uc_section_styles_indicator";
-			break;
-			case "items":
-				var selector = ".elementor-control.elementor-control-section_uc_items_consolidation";
-			break;
-			default:
-				trace("section type not found: " + sectionType);
-			break;
-		}
-		
-		if(!g_lastAddonName)
-			return(false);
-		
-		//check special param, tells that it's really the style controls
-		var objWrapper = jQuery("#elementor-controls");
-		
-		var objControl = objWrapper.find(selector);
-		if(objControl.length == 0)
-			return(false);
-		
-		var isInited = objControl.data("uc_isinited");
-				
-		if(isInited == true){
-			return(false);
-		}
-		
-		objControl.data("uc_isinited", true);
-		
-		return(true);
-	}
-	
-	
-	/**
-	 * init the style controls
-	 */
-	function initStyleControls(){
-		
-		var isFound = indicateInitControl("style");
-		if(isFound == false)
-			return(false);
-		
-		var arrParamNames = g_objAddonParams[g_lastAddonName];
-		
-		hideAllControls();
-		showControlsByNames(arrParamNames);
-		
-		return(true);
-	}
-	
-	
-	/**
-	 * init items controls (with the repeater)
-	 */
-	function initItemsControls(){
-		
-		var isFound = indicateInitControl("items");
-		if(isFound == false)
-			return(false);
-		
-		var arrParamNames = g_objAddonParams[g_lastAddonName];
-		
-		hideAllItemsControls();
-		showActiveItemsControls();
-		
-		//showControlsByNames(arrParamNames);
-		
-		return(true);
-	}
-	
 	
 	/**
 	 * occure on change of settings panel
 	 */
 	function onSettingsPanelInit(){
-				
+		
 		initSpecialSelects();
-		
-		var isInited = initStyleControls();
-		
-		if(isInited == false)
-			initItemsControls();
 		
 		//init the post type selector if exists
 		postSelectOnLoad();
 		
+		g_objBody.trigger("uc_settings_panel_change");
+		
 	}
 	
-	/**
-	 * on repeater click
-	 */
-	function onRepeaterItemClick(){
-		setTimeout(function(){
-			showRepeaterFields();
-		},500);
-	}
 	
 	/**
 	 * init all the events
@@ -898,10 +776,7 @@ function UniteCreatorElementorEditorAdmin(){
 			  g_handle = setTimeout(onSettingsPanelInit, 50);
 			  
 		});
-		
-		//init items repeater events
-		jQuery(document).on("mousedown",".elementor-control-uc_items .elementor-repeater-row-item-title",onRepeaterItemClick);
-		
+				
 	}
 	
 	function a________LOAD_INCLUDES_________(){}
@@ -1362,7 +1237,7 @@ function UniteCreatorElementorEditorAdmin(){
 	 * ajax request to unlimited plugin from the editor
 	 */
 	function ajaxRequest(action, data, funcSuccess, funcError){
-				
+		
 		if(!data)
 			var data = {};
 		
@@ -1586,11 +1461,17 @@ function UniteCreatorElementorEditorAdmin(){
 				return(true);
 			break;
 		}
-						
+		
+				
 		var id = objElement.data("id");
 		
+		//validate it's opened element in panel
+		
+		if(window.ucLastElementorModelID && id != window.ucLastElementorModelID)
+			return(true);
+		
 		var objSettings = getSettingsFromElementor(id);
-				
+		
 		checkElementBackground(element, objSettings);
 	}
 	
@@ -1628,7 +1509,7 @@ function UniteCreatorElementorEditorAdmin(){
 		elementor.hooks.addAction("panel/open_editor/section", onElementorSectionPanelChange);
 		elementor.hooks.addAction("panel/open_editor/container", onElementorSectionPanelChange);
 		elementor.hooks.addAction("panel/open_editor/widget", onElementorSectionPanelChange);
-				
+		
 		if(typeof elementorFrontend != "undefined"){
 			
 			//elementorFrontend.hooks.addAction( 'frontend/element_ready/widget', onFrontWidgetReady); 
@@ -1639,10 +1520,31 @@ function UniteCreatorElementorEditorAdmin(){
 	}
 
 	/**
+	 * check and remove panel loader, if enought time passed
+	 */
+	function checkRemoveLoader(){
+		
+		var hasLoadingClass = jQuery("body").hasClass("elementor-panel-loading");
+		
+		if(hasLoadingClass == false)
+			return(false);
+		
+		var timePass = Date.now() - g_temp.startTime;
+		
+		if(timePass > 10000)
+			jQuery("body").removeClass("elementor-panel-loading");
+		
+	}
+	
+
+	/**
 	 * on open widget
 	 * save last model
 	 */
 	function onElementorOpenWidget(event, model){
+		
+		//remove the loader if open widget
+		checkRemoveLoader();
 		
 		window.ucLastElementorModelID = model.id;
 		window.ucLastElementorModel = model.attributes;
@@ -1650,6 +1552,8 @@ function UniteCreatorElementorEditorAdmin(){
 		window.lastWidgetType = getVal(model.attributes, "widgetType");
 		
 		g_frontAPI.triggerEvent("open_widget_settings", window.ucLastElementorModel);
+		
+		
 		
 	}
 	
@@ -1694,6 +1598,13 @@ function UniteCreatorElementorEditorAdmin(){
 					
 	}
 	
+	/**
+	 * ajax request
+	 */
+	this.ajaxRequest = function(action, ajaxData, response){
+		ajaxRequest(action, ajaxData, response);		
+	}
+
 	
 	/**
 	 * init front end interaction
@@ -1725,6 +1636,8 @@ function UniteCreatorElementorEditorAdmin(){
 		if(typeof g_ucHasBackgrounds !== "undefined" && g_ucHasBackgrounds === true)
 			initBackgrounds();
 		
+		g_temp.startTime = Date.now();
+		
 		elementor.hooks.addAction("panel/open_editor/widget", onElementorOpenWidget);
 		
 		if(elementor.channels){
@@ -1746,7 +1659,9 @@ function UniteCreatorElementorEditorAdmin(){
 	 * init the object
 	 */
 	this.init = function(){
-				
+		
+		g_objBody = jQuery("body");
+		
 		g_objSettingsPanel = jQuery("#elementor-panel");
 		
 		//initPreviewThumbs();

@@ -140,8 +140,7 @@ class GSToc{
                     continue;
                 }
             }
-            if ($block['blockName'] == 'core/heading') {        
-                print_r($block);                    
+            if ($block['blockName'] == 'core/heading') {                          
                 if(!empty($block['attrs']['level']) && ('h'.$block['attrs']['level'] == $headingTag || 'h'.$block['attrs']['level'] == $headingSecTag)){
                     if(!empty($block['attrs']['anchor']) || !empty($block['attrs']['customAnchor'])){
                         $headarray = [];
@@ -189,7 +188,9 @@ class GSToc{
               // get id
               $att_string = $matches[2][$i];
               preg_match("/id=\"([^\"]*)\"/", $att_string , $id_matches);
-              $headings[$i]["id"] = $id_matches[1];
+              if(!empty($id_matches[1])){
+                $headings[$i]["id"] = $id_matches[1];
+              }
               // get classes
               $att_string = $matches[2][$i];
               preg_match_all("/class=\"([^\"]*)\"/", $att_string , $class_matches);

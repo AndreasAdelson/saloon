@@ -3,16 +3,16 @@ namespace WprAddons\Modules\InstagramFeed\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Repeater;
 use Elementor\Group_Control_Image_Size;
+use Exception;
 use WprAddons\Classes\Utilities;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -51,6 +51,8 @@ class Wpr_Instagram_Feed extends Widget_Base {
     	if ( empty(get_option('wpr_wl_plugin_links')) )
     		return 'https://wordpress.org/support/plugin/royal-elementor-addons/';
     }
+
+	public $reauthorization_needed;
 	
 	public function add_controls_group_limit() {
 		$this->add_control(
@@ -197,7 +199,8 @@ class Wpr_Instagram_Feed extends Widget_Base {
 					'luminosity' => esc_html__( 'luminosity', 'wpr-addons' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}} .wpr-insta-feed-media-hover-bg' => 'mix-blend-mode: {{VALUE}}',
+					// '{{WRAPPER}} {{CURRENT_ITEM}} .wpr-insta-feed-media-hover-bg' => 'mix-blend-mode: {{VALUE}}',
+					'{{WRAPPER}} .wpr-insta-feed-media-hover-bg' => 'mix-blend-mode: {{VALUE}}',
 				],
 				'separator' => 'after',
 			]
@@ -581,7 +584,7 @@ class Wpr_Instagram_Feed extends Widget_Base {
 		$this->start_controls_section(
 			'section_insta_api',
 			[
-				'label' => esc_html__( 'Integration', 'wpr-addons' ),
+				'label' => 'Intergration <a href="#" onclick="window.open(\'https://www.youtube.com/watch?v=EGwuqWK-s9E\',\'_blank\').focus()">Video Tutorial <span class="dashicons dashicons-video-alt3"></span></a>',
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -592,6 +595,7 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			'instagram_access_token_authorize',
 			[
 				'type' => Controls_Manager::RAW_HTML,
+				// 'raw' => '<a class="wpr-authorize-instagram" href="https://www.instagram.com/oauth/authorize?client_id=819922469680194&redirect_uri=https://reastats.kinsta.cloud/token/social-network.php&scope=user_profile,user_media&response_type=code" target="popup">'. esc_html__( 'Authorize Instagram','wpr-addons' ) .'</a>',
 				'raw' => '<a class="wpr-authorize-instagram" href="https://www.instagram.com/oauth/authorize?client_id=1551600955281199&redirect_uri=https://reastats.kinsta.cloud/token/social-network.php&scope=user_profile,user_media&response_type=code" target="popup">'. esc_html__( 'Authorize Instagram','wpr-addons' ) .'</a>',
 				// 'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 			]
@@ -602,6 +606,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Access Token', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'label_block' => true
 			]
 		);
@@ -611,8 +618,11 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Expiry Date', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'label_block' => true,
-				'description' => esc_html__('Please Note: You just need to enter this once, later it will update automatically')
+				'description' => esc_html__('Please Note: You just need to enter this once, later it will update automatically', 'wpr-addons')
 			]
 		);
 
@@ -620,7 +630,7 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			'cache_timeout_select',
 			[
 				'label'   => esc_html__( 'Cache Timeout', 'powerpack' ),
-				'description' => esc_html__('Determine how often you want the feed to be updated'),
+				'description' => esc_html__('Determine how often you want the feed to be updated', 'wpr-addons'),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'hour',
 				'options' => [
@@ -1387,6 +1397,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Read More Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Read More',
 				'condition' => [
 					'element_select' => [ 'read-more' ],
@@ -1412,6 +1425,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'One Comment', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Comment',
 				'condition' => [
 					'element_select' => [ 'comments' ],
@@ -1424,6 +1440,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Multiple Comments', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Comments',
 				'condition' => [
 					'element_select' => [ 'comments' ],
@@ -1503,6 +1522,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Extra Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'condition' => [
 					'element_select!' => [
@@ -2165,6 +2187,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Follow on Instagram',
 				'label_block' => true,
 				'condition' => [
@@ -2178,6 +2203,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Link', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'default' => [
 					'url' => 'https://www.instagram.com/',
@@ -2228,6 +2256,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Load More Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Load More',
 			]
 		);
@@ -2237,6 +2268,9 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Finish Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'End of Content.',
 			]
 		);
@@ -2692,7 +2726,6 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-insta-feed-item-username a',
 				'fields_options' => [
 					'typography' => [
@@ -2845,7 +2878,6 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'caption_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-insta-feed-item-caption, {{WRAPPER}} .wpr-insta-feed-item-caption p, {{WRAPPER}} .wpr-insta-feed-item-caption figcaption',
 				'fields_options' => [
 					'typography' => [
@@ -3067,7 +3099,6 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'date_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-insta-feed-item-date'
 			]
 		);
@@ -3348,7 +3379,6 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'icon_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-insta-feed-item-icon'
 			]
 		);
@@ -3621,7 +3651,6 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'lightbox_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-insta-feed-item-lightbox'
 			]
 		);
@@ -3886,7 +3915,6 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'button_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-instagram-follow-btn',
 				'separator' => 'before',
 			]
@@ -3984,6 +4012,7 @@ class Wpr_Instagram_Feed extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-instagram-follow-btn i' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-instagram-follow-btn svg' => 'margin-right: {{SIZE}}{{UNIT}};'
 				],
 				'separator' => 'before'
 			]
@@ -4433,7 +4462,6 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			[
 				'name' => 'cs_pag_fraction_typography',
 				'label' => __( 'Typography', 'wpr-addons' ),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}}.wpr-insta-feed-layout-carousel .swiper-pagination-fraction',
 				'fields_options' => [
 					'typography' => [
@@ -4663,7 +4691,6 @@ class Wpr_Instagram_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'pagination_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-grid-pagination, {{WRAPPER}} .wpr-grid-pagination button'
 			]
 		);
@@ -4852,7 +4879,7 @@ class Wpr_Instagram_Feed extends Widget_Base {
 
 		if ( get_transient($key) === false || empty(get_transient($key)) || ($settings['instagram_access_token'] !== get_option('wpr_instagram_access_token_to_compare'. $this->get_ID())) ) {
 
-			$limit = wp_is_mobile() ? $settings['limit_mobile'] : $settings['limit'];
+			$limit = !empty($settings['limit']) ? $settings['limit'] : 10;
 
 			$url = 'https://graph.instagram.com/me/media?fields=id,media_type,media_url,thumbnail_url,permalink,children,username,caption,timestamp&access_token='. $access_token .'&limit='. $limit;
 
@@ -4913,9 +4940,13 @@ class Wpr_Instagram_Feed extends Widget_Base {
 		$response = wp_remote_get($url);
 		if(!isset($body)) {
 			$body = json_decode($response['body']);
-			set_transient('wpr_instagram_access_token'. $this->get_ID(), $body->access_token, $body->expires_in);
-			set_transient('wpr_instagram_access_token_expires_in'. $this->get_ID(), $body->expires_in, $body->expires_in);
-			set_transient('wpr_instagram_access_token_generation_date'. $this->get_ID(), date('Y-m-d'), $body->expires_in);
+			if ($body->error) {
+				$this->reauthorization_needed = true;
+			} else {
+				set_transient('wpr_instagram_access_token'. $this->get_ID(), $body->access_token, $body->expires_in);
+				set_transient('wpr_instagram_access_token_expires_in'. $this->get_ID(), $body->expires_in, $body->expires_in);
+				set_transient('wpr_instagram_access_token_generation_date'. $this->get_ID(), date('Y-m-d'), $body->expires_in);
+			}
 		}
 	}
 
@@ -5450,13 +5481,12 @@ class Wpr_Instagram_Feed extends Widget_Base {
 	
 			$token_generation_date = strtotime(get_transient('wpr_instagram_access_token_generation_date'. $this->get_ID()));
 		} else {
-			
 			$access_token = $settings['instagram_access_token'];
-
+			
 			if ( !get_transient('wpr_instagram_access_token_expires_in'. $this->get_ID()) ) {
 				set_transient('wpr_instagram_access_token_expires_in'. $this->get_ID(), $settings['instagram_access_token_expires_in']);
 			}
-
+			
 			$token_expires_in = get_transient('wpr_instagram_access_token_expires_in'. $this->get_ID());
 			
 			if (!get_transient('wpr_instagram_access_token_generation_date'. $this->get_ID())) {
@@ -5474,15 +5504,20 @@ class Wpr_Instagram_Feed extends Widget_Base {
 		// 	return $dtF->diff($dtT)->format('%a days, %h hours, %i minutes and %s seconds');
 		// }
 
-		// var_dump(secondsToTime((int) get_option( '_transient_timeout_wpr_instagram_access_token_expires_in'. $this->get_ID(), 0 ) - time()));
-
 		if ( ($token_generation_date <= $compare_date) || (get_option('wpr_instagram_access_token_to_compare'. $this->get_ID()) != $settings['instagram_access_token']) ) {
 				$this->refresh_access_token($access_token);
 		}
 
 		if ( '' === $access_token ) {
 			if ( current_user_can('administrator') ) {
-				echo '<p class="wpr-token-missing">'. esc_html__('Please click on the Authorize Instagram button to get instagram access token and expiry date!') .'</p>';
+				echo '<p class="wpr-token-missing">'. esc_html__('Please click on the Authorize Instagram button to get instagram access token and expiry date!', 'wpr-addons') .'</p>';
+			}
+			return;
+		}
+
+		if ( $this->reauthorization_needed ) {
+			if ( current_user_can('administrator') ) {
+				echo '<p class="wpr-token-missing">'. esc_html__('Please reauthorize instagram', 'wpr-addons') .'</p>';
 			}
 			return;
 		}

@@ -1,5 +1,6 @@
 {
 	"name": "greenshift-blocks/image",
 	"title": "Image",
-	"category":"GreenShift"
+	"category":"GreenShiftContent",
+	"apiVersion": 3
 }

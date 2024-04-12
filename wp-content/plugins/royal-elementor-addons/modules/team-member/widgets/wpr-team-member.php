@@ -3,14 +3,13 @@ namespace WprAddons\Modules\TeamMember\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Icons;
@@ -75,6 +74,9 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
@@ -86,7 +88,10 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Name', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => 'John Doe',
+				'dynamic' => [
+					'active' => true,
+				],
+				'default' => __('John Doe', 'wpr-addons'),
 			]
 		);
 
@@ -115,7 +120,10 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Job', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
-				'default' => 'Sony CEO',
+				'dynamic' => [
+					'active' => true,
+				],
+				'default' => __('Sony CEO', 'wpr-addons'),
 			]
 		);
 
@@ -124,6 +132,9 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Description', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur laoreet cursus volutpat. Aliquam sit amet ligula et justo tincidunt laorsoet non vitae lorem.',
 			]
 		);
@@ -250,6 +261,9 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Social URL', 'wpr-addons' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'show_external' => false,
 				'placeholder' => esc_html__( 'https://www.your-link.com', 'wpr-addons' ),
 				'condition' => [
@@ -292,6 +306,9 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Social URL', 'wpr-addons' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'show_external' => false,
 				'placeholder' => esc_html__( 'https://www.your-link.com', 'wpr-addons' ),
 				'condition' => [
@@ -334,6 +351,9 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Social URL', 'wpr-addons' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'show_external' => false,
 				'placeholder' => esc_html__( 'https://www.your-link.com', 'wpr-addons' ),
 				'condition' => [
@@ -372,6 +392,9 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Social URL', 'wpr-addons' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'show_external' => false,
 				'placeholder' => esc_html__( 'https://www.your-link.com', 'wpr-addons' ),
 				'condition' => [
@@ -410,6 +433,9 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Social URL', 'wpr-addons' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'show_external' => false,
 				'placeholder' => esc_html__( 'https://www.your-link.com', 'wpr-addons' ),
 				'condition' => [
@@ -441,6 +467,9 @@ class Wpr_Team_Member extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'About Me',
 				'condition' => [
 					'member_btn' => 'yes',
@@ -452,6 +481,9 @@ class Wpr_Team_Member extends Widget_Base {
 			'member_btn_url',
 			[
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'condition' => [
 					'member_btn' => 'yes',
@@ -619,7 +651,6 @@ class Wpr_Team_Member extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'name_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-member-name',
 			]
 		);
@@ -699,7 +730,6 @@ class Wpr_Team_Member extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'job_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-member-job',
 			]
 		);
@@ -779,7 +809,6 @@ class Wpr_Team_Member extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-member-description',
 			]
 		);
@@ -1162,6 +1191,7 @@ class Wpr_Team_Member extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .wpr-member-social' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .wpr-member-social i' => 'line-height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-member-social svg' => 'line-height: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -1526,7 +1556,6 @@ class Wpr_Team_Member extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'btn_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-member-btn',
 				'separator' => 'before',
 			]
@@ -1797,9 +1826,8 @@ class Wpr_Team_Member extends Widget_Base {
 	?>
 
 	<div class="wpr-team-member">
-		
 		<?php if ( '' !== $settings['member_image']['url'] ) : ?>
-			<?php 
+			<?php
 				$image_src = Group_Control_Image_Size::get_attachment_image_src( $settings['member_image']['id'], 'image_size', $settings );
 
 				if ( ! $image_src ) {

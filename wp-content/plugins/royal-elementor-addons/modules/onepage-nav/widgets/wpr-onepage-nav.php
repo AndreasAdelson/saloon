@@ -3,14 +3,13 @@ namespace WprAddons\Modules\OnepageNav\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Icons;
@@ -470,7 +469,7 @@ class Wpr_OnepageNav extends Widget_Base {
 				'default' => '#ffffff',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-onepage-nav-item i' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .wpr-onepage-nav-item svg' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-onepage-nav-item svg' => 'color: {{VALUE}};', // GOGA - shesacvlelia mgoni
 				],
 			]
 		);
@@ -527,7 +526,7 @@ class Wpr_OnepageNav extends Widget_Base {
 				'default' => '#FFEC00',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-onepage-nav-item:hover i' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .wpr-onepage-active-item i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-onepage-active-item i' => 'color: {{VALUE}} !important;',
 					'{{WRAPPER}} .wpr-onepage-nav-item:hover svg' => 'fill: {{VALUE}};',
 					'{{WRAPPER}} .wpr-onepage-active-item svg' => 'fill: {{VALUE}};',
 				],
@@ -542,7 +541,7 @@ class Wpr_OnepageNav extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-onepage-nav-item:hover i' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}} .wpr-onepage-active-item i' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-onepage-active-item i' => 'background-color: {{VALUE}} !important;',
 					'{{WRAPPER}} .wpr-onepage-nav-item:hover svg' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}} .wpr-onepage-active-item svg' => 'background-color: {{VALUE}};',
 				],
@@ -557,7 +556,7 @@ class Wpr_OnepageNav extends Widget_Base {
 				'default' => '#E8E8E8',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-onepage-nav-item:hover i' => 'border-color: {{VALUE}};',
-					'{{WRAPPER}} .wpr-onepage-active-item i' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-onepage-active-item i' => 'border-color: {{VALUE}} !important;',
 					'{{WRAPPER}} .wpr-onepage-nav-item:hover svg' => 'border-color: {{VALUE}};',
 					'{{WRAPPER}} .wpr-onepage-active-item svg' => 'border-color: {{VALUE}};',
 				],

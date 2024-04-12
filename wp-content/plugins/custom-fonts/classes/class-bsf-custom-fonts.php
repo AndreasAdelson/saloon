@@ -44,7 +44,6 @@ if ( ! class_exists( 'Bsf_Custom_Fonts' ) ) {
 				require_once BSF_CUSTOM_FONTS_DIR . 'includes/class-bsf-custom-fonts-admin.php';
 				require_once BSF_CUSTOM_FONTS_DIR . 'classes/class-bsf-custom-fonts-white-label.php';
 			}
-
 		}
 
 		/**

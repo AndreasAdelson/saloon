@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.11.5 - 12-03-2023 */
+/*! elementor-pro - v3.20.0 - 10-04-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -75,8 +75,7 @@ module.exports = elementorModules.editor.utils.Module.extend({
    *
    * @return {void}
    */
-  addControlError(controlName, error) {
-    let location = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.elementor-control-content';
+  addControlError(controlName, error, location = '.elementor-control-content') {
     const $el = this.getEditorControlView(controlName).$el;
 
     // Remove any existing error in order to override it.
@@ -161,6 +160,33 @@ module.exports = elementorModules.editor.views.ControlsStack.extend({
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/tiers.js":
+/*!****************************************!*\
+  !*** ../assets/dev/js/editor/tiers.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.isTierAtLeast = exports.TIERS_PRIORITY = void 0;
+// TODO: Read from Core.
+const TIERS_PRIORITY = exports.TIERS_PRIORITY = Object.freeze(['free', 'essential', 'essential-oct2023', 'advanced', 'expert', 'agency']);
+const isTierAtLeast = (currentTier, expectedTier) => {
+  const currentTierIndex = TIERS_PRIORITY.indexOf(currentTier);
+  const expectedTierIndex = TIERS_PRIORITY.indexOf(expectedTier);
+  if (-1 === currentTierIndex || -1 === expectedTierIndex) {
+    return false;
+  }
+  return currentTierIndex >= expectedTierIndex;
+};
+exports.isTierAtLeast = isTierAtLeast;
+
+/***/ }),
+
 /***/ "../assets/dev/js/preview/utils/document-handle.js":
 /*!*********************************************************!*\
   !*** ../assets/dev/js/preview/utils/document-handle.js ***!
@@ -177,13 +203,12 @@ Object.defineProperty(exports, "__esModule", ({
 exports.SAVE_CONTEXT = exports.EDIT_CONTEXT = void 0;
 exports.createElement = createElement;
 exports["default"] = addDocumentHandle;
-__webpack_require__(/*! core-js/modules/es.error.cause.js */ "../node_modules/core-js/modules/es.error.cause.js");
+__webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 const EDIT_HANDLE_CLASS_NAME = 'elementor-document-handle';
 const EDIT_MODE_CLASS_NAME = 'elementor-edit-mode';
-const EDIT_CONTEXT = 'edit';
-exports.EDIT_CONTEXT = EDIT_CONTEXT;
+const EDIT_CONTEXT = exports.EDIT_CONTEXT = 'edit';
 const SAVE_HANDLE_CLASS_NAME = 'elementor-document-save-back-handle';
-const SAVE_CONTEXT = 'save';
+const SAVE_CONTEXT = exports.SAVE_CONTEXT = 'save';
 
 /**
  * @param {Object}        handleTarget
@@ -194,16 +219,11 @@ const SAVE_CONTEXT = 'save';
  * @param {Function|null} onCloseDocument      - Callback to run when outgoing document is closed.
  * @param {string}        selector
  */
-exports.SAVE_CONTEXT = SAVE_CONTEXT;
-function addDocumentHandle(_ref) {
-  let {
-    element,
-    id,
-    title = __('Template', 'elementor-pro')
-  } = _ref;
-  let context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EDIT_CONTEXT;
-  let onCloseDocument = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  let selector = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+function addDocumentHandle({
+  element,
+  id,
+  title = __('Template', 'elementor-pro')
+}, context = EDIT_CONTEXT, onCloseDocument = null, selector = null) {
   if (EDIT_CONTEXT === context) {
     if (!id || !element) {
       throw Error('`id` and `element` are required.');
@@ -215,7 +235,7 @@ function addDocumentHandle(_ref) {
   const handleElement = createHandleElement({
     title,
     onClick: () => onDocumentClick(id, context, onCloseDocument, selector)
-  }, context);
+  }, context, element);
   element.prepend(handleElement);
   if (EDIT_CONTEXT === context) {
     element.dataset.editableElementorDocument = id;
@@ -241,32 +261,42 @@ function hasHandle(element) {
 }
 
 /**
- * @param {Object}   handleProperties
- * @param {string}   handleProperties.title
- * @param {Function} handleProperties.onClick
- * @param {string}   context
+ * @param {Object}      handleProperties
+ * @param {string}      handleProperties.title
+ * @param {Function}    handleProperties.onClick
+ * @param {string}      context
+ * @param {HTMLElement} element
  *
  * @return {HTMLElement} The newly generated Handle element
  */
-function createHandleElement(_ref2, context) {
-  let {
-    title,
-    onClick
-  } = _ref2;
-  const element = createElement({
+function createHandleElement({
+  title,
+  onClick
+}, context, element = null) {
+  const handleTitle = ['header', 'footer'].includes(element?.dataset.elementorType) ? '%s' : __('Edit %s', 'elementor-pro');
+  const innerElement = createElement({
     tag: 'div',
-    classNames: EDIT_CONTEXT === context ? [EDIT_HANDLE_CLASS_NAME] : [EDIT_HANDLE_CLASS_NAME, SAVE_HANDLE_CLASS_NAME],
+    classNames: [`${EDIT_HANDLE_CLASS_NAME}__inner`],
     children: [createElement({
       tag: 'i',
       classNames: [getHandleIcon(context)]
     }), createElement({
       tag: 'div',
       classNames: [`${EDIT_CONTEXT === context ? EDIT_HANDLE_CLASS_NAME : SAVE_HANDLE_CLASS_NAME}__title`],
-      children: [document.createTextNode(EDIT_CONTEXT === context ? __('Edit %s', 'elementor-pro').replace('%s', title) : __('Save %s', 'elementor-pro').replace('%s', title))]
+      children: [document.createTextNode(EDIT_CONTEXT === context ? handleTitle.replace('%s', title) : __('Save %s', 'elementor-pro').replace('%s', title))]
     })]
   });
-  element.addEventListener('click', onClick);
-  return element;
+  const classNames = [EDIT_HANDLE_CLASS_NAME];
+  if (EDIT_CONTEXT !== context) {
+    classNames.push(SAVE_HANDLE_CLASS_NAME);
+  }
+  const containerElement = createElement({
+    tag: 'div',
+    classNames,
+    children: [innerElement]
+  });
+  containerElement.addEventListener('click', onClick);
+  return containerElement;
 }
 function getHandleIcon(context) {
   let icon = 'eicon-edit';
@@ -286,12 +316,11 @@ function getHandleIcon(context) {
  *
  * @return {HTMLElement} Generated Element
  */
-function createElement(_ref3) {
-  let {
-    tag,
-    classNames = [],
-    children = []
-  } = _ref3;
+function createElement({
+  tag,
+  classNames = [],
+  children = []
+}) {
   const element = document.createElement(tag);
   element.classList.add(...classNames);
   children.forEach(child => element.appendChild(child));
@@ -305,9 +334,7 @@ function createElement(_ref3) {
  * @param {string}        selector
  * @return {Promise<void>}
  */
-async function onDocumentClick(id, context) {
-  let onCloseDocument = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  let selector = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+async function onDocumentClick(id, context, onCloseDocument = null, selector = null) {
   if (EDIT_CONTEXT === context) {
     window.top.$e.internal('panel/state-loading');
     await window.top.$e.run('editor/documents/switch', {
@@ -349,8 +376,7 @@ class ConditionsConfig extends $e.modules.CommandData {
   }
 }
 exports.ConditionsConfig = ConditionsConfig;
-var _default = ConditionsConfig;
-exports["default"] = _default;
+var _default = exports["default"] = ConditionsConfig;
 
 /***/ }),
 
@@ -417,8 +443,7 @@ class TemplatesConditionsConflicts extends $e.modules.CommandData {
   }
 }
 exports.TemplatesConditionsConflicts = TemplatesConditionsConflicts;
-var _default = TemplatesConditionsConflicts;
-exports["default"] = _default;
+var _default = exports["default"] = TemplatesConditionsConflicts;
 
 /***/ }),
 
@@ -442,8 +467,7 @@ class TemplatesConditions extends $e.modules.CommandData {
   }
 }
 exports.TemplatesConditions = TemplatesConditions;
-var _default = TemplatesConditions;
-exports["default"] = _default;
+var _default = exports["default"] = TemplatesConditions;
 
 /***/ }),
 
@@ -467,8 +491,7 @@ class Templates extends $e.modules.CommandData {
   }
 }
 exports.Templates = Templates;
-var _default = Templates;
-exports["default"] = _default;
+var _default = exports["default"] = Templates;
 
 /***/ }),
 
@@ -486,8 +509,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var dataCommands = _interopRequireWildcard(__webpack_require__(/*! ./commands */ "../core/app/modules/site-editor/assets/js/data/commands/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class Component extends $e.modules.ComponentBase {
   static namespace = 'site-editor';
   getNamespace() {
@@ -554,11 +577,12 @@ module.exports = elementorModules.editor.utils.Module.extend({
 /*!******************************************************************!*\
   !*** ../modules/assets-manager/assets/js/editor/font-manager.js ***!
   \******************************************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
+__webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 module.exports = elementorModules.Module.extend({
   _enqueuedFonts: [],
   _enqueuedTypekit: false,
@@ -698,8 +722,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../modules/forms/assets/js/editor/hooks/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class Component extends $e.modules.ComponentBase {
   getNamespace() {
     return 'forms';
@@ -802,8 +826,8 @@ module.exports = class extends elementor.modules.controls.Repeater {
   getChildView() {
     return _fieldsRepeaterRow.default;
   }
-  initialize() {
-    super.initialize(...arguments);
+  initialize(...args) {
+    super.initialize(...args);
     const formFields = this.container.settings.get('form_fields');
     this.listenTo(formFields, 'change', model => this.onFormFieldChange(model)).listenTo(formFields, 'remove', model => this.onFormFieldRemove(model));
   }
@@ -1119,8 +1143,7 @@ class FormFieldsSanitizeCustomId extends $e.modules.hookData.Dependency {
   }
 }
 exports.FormFieldsSanitizeCustomId = FormFieldsSanitizeCustomId;
-var _default = FormFieldsSanitizeCustomId;
-exports["default"] = _default;
+var _default = exports["default"] = FormFieldsSanitizeCustomId;
 
 /***/ }),
 
@@ -1180,8 +1203,7 @@ class FormFieldsSetCustomId extends $e.modules.hookData.After {
   }
 }
 exports.FormFieldsSetCustomId = FormFieldsSetCustomId;
-var _default = FormFieldsSetCustomId;
-exports["default"] = _default;
+var _default = exports["default"] = FormFieldsSetCustomId;
 
 /***/ }),
 
@@ -1240,8 +1262,7 @@ class FormFieldsAddFirstStep extends $e.modules.hookData.After {
   }
 }
 exports.FormFieldsAddFirstStep = FormFieldsAddFirstStep;
-var _default = FormFieldsAddFirstStep;
-exports["default"] = _default;
+var _default = exports["default"] = FormFieldsAddFirstStep;
 
 /***/ }),
 
@@ -1294,8 +1315,7 @@ class FormSanitizeId extends $e.modules.hookData.Dependency {
   }
 }
 exports.FormSanitizeId = FormSanitizeId;
-var _default = FormSanitizeId;
-exports["default"] = _default;
+var _default = exports["default"] = FormSanitizeId;
 
 /***/ }),
 
@@ -1421,8 +1441,7 @@ class FormFieldsUpdateShortCode extends $e.modules.hookUI.After {
   }
 }
 exports.FormFieldsUpdateShortCode = FormFieldsUpdateShortCode;
-var _default = FormFieldsUpdateShortCode;
-exports["default"] = _default;
+var _default = exports["default"] = FormFieldsUpdateShortCode;
 
 /***/ }),
 
@@ -1458,6 +1477,7 @@ var _formFieldsUpdateShortcode = __webpack_require__(/*! ./form-fields-update-sh
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
+__webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 var BaseIntegrationModule = __webpack_require__(/*! ./base */ "../modules/forms/assets/js/editor/integrations/base.js");
 module.exports = BaseIntegrationModule.extend({
   fields: {},
@@ -1579,8 +1599,7 @@ module.exports = ElementEditorModule.extend({
       data: args
     });
   },
-  fetchCache(type, cacheKey, requestArgs) {
-    let immediately = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+  fetchCache(type, cacheKey, requestArgs, immediately = false) {
     return elementorPro.ajax.addRequest('forms_panel_action_data', {
       unique_id: 'integrations_' + this.getName(),
       data: requestArgs,
@@ -1949,8 +1968,7 @@ module.exports = BaseIntegrationModule.extend({
       self.getEditorControlView('mailchimp_fields_map').updateMap(data.fields);
     });
   },
-  getMailchimpCache(type, action, cacheKey, requestArgs) {
-    let immediately = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+  getMailchimpCache(type, action, cacheKey, requestArgs, immediately = false) {
     if (_.has(this.cache[type], cacheKey)) {
       var data = {};
       data[type] = this.cache[type][cacheKey];
@@ -1982,6 +2000,7 @@ module.exports = BaseIntegrationModule.extend({
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
+__webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 const BaseIntegrationModule = __webpack_require__(/*! ./base */ "../modules/forms/assets/js/editor/integrations/base.js");
 module.exports = BaseIntegrationModule.extend({
   fields: {},
@@ -2338,20 +2357,16 @@ class Templates extends $e.modules.CommandData {
   static getEndpointFormat() {
     return 'global-widget/templates';
   }
-  onAfterApply() {
-    let args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    let result = arguments.length > 1 ? arguments[1] : undefined;
+  onAfterApply(args = {}, result) {
     // TODO: Remove - Manually handling of cache - This behavior should be automatically handled by passed `options` to $e.data.
     $e.data.deleteCache(this.component, 'document/global/global-widget/templates', args.query);
-    Object.entries(result.data).forEach(_ref => {
-      let [templateID, data] = _ref;
+    Object.entries(result.data).forEach(([templateID, data]) => {
       $e.data.setCache(this.component, `document/global/global-widget/templates/${templateID}`, {}, data);
     });
   }
 }
 exports.Templates = Templates;
-var _default = Templates;
-exports["default"] = _default;
+var _default = exports["default"] = Templates;
 
 /***/ }),
 
@@ -2381,7 +2396,7 @@ var _saveTemplates = __webpack_require__(/*! ./save-templates */ "../modules/glo
 /*!*************************************************************************************!*\
   !*** ../modules/global-widget/assets/js/editor/commands-internal/save-templates.js ***!
   \*************************************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
@@ -2390,6 +2405,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = exports.SaveTemplates = void 0;
+__webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 /**
  * The command should run over all changed global widgets and
  * update the settings of the `document/global/global-widget/templates`,
@@ -2439,8 +2455,7 @@ class SaveTemplates extends $e.modules.CommandInternalBase {
   }
   getCurrentTemplatesModels(changedContainersId) {
     const templatesData = [];
-    Object.entries(changedContainersId).forEach(_ref => {
-      let [templateID, containerId] = _ref;
+    Object.entries(changedContainersId).forEach(([templateID, containerId]) => {
       const templateData = $e.data.getCache(this.component, `document/global/global-widget/templates/${templateID}`);
       if (!templateData) {
         if ($e.devTools) {
@@ -2465,8 +2480,7 @@ class SaveTemplates extends $e.modules.CommandInternalBase {
   }
 }
 exports.SaveTemplates = SaveTemplates;
-var _default = SaveTemplates;
-exports["default"] = _default;
+var _default = exports["default"] = SaveTemplates;
 
 /***/ }),
 
@@ -2513,8 +2527,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = exports.Link = void 0;
-__webpack_require__(/*! core-js/modules/es.error.cause.js */ "../node_modules/core-js/modules/es.error.cause.js");
-class Link extends $e.modules.document.CommandHistory {
+class Link extends $e.modules.editor.document.CommandHistoryBase {
   validateArgs(args) {
     this.requireContainer(args);
     this.requireArgumentConstructor('data', Object, args);
@@ -2554,7 +2567,7 @@ class Link extends $e.modules.document.CommandHistory {
       $e.run('document/elements/create', {
         container: container.parent,
         model: {
-          id: elementor.helpers.getUniqueID(),
+          id: elementorCommon.helpers.getUniqueId(),
           elType: elementModelAttributes.elType,
           widgetType: elementModelAttributes.widgetType,
           templateID: data.template_id
@@ -2571,8 +2584,7 @@ class Link extends $e.modules.document.CommandHistory {
   }
 }
 exports.Link = Link;
-var _default = Link;
-exports["default"] = _default;
+var _default = exports["default"] = Link;
 
 /***/ }),
 
@@ -2590,7 +2602,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = exports.Unlink = void 0;
-class Unlink extends $e.modules.document.CommandHistory {
+class Unlink extends $e.modules.editor.document.CommandHistoryBase {
   validateArgs(args) {
     this.requireContainer(args);
   }
@@ -2620,7 +2632,7 @@ class Unlink extends $e.modules.document.CommandHistory {
       $e.run('document/elements/create', {
         container: container.parent,
         model: {
-          id: elementor.helpers.getUniqueID(),
+          id: elementorCommon.helpers.getUniqueId(),
           elType: 'widget',
           widgetType: elementModel.get('widgetType'),
           settings: elementorCommon.helpers.cloneObject(elementModel.get('settings').attributes),
@@ -2638,8 +2650,7 @@ class Unlink extends $e.modules.document.CommandHistory {
   }
 }
 exports.Unlink = Unlink;
-var _default = Unlink;
-exports["default"] = _default;
+var _default = exports["default"] = Unlink;
 
 /***/ }),
 
@@ -2660,8 +2671,8 @@ var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ ".
 var commandsInternal = _interopRequireWildcard(__webpack_require__(/*! ./commands-internal/ */ "../modules/global-widget/assets/js/editor/commands-internal/index.js"));
 var commandsData = _interopRequireWildcard(__webpack_require__(/*! ./commands-data/ */ "../modules/global-widget/assets/js/editor/commands-data/index.js"));
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../modules/global-widget/assets/js/editor/hooks/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class Component extends $e.modules.ComponentBase {
   /**
    * Holds all the template ids, which not available due they simply not exist in document data.
@@ -2744,8 +2755,7 @@ class Component extends $e.modules.ComponentBase {
           const model = targetContainer[modelName];
           if (model instanceof Backbone.Model) {
             const accordingTo = 'settings' === modelName ? targetContainer.settings.attributes : model.changed;
-            Object.entries(accordingTo).forEach(_ref => {
-              let [key, setting] = _ref;
+            Object.entries(accordingTo).forEach(([key, setting]) => {
               container[modelName].set(key, setting);
             });
           }
@@ -2783,10 +2793,7 @@ class BaseGlobalWidgetPrepareUpdate extends $e.modules.hookData.After {
     } = args;
 
     // When the container is repeater item it should add the global repeater itself to the `lastChangedContainers` and not the repeater item
-    return containers.some(container => {
-      var _container$renderer, _container$renderer$m;
-      return (_container$renderer = container.renderer) === null || _container$renderer === void 0 ? void 0 : (_container$renderer$m = _container$renderer.model) === null || _container$renderer$m === void 0 ? void 0 : _container$renderer$m.get('templateID');
-    });
+    return containers.some(container => container.renderer?.model?.get('templateID'));
   }
   apply(args) {
     const {
@@ -2795,10 +2802,7 @@ class BaseGlobalWidgetPrepareUpdate extends $e.modules.hookData.After {
       component = $e.components.get('document/global');
 
     // Filter only the containers that are global widgets. (Can pass multiple containers that some of them global widgets and some of them not).
-    const globalWidgetContainers = containers.filter(container => {
-      var _container$renderer2, _container$renderer2$;
-      return (_container$renderer2 = container.renderer) === null || _container$renderer2 === void 0 ? void 0 : (_container$renderer2$ = _container$renderer2.model) === null || _container$renderer2$ === void 0 ? void 0 : _container$renderer2$.get('templateID');
-    });
+    const globalWidgetContainers = containers.filter(container => container.renderer?.model?.get('templateID'));
     component.lastChangedContainers = globalWidgetContainers.map(container => container.renderer);
     globalWidgetContainers.forEach(container => {
       component.changedContainersId[container.renderer.model.get('templateID')] = container.renderer.id;
@@ -2806,8 +2810,7 @@ class BaseGlobalWidgetPrepareUpdate extends $e.modules.hookData.After {
   }
 }
 exports.BaseGlobalWidgetPrepareUpdate = BaseGlobalWidgetPrepareUpdate;
-var _default = BaseGlobalWidgetPrepareUpdate;
-exports["default"] = _default;
+var _default = exports["default"] = BaseGlobalWidgetPrepareUpdate;
 
 /***/ }),
 
@@ -2839,8 +2842,7 @@ class GlobalWidgetPrepareUpdateElementSetSettings extends _baseGlobalWidgetPrepa
   }
 }
 exports.GlobalWidgetPrepareUpdateElementSetSettings = GlobalWidgetPrepareUpdateElementSetSettings;
-var _default = GlobalWidgetPrepareUpdateElementSetSettings;
-exports["default"] = _default;
+var _default = exports["default"] = GlobalWidgetPrepareUpdateElementSetSettings;
 
 /***/ }),
 
@@ -2879,8 +2881,7 @@ class GlobalWidgetDoUpdate extends $e.modules.hookData.After {
   }
 }
 exports.GlobalWidgetDoUpdate = GlobalWidgetDoUpdate;
-var _default = GlobalWidgetDoUpdate;
-exports["default"] = _default;
+var _default = exports["default"] = GlobalWidgetDoUpdate;
 
 /***/ }),
 
@@ -2913,8 +2914,7 @@ class GlobalWidgetPrepareUpdateRepeaterInsert extends _baseGlobalWidgetPrepareUp
   }
 }
 exports.GlobalWidgetPrepareUpdateRepeaterInsert = GlobalWidgetPrepareUpdateRepeaterInsert;
-var _default = GlobalWidgetPrepareUpdateRepeaterInsert;
-exports["default"] = _default;
+var _default = exports["default"] = GlobalWidgetPrepareUpdateRepeaterInsert;
 
 /***/ }),
 
@@ -2946,8 +2946,7 @@ class GlobalWidgetPrepareUpdateRepeaterRemove extends _baseGlobalWidgetPrepareUp
   }
 }
 exports.GlobalWidgetPrepareUpdateRepeaterRemove = GlobalWidgetPrepareUpdateRepeaterRemove;
-var _default = GlobalWidgetPrepareUpdateRepeaterRemove;
-exports["default"] = _default;
+var _default = exports["default"] = GlobalWidgetPrepareUpdateRepeaterRemove;
 
 /***/ }),
 
@@ -2989,8 +2988,7 @@ class GlobalWidgetSaveTemplates extends $e.modules.hookData.After {
   }
 }
 exports.GlobalWidgetSaveTemplates = GlobalWidgetSaveTemplates;
-var _default = GlobalWidgetSaveTemplates;
-exports["default"] = _default;
+var _default = exports["default"] = GlobalWidgetSaveTemplates;
 
 /***/ }),
 
@@ -2998,7 +2996,7 @@ exports["default"] = _default;
 /*!****************************************************************************************************************************!*\
   !*** ../modules/global-widget/assets/js/editor/hooks/data/editor/documents/attach-preview/global-widget-load-templates.js ***!
   \****************************************************************************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
@@ -3007,6 +3005,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = exports.GlobalWidgetLoadTemplates = void 0;
+__webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 /**
  * Hook responsible to load current active templates ( global widget that are in used ) to `$e.data.cache`,
  * also it tells the component which templates are not active and required to be loaded from the backend.
@@ -3036,8 +3035,7 @@ class GlobalWidgetLoadTemplates extends $e.modules.hookData.After {
   }
   apply() {
     GlobalWidgetLoadTemplates.calledOnce = true;
-    Object.entries(elementorPro.config.widget_templates).forEach(_ref => {
-      let [id, data] = _ref;
+    Object.entries(elementorPro.config.widget_templates).forEach(([id, data]) => {
       elementorPro.modules.globalWidget.addGlobalWidget(id, data);
       this.addTemplateToCache(id);
     });
@@ -3060,8 +3058,7 @@ class GlobalWidgetLoadTemplates extends $e.modules.hookData.After {
   }
 }
 exports.GlobalWidgetLoadTemplates = GlobalWidgetLoadTemplates;
-var _default = GlobalWidgetLoadTemplates;
-exports["default"] = _default;
+var _default = exports["default"] = GlobalWidgetLoadTemplates;
 
 /***/ }),
 
@@ -3200,8 +3197,7 @@ class GlobalWidgetHistoryUpdate extends $e.modules.hookUI.After {
   }
 }
 exports.GlobalWidgetHistoryUpdate = GlobalWidgetHistoryUpdate;
-var _default = GlobalWidgetHistoryUpdate;
-exports["default"] = _default;
+var _default = exports["default"] = GlobalWidgetHistoryUpdate;
 
 /***/ }),
 
@@ -3297,14 +3293,29 @@ class Module extends elementorModules.editor.utils.Module {
       view: __webpack_require__(/*! ./views/panel-page */ "../modules/global-widget/assets/js/editor/views/panel-page.js")
     });
   }
+
+  /**
+   * @param {string} id - The ID.
+   * @deprecated since 3.5.0, use `$e.data.getCache( `document/global/global-widget/templates/${ id }` )` instead.
+   */
   getGlobalModels(id) {
     elementorCommon.helpers.softDeprecated('elementorPro.modules.globalWidget.getGlobalModels( id )', '3.5.0', '$e.data.getCache( `document/global/global-widget/templates/${ id }` )');
     return $e.data.getCache(this.component, `document/global/global-widget/templates/${id}`);
   }
+
+  /**
+   * @deprecated since 3.5.0, use `$e.internal( 'document/global/save-templates' )` instead.
+   */
   saveTemplates() {
     elementorCommon.helpers.softDeprecated('elementorPro.modules.globalWidget.saveTemplates()', '3.5.0', "$e.internal( 'document/global/save-templates' )");
     $e.internal('document/global/save-templates');
   }
+
+  /**
+   * @param {*}        globalModel - global model.
+   * @param {Function} callback    - A callback function.
+   * @deprecated since 3.5.0, use `$e.data.get( 'document/global/templates' )` instead.
+   */
   requestGlobalModelSettings(globalModel, callback) {
     elementorCommon.helpers.softDeprecated('elementorPro.modules.globalWidget.requestGlobalModelSettings()', '3.5.0', "$e.data.get( 'document/global/templates' )");
     $e.data.get('document/global/templates', {
@@ -3324,22 +3335,37 @@ class Module extends elementorModules.editor.utils.Module {
       const saveAction = _.findWhere(saveGroup.actions, {
         name: 'save'
       });
+      if (elementorPro.config.should_show_promotion) {
+        const iconLink = '<i class="eicon-advanced"></i>' + '<a class="elementor-context-menu-list__item__shortcut--link-fullwidth" href="https://go.elementor.com/go-pro-advanced-global-widget-context-menu/" target="_blank" rel="noopener noreferrer"></a>';
+        saveAction.shortcut = jQuery(iconLink);
+        saveAction.isEnabled = () => false;
+        delete saveAction.callback;
+        return groups;
+      }
       saveAction.callback = widget.save.bind(widget);
       delete saveAction.shortcut;
       return groups;
     });
   }
+  filterRegionViews(regionViews) {
+    if (elementorPro.config.should_show_promotion) {
+      _.extend(regionViews.global, {
+        view: __webpack_require__(/*! ./views/promotion */ "../modules/global-widget/assets/js/editor/views/promotion.js"),
+        options: {}
+      });
+      return regionViews;
+    }
+    _.extend(regionViews.global, {
+      view: __webpack_require__(/*! ./views/global-templates-view */ "../modules/global-widget/assets/js/editor/views/global-templates-view.js"),
+      options: {
+        collection: this.panelWidgets
+      }
+    });
+    return regionViews;
+  }
   onElementorInit() {
     elementor.on('panel:init', () => {
-      elementor.hooks.addFilter('panel/elements/regionViews', regionViews => {
-        _.extend(regionViews.global, {
-          view: __webpack_require__(/*! ./views/global-templates-view */ "../modules/global-widget/assets/js/editor/views/global-templates-view.js"),
-          options: {
-            collection: this.panelWidgets
-          }
-        });
-        return regionViews;
-      });
+      elementor.hooks.addFilter('panel/elements/regionViews', this.filterRegionViews.bind(this));
     });
     this.registerTemplateType();
     this.setWidgetContextMenuSaveAction();
@@ -3481,6 +3507,24 @@ module.exports = Marionette.ItemView.extend({
   onUnlinkButtonClick() {
     this.getUnlinkDialog().show();
   }
+});
+
+/***/ }),
+
+/***/ "../modules/global-widget/assets/js/editor/views/promotion.js":
+/*!********************************************************************!*\
+  !*** ../modules/global-widget/assets/js/editor/views/promotion.js ***!
+  \********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+var GlobalWidgetsView = elementor.modules.layouts.panel.pages.elements.views.Global;
+module.exports = GlobalWidgetsView.extend({
+  template: '#tmpl-elementor-promotion',
+  id: 'tmpl-elementor-promotion',
+  className: 'elementor-nerd-box elementor-panel-nerd-box e-responsive-panel-stretch'
 });
 
 /***/ }),
@@ -3653,7 +3697,7 @@ module.exports = function () {
     } else {
       $editButton = jQuery('<a />', {
         target: '_blank',
-        class: 'elementor-button elementor-button-default elementor-edit-template',
+        class: 'elementor-button elementor-edit-template',
         href: editUrl,
         html: '<i class="eicon-pencil" /> ' + __('Edit Template', 'elementor-pro')
       });
@@ -3668,6 +3712,143 @@ module.exports = function () {
 
 /***/ }),
 
+/***/ "../modules/loop-builder/assets/js/editor/component.js":
+/*!*************************************************************!*\
+  !*** ../modules/loop-builder/assets/js/editor/component.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../modules/loop-builder/assets/js/editor/hooks/index.js"));
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+class LoopBuilderComponent extends $e.modules.ComponentBase {
+  getNamespace() {
+    return 'document/loop';
+  }
+  defaultHooks() {
+    return this.importHooks(hooks);
+  }
+}
+exports["default"] = LoopBuilderComponent;
+
+/***/ }),
+
+/***/ "../modules/loop-builder/assets/js/editor/hooks/index.js":
+/*!***************************************************************!*\
+  !*** ../modules/loop-builder/assets/js/editor/hooks/index.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+Object.defineProperty(exports, "LoopBuilderAddLibraryTab", ({
+  enumerable: true,
+  get: function () {
+    return _addLoopBuildersTab.LoopBuilderAddLibraryTab;
+  }
+}));
+Object.defineProperty(exports, "LoopBuilderRemoveLibraryTab", ({
+  enumerable: true,
+  get: function () {
+    return _removeLoopBuildersTab.LoopBuilderRemoveLibraryTab;
+  }
+}));
+var _addLoopBuildersTab = __webpack_require__(/*! ./ui/editor/documents/open/add-loop-builders-tab */ "../modules/loop-builder/assets/js/editor/hooks/ui/editor/documents/open/add-loop-builders-tab.js");
+var _removeLoopBuildersTab = __webpack_require__(/*! ./ui/editor/documents/close/remove-loop-builders-tab */ "../modules/loop-builder/assets/js/editor/hooks/ui/editor/documents/close/remove-loop-builders-tab.js");
+
+/***/ }),
+
+/***/ "../modules/loop-builder/assets/js/editor/hooks/ui/editor/documents/close/remove-loop-builders-tab.js":
+/*!************************************************************************************************************!*\
+  !*** ../modules/loop-builder/assets/js/editor/hooks/ui/editor/documents/close/remove-loop-builders-tab.js ***!
+  \************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = exports.LoopBuilderRemoveLibraryTab = void 0;
+class LoopBuilderRemoveLibraryTab extends $e.modules.hookUI.After {
+  getCommand() {
+    return 'editor/documents/unload';
+  }
+  getId() {
+    return 'elementor-loop-items-remove-library-tab';
+  }
+  getConditions(args) {
+    const {
+      document
+    } = args;
+    return 'loop-item' === document?.config?.type;
+  }
+  apply() {
+    $e.components.get('library').removeTab('templates/loop-items');
+    $e.components.get('library').addTab('templates/blocks');
+    $e.components.get('library').addTab('templates/pages');
+  }
+}
+exports.LoopBuilderRemoveLibraryTab = LoopBuilderRemoveLibraryTab;
+var _default = exports["default"] = LoopBuilderRemoveLibraryTab;
+
+/***/ }),
+
+/***/ "../modules/loop-builder/assets/js/editor/hooks/ui/editor/documents/open/add-loop-builders-tab.js":
+/*!********************************************************************************************************!*\
+  !*** ../modules/loop-builder/assets/js/editor/hooks/ui/editor/documents/open/add-loop-builders-tab.js ***!
+  \********************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = exports.LoopBuilderAddLibraryTab = void 0;
+class LoopBuilderAddLibraryTab extends $e.modules.hookUI.After {
+  getCommand() {
+    return 'editor/documents/open';
+  }
+  getId() {
+    return 'elementor-loop-items-add-library-tab';
+  }
+  getConditions(args) {
+    const document = elementor.documents?.get(args.id);
+    return 'loop-item' === document?.config?.type;
+  }
+  apply() {
+    $e.components.get('library').addTab('templates/loop-items', {
+      title: __('Loop', 'elementor'),
+      filter: {
+        source: 'remote',
+        type: 'lb',
+        subtype: elementor.config.document.settings.settings.source
+      }
+    }, 0);
+    $e.components.get('library').removeTab('templates/blocks');
+    $e.components.get('library').removeTab('templates/pages');
+  }
+}
+exports.LoopBuilderAddLibraryTab = LoopBuilderAddLibraryTab;
+var _default = exports["default"] = LoopBuilderAddLibraryTab;
+
+/***/ }),
+
 /***/ "../modules/loop-builder/assets/js/editor/module.js":
 /*!**********************************************************!*\
   !*** ../modules/loop-builder/assets/js/editor/module.js ***!
@@ -3677,9 +3858,11 @@ module.exports = function () {
 "use strict";
 
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _documentHandle = _interopRequireWildcard(__webpack_require__(/*! elementor-pro/preview/utils/document-handle */ "../assets/dev/js/preview/utils/document-handle.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/loop-builder/assets/js/editor/component.js"));
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class loopBuilderModule extends elementorModules.editor.utils.Module {
   onElementorFrontendInit() {
     elementorFrontend.elements.$body.on('click', '.e-loop-empty-view__box-cta', () => {
@@ -3695,21 +3878,21 @@ class loopBuilderModule extends elementorModules.editor.utils.Module {
     });
   }
   createDocumentSaveHandles() {
-    var _elementorFrontend$co, _elementorFrontend$co2;
-    Object.entries((_elementorFrontend$co = elementorFrontend.config) === null || _elementorFrontend$co === void 0 ? void 0 : (_elementorFrontend$co2 = _elementorFrontend$co.elements) === null || _elementorFrontend$co2 === void 0 ? void 0 : _elementorFrontend$co2.data).forEach(_ref => {
-      let [cid, element] = _ref;
+    Object.entries(elementorFrontend.config?.elements?.data).forEach(([cid, element]) => {
       const elementData = elementor.getElementData(element);
-      if (!(elementData !== null && elementData !== void 0 && elementData.is_loop)) {
+      if (!elementData?.is_loop) {
         return;
       }
-      const md = elementorFrontend.elements.$body.find('[data-model-cid="' + cid + '"]');
-      if (!md.length) {
+      const templateId = element.attributes.template_id;
+      if (!templateId) {
         return;
       }
-      const masterItem = md.find('[data-elementor-type="loop-item"]').first();
-      if (masterItem) {
+      const widgetSelector = `.elementor-element[data-model-cid="${cid}"]`,
+        editHandleSelector = `[data-elementor-type="loop-item"].elementor-${templateId}`,
+        editHandleElement = elementorFrontend.elements.$body.find(`${widgetSelector} ${editHandleSelector}`).first()[0];
+      if (editHandleElement) {
         (0, _documentHandle.default)({
-          element: masterItem,
+          element: editHandleElement,
           id: 0,
           title: '& Back'
         }, _documentHandle.SAVE_CONTEXT, null, '.elementor-' + elementor.config.initial_document.id);
@@ -3720,6 +3903,9 @@ class loopBuilderModule extends elementorModules.editor.utils.Module {
     elementor.on('document:loaded', this.onDocumentLoaded.bind(this));
     elementor.on('document:unload', this.onDocumentUnloaded.bind(this));
     this.onApplySourceChange = this.onApplySourceChange.bind(this);
+    this.component = $e.components.register(new _component.default({
+      manager: this
+    }));
   }
   onDocumentLoaded(document) {
     if (!document.config.theme_builder) {
@@ -3785,6 +3971,563 @@ class _default extends elementorModules.editor.utils.Module {
       settingKeys: ['motion_fx_motion_fx_scrolling', 'motion_fx_motion_fx_mouse', 'background_motion_fx_motion_fx_scrolling', 'background_motion_fx_motion_fx_mouse'],
       section: 'section_effects'
     };
+  }
+}
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/notes/assets/js/notes-context-menu.js":
+/*!********************************************************!*\
+  !*** ../modules/notes/assets/js/notes-context-menu.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.notesContextMenu = exports["default"] = void 0;
+class notesContextMenu {
+  constructor() {
+    const elTypes = ['widget', 'section', 'column', 'container'];
+    elTypes.forEach(type => {
+      elementor.hooks.addFilter(`elements/${type}/contextMenuGroups`, this.notesContextMenuAddGroup);
+    });
+  }
+
+  /**
+   * Enable the 'Notes' context menu item
+   *
+   * @since 3.8.0
+   *
+   * @param {Array} groups
+   * @return {Array} The updated groups.
+   */
+  notesContextMenuAddGroup(groups) {
+    const notesGroup = _.findWhere(groups, {
+        name: 'notes'
+      }),
+      notesGroupIndex = groups.indexOf(notesGroup),
+      notesActionItem = {
+        name: 'open_notes',
+        title: __('Notes', 'elementor-pro'),
+        shortcut: '⇧+C',
+        isEnabled: () => true,
+        callback: () => $e.route('notes')
+      };
+    if (elementorPro.config.should_show_promotion) {
+      const iconLink = '<i class="eicon-advanced"></i>' + '<a class="elementor-context-menu-list__item__shortcut--link-fullwidth" href="https://go.elementor.com/go-pro-advanced-notes-context-menu/" target="_blank" rel="noopener noreferrer"></a>';
+      notesActionItem.shortcut = jQuery(iconLink);
+      notesActionItem.isEnabled = () => false;
+      delete notesActionItem.callback;
+    }
+
+    // Create the Notes group if it doesn't exist
+    if (-1 === notesGroupIndex) {
+      const deleteGroup = _.findWhere(groups, {
+          name: 'delete'
+        }),
+        deleteGroupIndex = groups.indexOf(deleteGroup),
+        newGroupPosition = -1 !== deleteGroupIndex ? deleteGroupIndex : groups.length;
+      groups.splice(newGroupPosition, 0, {
+        name: 'notes',
+        actions: [notesActionItem]
+      });
+      return groups;
+    }
+    const openNotesAction = _.findWhere(notesGroup.actions, {
+        name: 'open_notes'
+      }),
+      openNotesActionIndex = notesGroup.actions.indexOf(openNotesAction);
+    groups[notesGroupIndex].actions[openNotesActionIndex] = notesActionItem;
+    return groups;
+  }
+}
+exports.notesContextMenu = notesContextMenu;
+var _default = exports["default"] = notesContextMenu;
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/commands/animate.js":
+/*!************************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/commands/animate.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = exports.Animate = void 0;
+class Animate extends $e.modules.CommandBase {
+  /**
+   * Animate the Page Transition element.
+   *
+   * @return {void}
+   */
+  apply() {
+    const pageTransition = elementor.$previewContents[0].querySelector('e-page-transition');
+    if (!pageTransition) {
+      return;
+    }
+    pageTransition.animate();
+  }
+}
+exports.Animate = Animate;
+var _default = exports["default"] = Animate;
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/commands/index.js":
+/*!**********************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/commands/index.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+Object.defineProperty(exports, "Animate", ({
+  enumerable: true,
+  get: function () {
+    return _animate.Animate;
+  }
+}));
+var _animate = __webpack_require__(/*! ./animate */ "../modules/page-transitions/assets/js/editor/commands/animate.js");
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/component.js":
+/*!*****************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/component.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../modules/page-transitions/assets/js/editor/commands/index.js"));
+var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../modules/page-transitions/assets/js/editor/hooks/index.js"));
+var _pageTransitionPreview = _interopRequireDefault(__webpack_require__(/*! ./hooks/routes/page-transition-preview */ "../modules/page-transitions/assets/js/editor/hooks/routes/page-transition-preview.js"));
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+class Component extends $e.modules.ComponentBase {
+  /**
+   * Initialize the component.
+   *
+   * @return {void}
+   */
+  constructor() {
+    super();
+    this.routesHooks = {};
+    this.initRouteHooks();
+  }
+
+  /**
+   * Add route hooks & listen to route changes.
+   *
+   * @return {void}
+   */
+  initRouteHooks() {
+    // TODO: Remove when route hooks are available.
+    this.routesHooks.pageTransitionPreview = new _pageTransitionPreview.default();
+    $e.routes.on('run:after', (component, route) => {
+      this.routesHooks.pageTransitionPreview.run(component, route);
+    });
+  }
+
+  /**
+   * Get the component namespace.
+   *
+   * @return {string} - Component namespace.
+   */
+  getNamespace() {
+    return 'page-transitions';
+  }
+
+  /**
+   * Get the component hooks.
+   *
+   * @return {Object} - Component hooks.
+   */
+  defaultHooks() {
+    return this.importHooks(hooks);
+  }
+
+  /**
+   * Get the component commands.
+   *
+   * @return {Object} - Component commands.
+   */
+  defaultCommands() {
+    return this.importCommands(commands);
+  }
+}
+exports["default"] = Component;
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/hooks/data/animate-page-transition.js":
+/*!******************************************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/hooks/data/animate-page-transition.js ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = exports.AnimatePageTransition = void 0;
+/**
+ * Data hook that animates the Page Transition component when entrance / exit animations are changed.
+ */
+class AnimatePageTransition extends $e.modules.hookData.After {
+  // Page Transitions settings prefix.
+  prefix = 'settings_page_transitions_';
+
+  // Controls that the hook should listen to.
+  settings = ['entrance_animation', 'exit_animation'];
+  getCommand() {
+    return 'document/elements/settings';
+  }
+  getId() {
+    return 'animate-page-transitions--document/elements/settings';
+  }
+  getContainerType() {
+    return 'document';
+  }
+  getConditions(args) {
+    // Execute only for specific settings.
+    return Object.keys(args.settings).some(key => {
+      key = key.replace(this.prefix, '');
+      return this.settings.includes(key);
+    });
+  }
+  apply() {
+    $e.run('page-transitions/animate');
+  }
+}
+exports.AnimatePageTransition = AnimatePageTransition;
+var _default = exports["default"] = AnimatePageTransition;
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/hooks/data/index.js":
+/*!************************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/hooks/data/index.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+Object.defineProperty(exports, "AnimatePageTransition", ({
+  enumerable: true,
+  get: function () {
+    return _animatePageTransition.AnimatePageTransition;
+  }
+}));
+Object.defineProperty(exports, "ReRenderPageTransition", ({
+  enumerable: true,
+  get: function () {
+    return _reRenderPageTransition.ReRenderPageTransition;
+  }
+}));
+var _animatePageTransition = __webpack_require__(/*! ./animate-page-transition */ "../modules/page-transitions/assets/js/editor/hooks/data/animate-page-transition.js");
+var _reRenderPageTransition = __webpack_require__(/*! ./re-render-page-transition */ "../modules/page-transitions/assets/js/editor/hooks/data/re-render-page-transition.js");
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/hooks/data/re-render-page-transition.js":
+/*!********************************************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/hooks/data/re-render-page-transition.js ***!
+  \********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = exports.ReRenderPageTransition = void 0;
+var _utils = __webpack_require__(/*! ../utils */ "../modules/page-transitions/assets/js/editor/hooks/utils.js");
+/**
+ * Data hook that passes the new settings from the panel as attributes to the Page Transition component, in order to re-render it.
+ */
+class ReRenderPageTransition extends $e.modules.hookData.After {
+  // Page Transitions settings prefix.
+  prefix = 'settings_page_transitions_';
+
+  // Controls that the hook should listen to.
+  settings = ['entrance_animation', 'preloader_type', 'preloader_icon', 'preloader_image', 'preloader_animation_type'];
+  getCommand() {
+    return 'document/elements/settings';
+  }
+  getId() {
+    return 're-render-page-transitions--document/elements/settings';
+  }
+  getContainerType() {
+    return 'document';
+  }
+  getConditions(args) {
+    // Execute only for specific settings.
+    return Object.keys(args.settings).some(key => {
+      key = key.replace(this.prefix, '');
+      return this.settings.includes(key);
+    });
+  }
+  apply(args) {
+    (0, _utils.renderPageTransition)(args.container);
+  }
+}
+exports.ReRenderPageTransition = ReRenderPageTransition;
+var _default = exports["default"] = ReRenderPageTransition;
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/hooks/index.js":
+/*!*******************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/hooks/index.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+var _data = __webpack_require__(/*! ./data */ "../modules/page-transitions/assets/js/editor/hooks/data/index.js");
+Object.keys(_data).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _data[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _data[key];
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/hooks/routes/page-transition-preview.js":
+/*!********************************************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/hooks/routes/page-transition-preview.js ***!
+  \********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _utils = __webpack_require__(/*! ../utils */ "../modules/page-transitions/assets/js/editor/hooks/utils.js");
+/**
+ * A route hook that listens to route changes in the panel and change the preview mode for
+ * the Page Transitions feature when navigating to the `Site Settings -> Page Transitions` tab.
+ *
+ * TODO: Convert to `$e.modules.hookRoute.After` when available.
+ */
+class PageTransitionPreview {
+  /**
+   * Run the hook.
+   *
+   * @param {Object} component
+   * @param {string} route
+   *
+   * @return {void}
+   */
+  run(component, route) {
+    if ('panel/global/settings-page-transitions' === route) {
+      (0, _utils.renderPageTransition)(elementor.documents.getCurrent().container);
+      this.togglePageTransitionPreview(true);
+    } else {
+      this.togglePageTransitionPreview(false);
+    }
+  }
+
+  /**
+   * Toggle the Page Transition state to show or hide preview.
+   *
+   * @param {boolean} on
+   *
+   * @return {void}
+   */
+  togglePageTransitionPreview(on = true) {
+    const className = 'e-page-transition--preview',
+      pageTransition = elementor.$previewContents[0].body.querySelector('e-page-transition');
+    if (!pageTransition) {
+      return;
+    }
+    pageTransition.classList.toggle(className, on);
+  }
+}
+exports["default"] = PageTransitionPreview;
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/hooks/utils.js":
+/*!*******************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/hooks/utils.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.getPageTransitionSettings = getPageTransitionSettings;
+exports.renderPageTransition = renderPageTransition;
+const prefix = 'settings_page_transitions_';
+
+/**
+ * Get only the Page Transitions controls' values from a Container.
+ *
+ * @param {Object} container
+ *
+ * @return {Object} - Controls' values.
+ */
+function getPageTransitionSettings(container) {
+  // Filter only the Page Transitions controls which doesn't change CSS values.
+  // (since they shouldn't affect the render)
+  const controls = Object.entries(container.settings.getActiveControls()).filter(([key, control]) => {
+    return key.startsWith(prefix) && !control.selectors;
+  });
+  const settings = {};
+  controls.forEach(([control]) => {
+    settings[control] = container.settings.get(control);
+  });
+  return settings;
+}
+
+/**
+ * Live render the Page Transition element, based on settings from the user.
+ *
+ * @param {Object} container - The container to get the settings from.
+ *
+ * @return {void}
+ */
+function renderPageTransition(container) {
+  let pageTransition = elementor.$previewContents[0].querySelector('e-page-transition');
+  const hasEntranceAnimation = !!container.settings.get(`${prefix}entrance_animation`),
+    hasPreloader = !!container.settings.get(`${prefix}preloader_type`),
+    shouldRender = hasEntranceAnimation || hasPreloader;
+
+  // Create the Page Transition element if it doesn't exist.
+  if (!pageTransition) {
+    pageTransition = document.createElement('e-page-transition');
+    pageTransition.classList.add('e-page-transition--preview');
+    elementor.$previewContents[0].body.append(pageTransition);
+  }
+
+  // Disable the Page Transition if needed.
+  pageTransition.toggleAttribute('disabled', !shouldRender);
+  const settings = getPageTransitionSettings(container);
+
+  // Iterate over the settings and set them as attributes.
+  Object.entries(settings).forEach(([key, value]) => {
+    key = key.replace(prefix, '');
+    key = key.replaceAll('_', '-');
+    if (!value) {
+      pageTransition.removeAttribute(key);
+      return;
+    }
+    if ('string' === typeof value) {
+      pageTransition.setAttribute(key, value);
+      return;
+    }
+
+    // For object values (e.g. image control).
+    Object.entries(value).forEach(([subKey, subValue]) => {
+      let newKey = key;
+
+      // Append the sub key only if it's not `value` (e.g. `url`), in order to avoid weird
+      // attributes like `preloader-icon-value`.
+      if (subKey !== 'value') {
+        newKey = `${key}-${subKey}`;
+      }
+      pageTransition.setAttribute(newKey, subValue);
+    });
+  });
+}
+
+/***/ }),
+
+/***/ "../modules/page-transitions/assets/js/editor/module.js":
+/*!**************************************************************!*\
+  !*** ../modules/page-transitions/assets/js/editor/module.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/page-transitions/assets/js/editor/component.js"));
+class _default extends elementorModules.editor.utils.Module {
+  /**
+   * Register the component & bind events on init.
+   *
+   * @return {void}
+   */
+  onInit() {
+    $e.components.register(new _component.default());
+    this.bindEvents();
+  }
+
+  /**
+   * Listen to Page Transition event.
+   *
+   * @return {void}
+   */
+  bindEvents() {
+    // Make sure that `window.elementor` is initialized.
+    // TODO: Find a better solution. It's caused because of the dynamic import.
+    if (window.elementor) {
+      this.onAnimateButtonClick();
+      return;
+    }
+    jQuery(window).on('elementor:init', () => this.onAnimateButtonClick());
+  }
+
+  /**
+   * Listen to `animate` button click event and animate the Page Transition.
+   *
+   * @return {void}
+   */
+  onAnimateButtonClick() {
+    elementor.channels.editor.on('elementorPageTransitions:animate', () => {
+      $e.run('page-transitions/animate');
+    });
   }
 }
 exports["default"] = _default;
@@ -3861,8 +4604,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../modules/popup/assets/js/editor/hooks/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class PopupComponent extends $e.modules.ComponentBase {
   /**
    * @type {null|Function}
@@ -3893,8 +4636,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 class _default extends elementorModules.editor.views.ControlsStack {
-  constructor() {
-    super(...arguments);
+  constructor(...args) {
+    super(...args);
     this.template = _.noop;
     this.activeTab = 'content';
     this.listenTo(this.model, 'change', this.onModelChange);
@@ -4013,8 +4756,7 @@ class PopupSave extends $e.modules.hookData.After {
   }
 }
 exports.PopupSave = PopupSave;
-var _default = PopupSave;
-exports["default"] = _default;
+var _default = exports["default"] = PopupSave;
 
 /***/ }),
 
@@ -4055,67 +4797,6 @@ Object.keys(_ui).forEach(function (key) {
 
 /***/ }),
 
-/***/ "../modules/popup/assets/js/editor/hooks/ui/base/base-hook-popup-after.js":
-/*!********************************************************************************!*\
-  !*** ../modules/popup/assets/js/editor/hooks/ui/base/base-hook-popup-after.js ***!
-  \********************************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-class BaseHookPopupAfter extends $e.modules.hookUI.After {
-  run() {
-    this.component = this.component || $e.components.get('document/popup');
-    return super.run(...arguments);
-  }
-}
-exports["default"] = BaseHookPopupAfter;
-
-/***/ }),
-
-/***/ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/close/remove-instructions.js":
-/*!************************************************************************************************!*\
-  !*** ../modules/popup/assets/js/editor/hooks/ui/editor/documents/close/remove-instructions.js ***!
-  \************************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = exports.PopupRemoveInstructions = void 0;
-var _baseHookPopupAfter = _interopRequireDefault(__webpack_require__(/*! ../../../base/base-hook-popup-after */ "../modules/popup/assets/js/editor/hooks/ui/base/base-hook-popup-after.js"));
-class PopupRemoveInstructions extends _baseHookPopupAfter.default {
-  getCommand() {
-    return 'editor/documents/unload';
-  }
-  getId() {
-    return 'elementor-pro-popup-remove-instructions';
-  }
-  getConditions(args) {
-    const {
-      document
-    } = args;
-    return 'popup' === document.config.type && !elementor.config.user.introduction.popupSettings;
-  }
-  apply() {
-    $e.components.get('panel/page-settings').off('route/close', this.component.onPageSettingsCloseHandler);
-  }
-}
-exports.PopupRemoveInstructions = PopupRemoveInstructions;
-var _default = PopupRemoveInstructions;
-exports["default"] = _default;
-
-/***/ }),
-
 /***/ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/close/remove-library-tab.js":
 /*!***********************************************************************************************!*\
   !*** ../modules/popup/assets/js/editor/hooks/ui/editor/documents/close/remove-library-tab.js ***!
@@ -4147,8 +4828,7 @@ class PopupRemoveLibraryTab extends $e.modules.hookUI.After {
   }
 }
 exports.PopupRemoveLibraryTab = PopupRemoveLibraryTab;
-var _default = PopupRemoveLibraryTab;
-exports["default"] = _default;
+var _default = exports["default"] = PopupRemoveLibraryTab;
 
 /***/ }),
 
@@ -4199,73 +4879,7 @@ class PopupRemoveTriggers extends $e.modules.hookUI.After {
   }
 }
 exports.PopupRemoveTriggers = PopupRemoveTriggers;
-var _default = PopupRemoveTriggers;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/open/add-instructions.js":
-/*!********************************************************************************************!*\
-  !*** ../modules/popup/assets/js/editor/hooks/ui/editor/documents/open/add-instructions.js ***!
-  \********************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = exports.PopupAddInstructions = void 0;
-var _baseHookPopupAfter = _interopRequireDefault(__webpack_require__(/*! ../../../base/base-hook-popup-after */ "../modules/popup/assets/js/editor/hooks/ui/base/base-hook-popup-after.js"));
-class PopupAddInstructions extends _baseHookPopupAfter.default {
-  getCommand() {
-    return 'editor/documents/open';
-  }
-  getId() {
-    return 'elementor-pro-popup-add-instructions';
-  }
-  getConditions(args) {
-    const document = elementor.documents.get(args.id);
-    return 'popup' === document.config.type && !elementor.config.user.introduction.popupSettings;
-  }
-  apply() {
-    // Expose for the remove hook.
-    this.component.onPageSettingsCloseHandler = this.onPageSettingsClose.bind(this);
-    $e.components.get('panel/page-settings').on('route/close', this.component.onPageSettingsCloseHandler);
-  }
-  onPageSettingsClose() {
-    const introduction = this.getIntroduction();
-    introduction.show(elementor.getPanelView().footer.currentView.ui.settings[0]);
-    introduction.setViewed();
-    $e.components.get('panel/page-settings').off('route/close', this.component.onPageSettingsCloseHandler);
-  }
-  getIntroduction() {
-    return new elementorModules.editor.utils.Introduction({
-      introductionKey: 'popupSettings',
-      dialogOptions: {
-        id: 'elementor-popup-settings-introduction',
-        headerMessage: '<i class="eicon-info"></i>' + __('Please Note', 'elementor-pro'),
-        message: __('Popup settings are accessed via the settings icon in the bottom menu', 'elementor-pro'),
-        closeButton: true,
-        closeButtonClass: 'eicon-close',
-        position: {
-          my: 'left bottom',
-          at: 'right bottom-5',
-          autoRefresh: true
-        },
-        hide: {
-          onOutsideClick: false
-        }
-      }
-    });
-  }
-}
-exports.PopupAddInstructions = PopupAddInstructions;
-var _default = PopupAddInstructions;
-exports["default"] = _default;
+var _default = exports["default"] = PopupRemoveTriggers;
 
 /***/ }),
 
@@ -4305,8 +4919,7 @@ class PopupAddLibraryTab extends $e.modules.hookUI.After {
   }
 }
 exports.PopupAddLibraryTab = PopupAddLibraryTab;
-var _default = PopupAddLibraryTab;
-exports["default"] = _default;
+var _default = exports["default"] = PopupAddLibraryTab;
 
 /***/ }),
 
@@ -4341,7 +4954,7 @@ class PopupAddTriggers extends $e.modules.hookUI.After {
       this.addUI();
     } else {
       // First open, the panel is not available yet.
-      elementor.on('preview:loaded', this.addUI.bind(this));
+      elementor.once('preview:loaded', this.addUI.bind(this));
     }
   }
   addUI() {
@@ -4391,8 +5004,7 @@ class PopupAddTriggers extends $e.modules.hookUI.After {
   }
 }
 exports.PopupAddTriggers = PopupAddTriggers;
-var _default = PopupAddTriggers;
-exports["default"] = _default;
+var _default = exports["default"] = PopupAddTriggers;
 
 /***/ }),
 
@@ -4408,12 +5020,6 @@ exports["default"] = _default;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-Object.defineProperty(exports, "PopupAddInstructions", ({
-  enumerable: true,
-  get: function () {
-    return _addInstructions.PopupAddInstructions;
-  }
-}));
 Object.defineProperty(exports, "PopupAddLibraryTab", ({
   enumerable: true,
   get: function () {
@@ -4424,12 +5030,6 @@ Object.defineProperty(exports, "PopupAddTriggers", ({
   enumerable: true,
   get: function () {
     return _addTriggers.PopupAddTriggers;
-  }
-}));
-Object.defineProperty(exports, "PopupRemoveInstructions", ({
-  enumerable: true,
-  get: function () {
-    return _removeInstructions.PopupRemoveInstructions;
   }
 }));
 Object.defineProperty(exports, "PopupRemoveLibraryTab", ({
@@ -4444,10 +5044,8 @@ Object.defineProperty(exports, "PopupRemoveTriggers", ({
     return _removeTriggers.PopupRemoveTriggers;
   }
 }));
-var _addInstructions = __webpack_require__(/*! ./editor/documents/open/add-instructions */ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/open/add-instructions.js");
 var _addLibraryTab = __webpack_require__(/*! ./editor/documents/open/add-library-tab */ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/open/add-library-tab.js");
 var _addTriggers = __webpack_require__(/*! ./editor/documents/open/add-triggers */ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/open/add-triggers.js");
-var _removeInstructions = __webpack_require__(/*! ./editor/documents/close/remove-instructions */ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/close/remove-instructions.js");
 var _removeLibraryTab = __webpack_require__(/*! ./editor/documents/close/remove-library-tab */ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/close/remove-library-tab.js");
 var _removeTriggers = __webpack_require__(/*! ./editor/documents/close/remove-triggers */ "../modules/popup/assets/js/editor/hooks/ui/editor/documents/close/remove-triggers.js");
 
@@ -4466,8 +5064,8 @@ var _removeTriggers = __webpack_require__(/*! ./editor/documents/close/remove-tr
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/popup/assets/js/editor/component.js"));
 class PopupModule extends elementorModules.editor.utils.Module {
-  constructor() {
-    super(...arguments);
+  constructor(...args) {
+    super(...args);
     this.displaySettingsTypes = {
       triggers: {
         icon: 'eicon-click',
@@ -4503,12 +5101,9 @@ module.exports = PopupModule;
 module.exports = elementorModules.editor.utils.Module.extend({
   onElementorPreviewLoaded() {
     elementor.addControlView('Query', __webpack_require__(/*! ./editor/query-control */ "../modules/query-control/assets/js/editor/query-control.js"));
-    __webpack_require__.e(/*! import() */ "modules_query-control_assets_js_editor_template-query-control_js").then(__webpack_require__.bind(__webpack_require__, /*! ./editor/template-query-control */ "../modules/query-control/assets/js/editor/template-query-control.js")).then(_ref => {
-      let {
-        default: TemplateQueryControl
-      } = _ref;
-      return elementor.addControlView('template_query', TemplateQueryControl);
-    });
+    __webpack_require__.e(/*! import() */ "modules_query-control_assets_js_editor_template-query-control_js").then(__webpack_require__.bind(__webpack_require__, /*! ./editor/template-query-control */ "../modules/query-control/assets/js/editor/template-query-control.js")).then(({
+      default: TemplateQueryControl
+    }) => elementor.addControlView('template_query', TemplateQueryControl));
   }
 });
 
@@ -4665,8 +5260,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var dataHooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/data */ "../modules/screenshots/assets/js/editor/hooks/data/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class _default extends $e.modules.ComponentBase {
   getNamespace() {
     return 'screenshots';
@@ -4717,8 +5312,7 @@ class DeleteScreenshot extends $e.modules.hookData.After {
   }
 }
 exports.DeleteScreenshot = DeleteScreenshot;
-var _default = DeleteScreenshot;
-exports["default"] = _default;
+var _default = exports["default"] = DeleteScreenshot;
 
 /***/ }),
 
@@ -4782,8 +5376,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ui */ "../modules/scroll-snap/assets/js/editor/hooks/ui/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class ScrollSnapComponent extends $e.modules.ComponentBase {
   getNamespace() {
     return 'scroll-snap';
@@ -4817,8 +5411,7 @@ class FocusPreview extends $e.modules.hookData.After {
     return 'focus-preview--document/elements/settings';
   }
   getConditions(args) {
-    var _args$settings$scroll;
-    return ((_args$settings$scroll = args.settings.scroll_snap_padding) === null || _args$settings$scroll === void 0 ? void 0 : _args$settings$scroll.size) !== '';
+    return args.settings.scroll_snap_padding?.size !== '';
   }
   apply() {
     setTimeout(() => {
@@ -4827,8 +5420,7 @@ class FocusPreview extends $e.modules.hookData.After {
   }
 }
 exports.FocusPreview = FocusPreview;
-var _default = FocusPreview;
-exports["default"] = _default;
+var _default = exports["default"] = FocusPreview;
 
 /***/ }),
 
@@ -4907,9 +5499,8 @@ module.exports = elementorModules.editor.utils.Module.extend({
     return networkClass;
   },
   getNetworkTitle(buttonSettings) {
-    var _this$getNetworkData;
     // BC for items that are already selected and have been removed from the options list.
-    return buttonSettings.text || ((_this$getNetworkData = this.getNetworkData(buttonSettings)) === null || _this$getNetworkData === void 0 ? void 0 : _this$getNetworkData.title);
+    return buttonSettings.text || this.getNetworkData(buttonSettings)?.title;
   },
   getNetworkData(buttonSettings) {
     return this.config[buttonSettings.button];
@@ -5235,8 +5826,7 @@ class ThemeBuilderSaveAndReload extends $e.modules.hookData.After {
   }
 }
 exports.ThemeBuilderSaveAndReload = ThemeBuilderSaveAndReload;
-var _default = ThemeBuilderSaveAndReload;
-exports["default"] = _default;
+var _default = exports["default"] = ThemeBuilderSaveAndReload;
 
 /***/ }),
 
@@ -5286,8 +5876,7 @@ class ThemeBuilderUpdatePreviewOptions extends $e.modules.hookData.After {
   }
 }
 exports.ThemeBuilderUpdatePreviewOptions = ThemeBuilderUpdatePreviewOptions;
-var _default = ThemeBuilderUpdatePreviewOptions;
-exports["default"] = _default;
+var _default = exports["default"] = ThemeBuilderUpdatePreviewOptions;
 
 /***/ }),
 
@@ -5329,8 +5918,7 @@ class ThemeBuilderSaveConditions extends $e.modules.hookData.After {
   }
 }
 exports.ThemeBuilderSaveConditions = ThemeBuilderSaveConditions;
-var _default = ThemeBuilderSaveConditions;
-exports["default"] = _default;
+var _default = exports["default"] = ThemeBuilderSaveConditions;
 
 /***/ }),
 
@@ -5381,8 +5969,7 @@ class ThemeBuilderShowConditions extends $e.modules.hookData.Dependency {
   }
 }
 exports.ThemeBuilderShowConditions = ThemeBuilderShowConditions;
-var _default = ThemeBuilderShowConditions;
-exports["default"] = _default;
+var _default = exports["default"] = ThemeBuilderShowConditions;
 
 /***/ }),
 
@@ -5418,8 +6005,7 @@ class ThemeBuilderPreviewBreak extends $e.modules.hookData.Dependency {
   }
 }
 exports.ThemeBuilderPreviewBreak = ThemeBuilderPreviewBreak;
-var _default = ThemeBuilderPreviewBreak;
-exports["default"] = _default;
+var _default = exports["default"] = ThemeBuilderPreviewBreak;
 
 /***/ }),
 
@@ -5547,8 +6133,7 @@ class ThemeBuilderToggleMenuConditions extends $e.modules.hookUI.After {
   }
 }
 exports.ThemeBuilderToggleMenuConditions = ThemeBuilderToggleMenuConditions;
-var _default = ThemeBuilderToggleMenuConditions;
-exports["default"] = _default;
+var _default = exports["default"] = ThemeBuilderToggleMenuConditions;
 
 /***/ }),
 
@@ -5596,8 +6181,7 @@ class ThemeBuilderRemoveEditorUI extends $e.modules.hookUI.After {
   }
 }
 exports.ThemeBuilderRemoveEditorUI = ThemeBuilderRemoveEditorUI;
-var _default = ThemeBuilderRemoveEditorUI;
-exports["default"] = _default;
+var _default = exports["default"] = ThemeBuilderRemoveEditorUI;
 
 /***/ }),
 
@@ -5677,8 +6261,7 @@ class ThemeBuilderAddEditorUI extends $e.modules.hookUI.After {
   }
 }
 exports.ThemeBuilderAddEditorUI = ThemeBuilderAddEditorUI;
-var _default = ThemeBuilderAddEditorUI;
-exports["default"] = _default;
+var _default = exports["default"] = ThemeBuilderAddEditorUI;
 
 /***/ }),
 
@@ -5801,8 +6384,8 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = void 0;
 var _component = _interopRequireDefault(__webpack_require__(/*! ./publish/component */ "../modules/theme-builder/assets/js/editor/publish/component.js"));
 class ThemeBuilderModule extends elementorModules.editor.utils.Module {
-  __construct() {
-    super.__construct(...arguments);
+  __construct(...args) {
+    super.__construct(...args);
     Object.defineProperty(elementorPro.config, 'theme_builder', {
       get() {
         elementorCommon.helpers.softDeprecated('theme_builder', '2.9.0', 'elementor.config.document.theme_builder');
@@ -5932,8 +6515,8 @@ exports["default"] = void 0;
 var _content = _interopRequireDefault(__webpack_require__(/*! ./content */ "../modules/theme-builder/assets/js/editor/publish/content.js"));
 var _layout = _interopRequireDefault(__webpack_require__(/*! ./layout */ "../modules/theme-builder/assets/js/editor/publish/layout.js"));
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ../hooks */ "../modules/theme-builder/assets/js/editor/hooks/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class Component extends $e.modules.ComponentModalBase {
   getNamespace() {
     // TODO: should be 'theme-builder/publish'.
@@ -5979,7 +6562,7 @@ class Component extends $e.modules.ComponentModalBase {
     const isLastTab = !keys[this.currentTabIndex + 1];
     this.layout.modalContent.currentView.screen.show(new tabArgs.View(tabArgs.viewOptions));
     this.layout.modal.getElements('next').toggle(!isLastTab);
-    this.layout.modal.getElements('publish').toggleClass('elementor-button-success', isLastTab);
+    this.layout.modal.getElements('publish').toggleClass('e-primary', isLastTab);
   }
   activateTab(tab) {
     $e.routes.saveState(this.getNamespace());
@@ -6071,13 +6654,14 @@ class _default extends elementorModules.common.views.modal.Layout {
       text: __('Save & Close', 'elementor-pro'),
       callback: () => $e.run('theme-builder-publish/save')
     });
+    this.modal.getElements('publish').addClass('e-btn-txt');
     this.modal.addButton({
       name: 'next',
       text: __('Next', 'elementor-pro'),
       callback: () => $e.run('theme-builder-publish/next')
     });
     const $publishButton = this.modal.getElements('publish');
-    this.modal.getElements('next').addClass('elementor-button-success').add($publishButton).addClass('elementor-button').removeClass('dialog-button');
+    this.modal.getElements('next').addClass('e-primary').add($publishButton).addClass('elementor-button').removeClass('dialog-button');
   }
 }
 exports["default"] = _default;
@@ -6143,8 +6727,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ui */ "../modules/video-playlist/assets/js/editor/hooks/ui/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class VideoPlaylistComponent extends $e.modules.ComponentBase {
   getNamespace() {
     return 'video-playlist';
@@ -6195,8 +6779,7 @@ class ActiveTab extends $e.modules.hookData.After {
   }
 }
 exports.ActiveTab = ActiveTab;
-var _default = ActiveTab;
-exports["default"] = _default;
+var _default = exports["default"] = ActiveTab;
 
 /***/ }),
 
@@ -6281,8 +6864,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../modules/woocommerce/assets/js/editor/hooks/index.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class Component extends $e.modules.ComponentBase {
   getNamespace() {
     return 'woocommerce';
@@ -6508,10 +7091,11 @@ Object.keys(_data).forEach(function (key) {
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+__webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/woocommerce/assets/js/editor/component.js"));
 class WoocommerceModule extends elementorModules.editor.utils.Module {
-  constructor() {
-    super(...arguments);
+  constructor(...args) {
+    super(...args);
     this.pageSettingsWidgets = {
       'woocommerce-checkout-page': {
         headerMessage: __('Want to save this as your checkout page?', 'elementor-pro'),
@@ -6573,9 +7157,8 @@ class WoocommerceModule extends elementorModules.editor.utils.Module {
       });
     }
   }
-  didManuallyTriggerAddToCartEvent() {
-    let data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    return data === null || data === void 0 ? void 0 : data.e_manually_triggered;
+  didManuallyTriggerAddToCartEvent(data = null) {
+    return data?.e_manually_triggered;
   }
   onElementorLoaded() {
     this.component = $e.components.register(new _component.default({
@@ -6720,9 +7303,7 @@ class WoocommerceModule extends elementorModules.editor.utils.Module {
   }
 
   // TODO: Add this as a reusable core function - to be able to open any settings tab.
-  openSiteSettingsTab() {
-    let tabId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    let sectionId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  openSiteSettingsTab(tabId = '', sectionId = '') {
     const isWPPreviewMode = elementorCommon.elements.$body.hasClass('elementor-editor-preview');
     if (isWPPreviewMode) {
       elementor.exitPreviewMode();
@@ -6755,11 +7336,39 @@ module.exports = WoocommerceModule;
 
 /***/ }),
 
+/***/ "@wordpress/i18n":
+/*!**************************!*\
+  !*** external "wp.i18n" ***!
+  \**************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = wp.i18n;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
+  \***********************************************************************/
+/***/ ((module) => {
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    "default": obj
+  };
+}
+module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
 /***/ "../node_modules/core-js/internals/a-callable.js":
 /*!*******************************************************!*\
   !*** ../node_modules/core-js/internals/a-callable.js ***!
   \*******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var tryToString = __webpack_require__(/*! ../internals/try-to-string */ "../node_modules/core-js/internals/try-to-string.js");
@@ -6769,26 +7378,7 @@ var $TypeError = TypeError;
 // `Assert: IsCallable(argument) is true`
 module.exports = function (argument) {
   if (isCallable(argument)) return argument;
-  throw $TypeError(tryToString(argument) + ' is not a function');
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/internals/a-possible-prototype.js":
-/*!*****************************************************************!*\
-  !*** ../node_modules/core-js/internals/a-possible-prototype.js ***!
-  \*****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
-
-var $String = String;
-var $TypeError = TypeError;
-
-module.exports = function (argument) {
-  if (typeof argument == 'object' || isCallable(argument)) return argument;
-  throw $TypeError("Can't set " + $String(argument) + ' as a prototype');
+  throw new $TypeError(tryToString(argument) + ' is not a function');
 };
 
 
@@ -6800,6 +7390,8 @@ module.exports = function (argument) {
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
 
 var $String = String;
@@ -6808,7 +7400,7 @@ var $TypeError = TypeError;
 // `Assert: Type(argument) is Object`
 module.exports = function (argument) {
   if (isObject(argument)) return argument;
-  throw $TypeError($String(argument) + ' is not an object');
+  throw new $TypeError($String(argument) + ' is not an object');
 };
 
 
@@ -6819,6 +7411,8 @@ module.exports = function (argument) {
   !*** ../node_modules/core-js/internals/array-includes.js ***!
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "../node_modules/core-js/internals/to-indexed-object.js");
 var toAbsoluteIndex = __webpack_require__(/*! ../internals/to-absolute-index */ "../node_modules/core-js/internals/to-absolute-index.js");
@@ -6833,10 +7427,10 @@ var createMethod = function (IS_INCLUDES) {
     var value;
     // Array#includes uses SameValueZero equality algorithm
     // eslint-disable-next-line no-self-compare -- NaN check
-    if (IS_INCLUDES && el != el) while (length > index) {
+    if (IS_INCLUDES && el !== el) while (length > index) {
       value = O[index++];
       // eslint-disable-next-line no-self-compare -- NaN check
-      if (value != value) return true;
+      if (value !== value) return true;
     // Array#indexOf ignores holes, Array#includes - not
     } else for (;length > index; index++) {
       if ((IS_INCLUDES || index in O) && O[index] === el) return IS_INCLUDES || index || 0;
@@ -6856,58 +7450,59 @@ module.exports = {
 
 /***/ }),
 
+/***/ "../node_modules/core-js/internals/array-set-length.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/internals/array-set-length.js ***!
+  \*************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
+var isArray = __webpack_require__(/*! ../internals/is-array */ "../node_modules/core-js/internals/is-array.js");
+
+var $TypeError = TypeError;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+// Safari < 13 does not throw an error in this case
+var SILENT_ON_NON_WRITABLE_LENGTH_SET = DESCRIPTORS && !function () {
+  // makes no sense without proper strict mode support
+  if (this !== undefined) return true;
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).length = 1;
+  } catch (error) {
+    return error instanceof TypeError;
+  }
+}();
+
+module.exports = SILENT_ON_NON_WRITABLE_LENGTH_SET ? function (O, length) {
+  if (isArray(O) && !getOwnPropertyDescriptor(O, 'length').writable) {
+    throw new $TypeError('Cannot set read only .length');
+  } return O.length = length;
+} : function (O, length) {
+  return O.length = length;
+};
+
+
+/***/ }),
+
 /***/ "../node_modules/core-js/internals/classof-raw.js":
 /*!********************************************************!*\
   !*** ../node_modules/core-js/internals/classof-raw.js ***!
   \********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThisRaw = __webpack_require__(/*! ../internals/function-uncurry-this-raw */ "../node_modules/core-js/internals/function-uncurry-this-raw.js");
+"use strict";
 
-var toString = uncurryThisRaw({}.toString);
-var stringSlice = uncurryThisRaw(''.slice);
+var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
+
+var toString = uncurryThis({}.toString);
+var stringSlice = uncurryThis(''.slice);
 
 module.exports = function (it) {
   return stringSlice(toString(it), 8, -1);
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/internals/classof.js":
-/*!****************************************************!*\
-  !*** ../node_modules/core-js/internals/classof.js ***!
-  \****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var TO_STRING_TAG_SUPPORT = __webpack_require__(/*! ../internals/to-string-tag-support */ "../node_modules/core-js/internals/to-string-tag-support.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
-var classofRaw = __webpack_require__(/*! ../internals/classof-raw */ "../node_modules/core-js/internals/classof-raw.js");
-var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "../node_modules/core-js/internals/well-known-symbol.js");
-
-var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-var $Object = Object;
-
-// ES3 wrong here
-var CORRECT_ARGUMENTS = classofRaw(function () { return arguments; }()) == 'Arguments';
-
-// fallback for IE11 Script Access Denied error
-var tryGet = function (it, key) {
-  try {
-    return it[key];
-  } catch (error) { /* empty */ }
-};
-
-// getting tag from ES6+ `Object.prototype.toString`
-module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
-  var O, tag, result;
-  return it === undefined ? 'Undefined' : it === null ? 'Null'
-    // @@toStringTag case
-    : typeof (tag = tryGet(O = $Object(it), TO_STRING_TAG)) == 'string' ? tag
-    // builtinTag case
-    : CORRECT_ARGUMENTS ? classofRaw(O)
-    // ES3 arguments fallback
-    : (result = classofRaw(O)) == 'Object' && isCallable(O.callee) ? 'Arguments' : result;
 };
 
 
@@ -6918,6 +7513,8 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
   !*** ../node_modules/core-js/internals/copy-constructor-properties.js ***!
   \************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
 var ownKeys = __webpack_require__(/*! ../internals/own-keys */ "../node_modules/core-js/internals/own-keys.js");
@@ -6945,6 +7542,8 @@ module.exports = function (target, source, exceptions) {
   \***************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "../node_modules/core-js/internals/object-define-property.js");
 var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "../node_modules/core-js/internals/create-property-descriptor.js");
@@ -6965,6 +7564,8 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
   \***********************************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 module.exports = function (bitmap, value) {
   return {
     enumerable: !(bitmap & 1),
@@ -6982,6 +7583,8 @@ module.exports = function (bitmap, value) {
   !*** ../node_modules/core-js/internals/define-built-in.js ***!
   \************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "../node_modules/core-js/internals/object-define-property.js");
@@ -7020,6 +7623,8 @@ module.exports = function (O, key, value, options) {
   \*******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 
 // eslint-disable-next-line es/no-object-defineproperty -- safe
@@ -7042,12 +7647,14 @@ module.exports = function (key, value) {
   \********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
-  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
+  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] !== 7;
 });
 
 
@@ -7059,9 +7666,12 @@ module.exports = !fails(function () {
   \*********************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 var documentAll = typeof document == 'object' && document.all;
 
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+// eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
 var IS_HTMLDDA = typeof documentAll == 'undefined' && documentAll !== undefined;
 
 module.exports = {
@@ -7078,6 +7688,8 @@ module.exports = {
   \********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
 
@@ -7092,15 +7704,34 @@ module.exports = function (it) {
 
 /***/ }),
 
+/***/ "../node_modules/core-js/internals/does-not-exceed-safe-integer.js":
+/*!*************************************************************************!*\
+  !*** ../node_modules/core-js/internals/does-not-exceed-safe-integer.js ***!
+  \*************************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+var $TypeError = TypeError;
+var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF; // 2 ** 53 - 1 == 9007199254740991
+
+module.exports = function (it) {
+  if (it > MAX_SAFE_INTEGER) throw $TypeError('Maximum allowed index exceeded');
+  return it;
+};
+
+
+/***/ }),
+
 /***/ "../node_modules/core-js/internals/engine-user-agent.js":
 /*!**************************************************************!*\
   !*** ../node_modules/core-js/internals/engine-user-agent.js ***!
   \**************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((module) => {
 
-var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "../node_modules/core-js/internals/get-built-in.js");
+"use strict";
 
-module.exports = getBuiltIn('navigator', 'userAgent') || '';
+module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
 
 
 /***/ }),
@@ -7110,6 +7741,8 @@ module.exports = getBuiltIn('navigator', 'userAgent') || '';
   !*** ../node_modules/core-js/internals/engine-v8-version.js ***!
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var userAgent = __webpack_require__(/*! ../internals/engine-user-agent */ "../node_modules/core-js/internals/engine-user-agent.js");
@@ -7148,6 +7781,8 @@ module.exports = version;
   \**********************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 // IE8- don't enum bug keys
 module.exports = [
   'constructor',
@@ -7162,55 +7797,13 @@ module.exports = [
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/error-stack-clear.js":
-/*!**************************************************************!*\
-  !*** ../node_modules/core-js/internals/error-stack-clear.js ***!
-  \**************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
-
-var $Error = Error;
-var replace = uncurryThis(''.replace);
-
-var TEST = (function (arg) { return String($Error(arg).stack); })('zxcasd');
-var V8_OR_CHAKRA_STACK_ENTRY = /\n\s*at [^:]*:[^\n]*/;
-var IS_V8_OR_CHAKRA_STACK = V8_OR_CHAKRA_STACK_ENTRY.test(TEST);
-
-module.exports = function (stack, dropEntries) {
-  if (IS_V8_OR_CHAKRA_STACK && typeof stack == 'string' && !$Error.prepareStackTrace) {
-    while (dropEntries--) stack = replace(stack, V8_OR_CHAKRA_STACK_ENTRY, '');
-  } return stack;
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/internals/error-stack-installable.js":
-/*!********************************************************************!*\
-  !*** ../node_modules/core-js/internals/error-stack-installable.js ***!
-  \********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
-var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "../node_modules/core-js/internals/create-property-descriptor.js");
-
-module.exports = !fails(function () {
-  var error = Error('a');
-  if (!('stack' in error)) return true;
-  // eslint-disable-next-line es/no-object-defineproperty -- safe
-  Object.defineProperty(error, 'stack', createPropertyDescriptor(1, 7));
-  return error.stack !== 7;
-});
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/export.js":
 /*!***************************************************!*\
   !*** ../node_modules/core-js/internals/export.js ***!
   \***************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var getOwnPropertyDescriptor = (__webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "../node_modules/core-js/internals/object-get-own-property-descriptor.js").f);
@@ -7276,6 +7869,8 @@ module.exports = function (options, source) {
   \**************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 module.exports = function (exec) {
   try {
     return !!exec();
@@ -7287,31 +7882,13 @@ module.exports = function (exec) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/function-apply.js":
-/*!***********************************************************!*\
-  !*** ../node_modules/core-js/internals/function-apply.js ***!
-  \***********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var NATIVE_BIND = __webpack_require__(/*! ../internals/function-bind-native */ "../node_modules/core-js/internals/function-bind-native.js");
-
-var FunctionPrototype = Function.prototype;
-var apply = FunctionPrototype.apply;
-var call = FunctionPrototype.call;
-
-// eslint-disable-next-line es/no-reflect -- safe
-module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? call.bind(apply) : function () {
-  return call.apply(apply, arguments);
-});
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/function-bind-native.js":
 /*!*****************************************************************!*\
   !*** ../node_modules/core-js/internals/function-bind-native.js ***!
   \*****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 
@@ -7331,6 +7908,8 @@ module.exports = !fails(function () {
   \**********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var NATIVE_BIND = __webpack_require__(/*! ../internals/function-bind-native */ "../node_modules/core-js/internals/function-bind-native.js");
 
 var call = Function.prototype.call;
@@ -7347,6 +7926,8 @@ module.exports = NATIVE_BIND ? call.bind(call) : function () {
   !*** ../node_modules/core-js/internals/function-name.js ***!
   \**********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
@@ -7369,11 +7950,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/function-uncurry-this-raw.js":
-/*!**********************************************************************!*\
-  !*** ../node_modules/core-js/internals/function-uncurry-this-raw.js ***!
-  \**********************************************************************/
+/***/ "../node_modules/core-js/internals/function-uncurry-this.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/core-js/internals/function-uncurry-this.js ***!
+  \******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var NATIVE_BIND = __webpack_require__(/*! ../internals/function-bind-native */ "../node_modules/core-js/internals/function-bind-native.js");
 
@@ -7390,30 +7973,13 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/function-uncurry-this.js":
-/*!******************************************************************!*\
-  !*** ../node_modules/core-js/internals/function-uncurry-this.js ***!
-  \******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var classofRaw = __webpack_require__(/*! ../internals/classof-raw */ "../node_modules/core-js/internals/classof-raw.js");
-var uncurryThisRaw = __webpack_require__(/*! ../internals/function-uncurry-this-raw */ "../node_modules/core-js/internals/function-uncurry-this-raw.js");
-
-module.exports = function (fn) {
-  // Nashorn bug:
-  //   https://github.com/zloirock/core-js/issues/1128
-  //   https://github.com/zloirock/core-js/issues/1130
-  if (classofRaw(fn) === 'Function') return uncurryThisRaw(fn);
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/get-built-in.js":
 /*!*********************************************************!*\
   !*** ../node_modules/core-js/internals/get-built-in.js ***!
   \*********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -7435,6 +8001,8 @@ module.exports = function (namespace, method) {
   \*******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var aCallable = __webpack_require__(/*! ../internals/a-callable */ "../node_modules/core-js/internals/a-callable.js");
 var isNullOrUndefined = __webpack_require__(/*! ../internals/is-null-or-undefined */ "../node_modules/core-js/internals/is-null-or-undefined.js");
 
@@ -7452,10 +8020,12 @@ module.exports = function (V, P) {
 /*!***************************************************!*\
   !*** ../node_modules/core-js/internals/global.js ***!
   \***************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
 
 var check = function (it) {
-  return it && it.Math == Math && it;
+  return it && it.Math === Math && it;
 };
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -7467,7 +8037,7 @@ module.exports =
   check(typeof self == 'object' && self) ||
   check(typeof __webpack_require__.g == 'object' && __webpack_require__.g) ||
   // eslint-disable-next-line no-new-func -- fallback
-  (function () { return this; })() || Function('return this')();
+  (function () { return this; })() || this || Function('return this')();
 
 
 /***/ }),
@@ -7477,6 +8047,8 @@ module.exports =
   !*** ../node_modules/core-js/internals/has-own-property.js ***!
   \*************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var toObject = __webpack_require__(/*! ../internals/to-object */ "../node_modules/core-js/internals/to-object.js");
@@ -7499,6 +8071,8 @@ module.exports = Object.hasOwn || function hasOwn(it, key) {
   \********************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 module.exports = {};
 
 
@@ -7510,6 +8084,8 @@ module.exports = {};
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 var createElement = __webpack_require__(/*! ../internals/document-create-element */ "../node_modules/core-js/internals/document-create-element.js");
@@ -7519,7 +8095,7 @@ module.exports = !DESCRIPTORS && !fails(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(createElement('div'), 'a', {
     get: function () { return 7; }
-  }).a != 7;
+  }).a !== 7;
 });
 
 
@@ -7530,6 +8106,8 @@ module.exports = !DESCRIPTORS && !fails(function () {
   !*** ../node_modules/core-js/internals/indexed-object.js ***!
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
@@ -7544,36 +8122,8 @@ module.exports = fails(function () {
   // eslint-disable-next-line no-prototype-builtins -- safe
   return !$Object('z').propertyIsEnumerable(0);
 }) ? function (it) {
-  return classof(it) == 'String' ? split(it, '') : $Object(it);
+  return classof(it) === 'String' ? split(it, '') : $Object(it);
 } : $Object;
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/internals/inherit-if-required.js":
-/*!****************************************************************!*\
-  !*** ../node_modules/core-js/internals/inherit-if-required.js ***!
-  \****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
-var setPrototypeOf = __webpack_require__(/*! ../internals/object-set-prototype-of */ "../node_modules/core-js/internals/object-set-prototype-of.js");
-
-// makes subclassing work correct for wrapped built-ins
-module.exports = function ($this, dummy, Wrapper) {
-  var NewTarget, NewTargetPrototype;
-  if (
-    // it can work only with native `setPrototypeOf`
-    setPrototypeOf &&
-    // we haven't completely correct pre-ES6 way for getting `new.target`, so use this
-    isCallable(NewTarget = dummy.constructor) &&
-    NewTarget !== Wrapper &&
-    isObject(NewTargetPrototype = NewTarget.prototype) &&
-    NewTargetPrototype !== Wrapper.prototype
-  ) setPrototypeOf($this, NewTargetPrototype);
-  return $this;
-};
 
 
 /***/ }),
@@ -7583,6 +8133,8 @@ module.exports = function ($this, dummy, Wrapper) {
   !*** ../node_modules/core-js/internals/inspect-source.js ***!
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -7602,31 +8154,13 @@ module.exports = store.inspectSource;
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/install-error-cause.js":
-/*!****************************************************************!*\
-  !*** ../node_modules/core-js/internals/install-error-cause.js ***!
-  \****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
-var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "../node_modules/core-js/internals/create-non-enumerable-property.js");
-
-// `InstallErrorCause` abstract operation
-// https://tc39.es/proposal-error-cause/#sec-errorobjects-install-error-cause
-module.exports = function (O, options) {
-  if (isObject(options) && 'cause' in options) {
-    createNonEnumerableProperty(O, 'cause', options.cause);
-  }
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/internal-state.js":
 /*!***********************************************************!*\
   !*** ../node_modules/core-js/internals/internal-state.js ***!
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var NATIVE_WEAK_MAP = __webpack_require__(/*! ../internals/weak-map-basic-detection */ "../node_modules/core-js/internals/weak-map-basic-detection.js");
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
@@ -7650,7 +8184,7 @@ var getterFor = function (TYPE) {
   return function (it) {
     var state;
     if (!isObject(it) || (state = get(it)).type !== TYPE) {
-      throw TypeError('Incompatible receiver, ' + TYPE + ' required');
+      throw new TypeError('Incompatible receiver, ' + TYPE + ' required');
     } return state;
   };
 };
@@ -7663,7 +8197,7 @@ if (NATIVE_WEAK_MAP || shared.state) {
   store.set = store.set;
   /* eslint-enable no-self-assign -- prototype methods protection */
   set = function (it, metadata) {
-    if (store.has(it)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
+    if (store.has(it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
     store.set(it, metadata);
     return metadata;
@@ -7678,7 +8212,7 @@ if (NATIVE_WEAK_MAP || shared.state) {
   var STATE = sharedKey('state');
   hiddenKeys[STATE] = true;
   set = function (it, metadata) {
-    if (hasOwn(it, STATE)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
+    if (hasOwn(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
     createNonEnumerableProperty(it, STATE, metadata);
     return metadata;
@@ -7702,11 +8236,33 @@ module.exports = {
 
 /***/ }),
 
+/***/ "../node_modules/core-js/internals/is-array.js":
+/*!*****************************************************!*\
+  !*** ../node_modules/core-js/internals/is-array.js ***!
+  \*****************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var classof = __webpack_require__(/*! ../internals/classof-raw */ "../node_modules/core-js/internals/classof-raw.js");
+
+// `IsArray` abstract operation
+// https://tc39.es/ecma262/#sec-isarray
+// eslint-disable-next-line es/no-array-isarray -- safe
+module.exports = Array.isArray || function isArray(argument) {
+  return classof(argument) === 'Array';
+};
+
+
+/***/ }),
+
 /***/ "../node_modules/core-js/internals/is-callable.js":
 /*!********************************************************!*\
   !*** ../node_modules/core-js/internals/is-callable.js ***!
   \********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var $documentAll = __webpack_require__(/*! ../internals/document-all */ "../node_modules/core-js/internals/document-all.js");
 
@@ -7729,6 +8285,8 @@ module.exports = $documentAll.IS_HTMLDDA ? function (argument) {
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 
@@ -7736,8 +8294,8 @@ var replacement = /#|\.prototype\./;
 
 var isForced = function (feature, detection) {
   var value = data[normalize(feature)];
-  return value == POLYFILL ? true
-    : value == NATIVE ? false
+  return value === POLYFILL ? true
+    : value === NATIVE ? false
     : isCallable(detection) ? fails(detection)
     : !!detection;
 };
@@ -7761,6 +8319,8 @@ module.exports = isForced;
   \*****************************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 // we can't use just `it == null` since of `document.all` special case
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-aec
 module.exports = function (it) {
@@ -7775,6 +8335,8 @@ module.exports = function (it) {
   !*** ../node_modules/core-js/internals/is-object.js ***!
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var $documentAll = __webpack_require__(/*! ../internals/document-all */ "../node_modules/core-js/internals/document-all.js");
@@ -7796,6 +8358,8 @@ module.exports = $documentAll.IS_HTMLDDA ? function (it) {
   \****************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 module.exports = false;
 
 
@@ -7806,6 +8370,8 @@ module.exports = false;
   !*** ../node_modules/core-js/internals/is-symbol.js ***!
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "../node_modules/core-js/internals/get-built-in.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -7830,6 +8396,8 @@ module.exports = USE_SYMBOL_AS_UID ? function (it) {
   \*****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var toLength = __webpack_require__(/*! ../internals/to-length */ "../node_modules/core-js/internals/to-length.js");
 
 // `LengthOfArrayLike` abstract operation
@@ -7847,6 +8415,9 @@ module.exports = function (obj) {
   \**********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
+var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
@@ -7857,8 +8428,12 @@ var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
+var $String = String;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
+var stringSlice = uncurryThis(''.slice);
+var replace = uncurryThis(''.replace);
+var join = uncurryThis([].join);
 
 var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
   return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
@@ -7867,8 +8442,8 @@ var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
 var TEMPLATE = String(String).split('String');
 
 var makeBuiltIn = module.exports = function (value, name, options) {
-  if (String(name).slice(0, 7) === 'Symbol(') {
-    name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
+  if (stringSlice($String(name), 0, 7) === 'Symbol(') {
+    name = '[' + replace($String(name), /^Symbol\(([^)]*)\)/, '$1') + ']';
   }
   if (options && options.getter) name = 'get ' + name;
   if (options && options.setter) name = 'set ' + name;
@@ -7887,7 +8462,7 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   } catch (error) { /* empty */ }
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
-    state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
+    state.source = join(TEMPLATE, typeof name == 'string' ? name : '');
   } return value;
 };
 
@@ -7906,6 +8481,8 @@ Function.prototype.toString = makeBuiltIn(function toString() {
   \*******************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 var ceil = Math.ceil;
 var floor = Math.floor;
 
@@ -7920,26 +8497,13 @@ module.exports = Math.trunc || function trunc(x) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/normalize-string-argument.js":
-/*!**********************************************************************!*\
-  !*** ../node_modules/core-js/internals/normalize-string-argument.js ***!
-  \**********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var toString = __webpack_require__(/*! ../internals/to-string */ "../node_modules/core-js/internals/to-string.js");
-
-module.exports = function (argument, $default) {
-  return argument === undefined ? arguments.length < 2 ? '' : $default : toString(argument);
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/object-define-property.js":
 /*!*******************************************************************!*\
   !*** ../node_modules/core-js/internals/object-define-property.js ***!
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
 
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var IE8_DOM_DEFINE = __webpack_require__(/*! ../internals/ie8-dom-define */ "../node_modules/core-js/internals/ie8-dom-define.js");
@@ -7980,7 +8544,7 @@ exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P
   if (IE8_DOM_DEFINE) try {
     return $defineProperty(O, P, Attributes);
   } catch (error) { /* empty */ }
-  if ('get' in Attributes || 'set' in Attributes) throw $TypeError('Accessors not supported');
+  if ('get' in Attributes || 'set' in Attributes) throw new $TypeError('Accessors not supported');
   if ('value' in Attributes) O[P] = Attributes.value;
   return O;
 };
@@ -7993,6 +8557,8 @@ exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P
   !*** ../node_modules/core-js/internals/object-get-own-property-descriptor.js ***!
   \*******************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
 
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var call = __webpack_require__(/*! ../internals/function-call */ "../node_modules/core-js/internals/function-call.js");
@@ -8026,6 +8592,8 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
   \**************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
+
 var internalObjectKeys = __webpack_require__(/*! ../internals/object-keys-internal */ "../node_modules/core-js/internals/object-keys-internal.js");
 var enumBugKeys = __webpack_require__(/*! ../internals/enum-bug-keys */ "../node_modules/core-js/internals/enum-bug-keys.js");
 
@@ -8047,6 +8615,8 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
   \****************************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
+
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
 exports.f = Object.getOwnPropertySymbols;
 
@@ -8058,6 +8628,8 @@ exports.f = Object.getOwnPropertySymbols;
   !*** ../node_modules/core-js/internals/object-is-prototype-of.js ***!
   \*******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 
@@ -8071,6 +8643,8 @@ module.exports = uncurryThis({}.isPrototypeOf);
   !*** ../node_modules/core-js/internals/object-keys-internal.js ***!
   \*****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
@@ -8121,48 +8695,13 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/object-set-prototype-of.js":
-/*!********************************************************************!*\
-  !*** ../node_modules/core-js/internals/object-set-prototype-of.js ***!
-  \********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-/* eslint-disable no-proto -- safe */
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "../node_modules/core-js/internals/an-object.js");
-var aPossiblePrototype = __webpack_require__(/*! ../internals/a-possible-prototype */ "../node_modules/core-js/internals/a-possible-prototype.js");
-
-// `Object.setPrototypeOf` method
-// https://tc39.es/ecma262/#sec-object.setprototypeof
-// Works with __proto__ only. Old v8 can't work with null proto objects.
-// eslint-disable-next-line es/no-object-setprototypeof -- safe
-module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
-  var CORRECT_SETTER = false;
-  var test = {};
-  var setter;
-  try {
-    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-    setter = uncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
-    setter(test, []);
-    CORRECT_SETTER = test instanceof Array;
-  } catch (error) { /* empty */ }
-  return function setPrototypeOf(O, proto) {
-    anObject(O);
-    aPossiblePrototype(proto);
-    if (CORRECT_SETTER) setter(O, proto);
-    else O.__proto__ = proto;
-    return O;
-  };
-}() : undefined);
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/ordinary-to-primitive.js":
 /*!******************************************************************!*\
   !*** ../node_modules/core-js/internals/ordinary-to-primitive.js ***!
   \******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var call = __webpack_require__(/*! ../internals/function-call */ "../node_modules/core-js/internals/function-call.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -8177,7 +8716,7 @@ module.exports = function (input, pref) {
   if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
   if (isCallable(fn = input.valueOf) && !isObject(val = call(fn, input))) return val;
   if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
-  throw $TypeError("Can't convert object to primitive value");
+  throw new $TypeError("Can't convert object to primitive value");
 };
 
 
@@ -8188,6 +8727,8 @@ module.exports = function (input, pref) {
   !*** ../node_modules/core-js/internals/own-keys.js ***!
   \*****************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "../node_modules/core-js/internals/get-built-in.js");
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
@@ -8207,30 +8748,13 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/proxy-accessor.js":
-/*!***********************************************************!*\
-  !*** ../node_modules/core-js/internals/proxy-accessor.js ***!
-  \***********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var defineProperty = (__webpack_require__(/*! ../internals/object-define-property */ "../node_modules/core-js/internals/object-define-property.js").f);
-
-module.exports = function (Target, Source, key) {
-  key in Target || defineProperty(Target, key, {
-    configurable: true,
-    get: function () { return Source[key]; },
-    set: function (it) { Source[key] = it; }
-  });
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/require-object-coercible.js":
 /*!*********************************************************************!*\
   !*** ../node_modules/core-js/internals/require-object-coercible.js ***!
   \*********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isNullOrUndefined = __webpack_require__(/*! ../internals/is-null-or-undefined */ "../node_modules/core-js/internals/is-null-or-undefined.js");
 
@@ -8239,7 +8763,7 @@ var $TypeError = TypeError;
 // `RequireObjectCoercible` abstract operation
 // https://tc39.es/ecma262/#sec-requireobjectcoercible
 module.exports = function (it) {
-  if (isNullOrUndefined(it)) throw $TypeError("Can't call method on " + it);
+  if (isNullOrUndefined(it)) throw new $TypeError("Can't call method on " + it);
   return it;
 };
 
@@ -8251,6 +8775,8 @@ module.exports = function (it) {
   !*** ../node_modules/core-js/internals/shared-key.js ***!
   \*******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var shared = __webpack_require__(/*! ../internals/shared */ "../node_modules/core-js/internals/shared.js");
 var uid = __webpack_require__(/*! ../internals/uid */ "../node_modules/core-js/internals/uid.js");
@@ -8270,6 +8796,8 @@ module.exports = function (key) {
   \*********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var defineGlobalProperty = __webpack_require__(/*! ../internals/define-global-property */ "../node_modules/core-js/internals/define-global-property.js");
 
@@ -8287,16 +8815,18 @@ module.exports = store;
   \***************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "../node_modules/core-js/internals/is-pure.js");
 var store = __webpack_require__(/*! ../internals/shared-store */ "../node_modules/core-js/internals/shared-store.js");
 
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.26.0',
+  version: '3.33.2',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.26.0/LICENSE',
+  copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.33.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -8309,16 +8839,23 @@ var store = __webpack_require__(/*! ../internals/shared-store */ "../node_module
   \*************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 /* eslint-disable es/no-symbol -- required for testing */
 var V8_VERSION = __webpack_require__(/*! ../internals/engine-v8-version */ "../node_modules/core-js/internals/engine-v8-version.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
+var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
+
+var $String = global.String;
 
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
-  var symbol = Symbol();
+  var symbol = Symbol('symbol detection');
   // Chrome 38 Symbol has incorrect toString conversion
   // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
-  return !String(symbol) || !(Object(symbol) instanceof Symbol) ||
+  // nb: Do not call `String` directly to avoid this being optimized out to `symbol+''` which will,
+  // of course, fail.
+  return !$String(symbol) || !(Object(symbol) instanceof Symbol) ||
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
     !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
@@ -8331,6 +8868,8 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
   !*** ../node_modules/core-js/internals/to-absolute-index.js ***!
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var toIntegerOrInfinity = __webpack_require__(/*! ../internals/to-integer-or-infinity */ "../node_modules/core-js/internals/to-integer-or-infinity.js");
 
@@ -8354,6 +8893,8 @@ module.exports = function (index, length) {
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 // toObject with fallback for non-array-like ES3 strings
 var IndexedObject = __webpack_require__(/*! ../internals/indexed-object */ "../node_modules/core-js/internals/indexed-object.js");
 var requireObjectCoercible = __webpack_require__(/*! ../internals/require-object-coercible */ "../node_modules/core-js/internals/require-object-coercible.js");
@@ -8370,6 +8911,8 @@ module.exports = function (it) {
   !*** ../node_modules/core-js/internals/to-integer-or-infinity.js ***!
   \*******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var trunc = __webpack_require__(/*! ../internals/math-trunc */ "../node_modules/core-js/internals/math-trunc.js");
 
@@ -8390,6 +8933,8 @@ module.exports = function (argument) {
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var toIntegerOrInfinity = __webpack_require__(/*! ../internals/to-integer-or-infinity */ "../node_modules/core-js/internals/to-integer-or-infinity.js");
 
 var min = Math.min;
@@ -8409,6 +8954,8 @@ module.exports = function (argument) {
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var requireObjectCoercible = __webpack_require__(/*! ../internals/require-object-coercible */ "../node_modules/core-js/internals/require-object-coercible.js");
 
 var $Object = Object;
@@ -8427,6 +8974,8 @@ module.exports = function (argument) {
   !*** ../node_modules/core-js/internals/to-primitive.js ***!
   \*********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var call = __webpack_require__(/*! ../internals/function-call */ "../node_modules/core-js/internals/function-call.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
@@ -8448,7 +8997,7 @@ module.exports = function (input, pref) {
     if (pref === undefined) pref = 'default';
     result = call(exoticToPrim, input, pref);
     if (!isObject(result) || isSymbol(result)) return result;
-    throw $TypeError("Can't convert object to primitive value");
+    throw new $TypeError("Can't convert object to primitive value");
   }
   if (pref === undefined) pref = 'number';
   return ordinaryToPrimitive(input, pref);
@@ -8463,6 +9012,8 @@ module.exports = function (input, pref) {
   \************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var toPrimitive = __webpack_require__(/*! ../internals/to-primitive */ "../node_modules/core-js/internals/to-primitive.js");
 var isSymbol = __webpack_require__(/*! ../internals/is-symbol */ "../node_modules/core-js/internals/is-symbol.js");
 
@@ -8476,47 +9027,13 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/to-string-tag-support.js":
-/*!******************************************************************!*\
-  !*** ../node_modules/core-js/internals/to-string-tag-support.js ***!
-  \******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "../node_modules/core-js/internals/well-known-symbol.js");
-
-var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-var test = {};
-
-test[TO_STRING_TAG] = 'z';
-
-module.exports = String(test) === '[object z]';
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/internals/to-string.js":
-/*!******************************************************!*\
-  !*** ../node_modules/core-js/internals/to-string.js ***!
-  \******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var classof = __webpack_require__(/*! ../internals/classof */ "../node_modules/core-js/internals/classof.js");
-
-var $String = String;
-
-module.exports = function (argument) {
-  if (classof(argument) === 'Symbol') throw TypeError('Cannot convert a Symbol value to a string');
-  return $String(argument);
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/try-to-string.js":
 /*!**********************************************************!*\
   !*** ../node_modules/core-js/internals/try-to-string.js ***!
   \**********************************************************/
 /***/ ((module) => {
+
+"use strict";
 
 var $String = String;
 
@@ -8537,6 +9054,8 @@ module.exports = function (argument) {
   \************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 
 var id = 0;
@@ -8556,6 +9075,8 @@ module.exports = function (key) {
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 /* eslint-disable es/no-symbol -- required for testing */
 var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/symbol-constructor-detection */ "../node_modules/core-js/internals/symbol-constructor-detection.js");
 
@@ -8572,6 +9093,8 @@ module.exports = NATIVE_SYMBOL
   \********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 
@@ -8582,7 +9105,7 @@ module.exports = DESCRIPTORS && fails(function () {
   return Object.defineProperty(function () { /* empty */ }, 'prototype', {
     value: 42,
     writable: false
-  }).prototype != 42;
+  }).prototype !== 42;
 });
 
 
@@ -8593,6 +9116,8 @@ module.exports = DESCRIPTORS && fails(function () {
   !*** ../node_modules/core-js/internals/weak-map-basic-detection.js ***!
   \*********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -8610,6 +9135,8 @@ module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var shared = __webpack_require__(/*! ../internals/shared */ "../node_modules/core-js/internals/shared.js");
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
@@ -8617,193 +9144,71 @@ var uid = __webpack_require__(/*! ../internals/uid */ "../node_modules/core-js/i
 var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/symbol-constructor-detection */ "../node_modules/core-js/internals/symbol-constructor-detection.js");
 var USE_SYMBOL_AS_UID = __webpack_require__(/*! ../internals/use-symbol-as-uid */ "../node_modules/core-js/internals/use-symbol-as-uid.js");
 
-var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
-var symbolFor = Symbol && Symbol['for'];
-var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
+var WellKnownSymbolsStore = shared('wks');
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
 
 module.exports = function (name) {
-  if (!hasOwn(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
-    var description = 'Symbol.' + name;
-    if (NATIVE_SYMBOL && hasOwn(Symbol, name)) {
-      WellKnownSymbolsStore[name] = Symbol[name];
-    } else if (USE_SYMBOL_AS_UID && symbolFor) {
-      WellKnownSymbolsStore[name] = symbolFor(description);
-    } else {
-      WellKnownSymbolsStore[name] = createWellKnownSymbol(description);
-    }
+  if (!hasOwn(WellKnownSymbolsStore, name)) {
+    WellKnownSymbolsStore[name] = NATIVE_SYMBOL && hasOwn(Symbol, name)
+      ? Symbol[name]
+      : createWellKnownSymbol('Symbol.' + name);
   } return WellKnownSymbolsStore[name];
 };
 
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/wrap-error-constructor-with-cause.js":
-/*!******************************************************************************!*\
-  !*** ../node_modules/core-js/internals/wrap-error-constructor-with-cause.js ***!
-  \******************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "../node_modules/core-js/internals/get-built-in.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
-var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "../node_modules/core-js/internals/create-non-enumerable-property.js");
-var isPrototypeOf = __webpack_require__(/*! ../internals/object-is-prototype-of */ "../node_modules/core-js/internals/object-is-prototype-of.js");
-var setPrototypeOf = __webpack_require__(/*! ../internals/object-set-prototype-of */ "../node_modules/core-js/internals/object-set-prototype-of.js");
-var copyConstructorProperties = __webpack_require__(/*! ../internals/copy-constructor-properties */ "../node_modules/core-js/internals/copy-constructor-properties.js");
-var proxyAccessor = __webpack_require__(/*! ../internals/proxy-accessor */ "../node_modules/core-js/internals/proxy-accessor.js");
-var inheritIfRequired = __webpack_require__(/*! ../internals/inherit-if-required */ "../node_modules/core-js/internals/inherit-if-required.js");
-var normalizeStringArgument = __webpack_require__(/*! ../internals/normalize-string-argument */ "../node_modules/core-js/internals/normalize-string-argument.js");
-var installErrorCause = __webpack_require__(/*! ../internals/install-error-cause */ "../node_modules/core-js/internals/install-error-cause.js");
-var clearErrorStack = __webpack_require__(/*! ../internals/error-stack-clear */ "../node_modules/core-js/internals/error-stack-clear.js");
-var ERROR_STACK_INSTALLABLE = __webpack_require__(/*! ../internals/error-stack-installable */ "../node_modules/core-js/internals/error-stack-installable.js");
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
-var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "../node_modules/core-js/internals/is-pure.js");
-
-module.exports = function (FULL_NAME, wrapper, FORCED, IS_AGGREGATE_ERROR) {
-  var STACK_TRACE_LIMIT = 'stackTraceLimit';
-  var OPTIONS_POSITION = IS_AGGREGATE_ERROR ? 2 : 1;
-  var path = FULL_NAME.split('.');
-  var ERROR_NAME = path[path.length - 1];
-  var OriginalError = getBuiltIn.apply(null, path);
-
-  if (!OriginalError) return;
-
-  var OriginalErrorPrototype = OriginalError.prototype;
-
-  // V8 9.3- bug https://bugs.chromium.org/p/v8/issues/detail?id=12006
-  if (!IS_PURE && hasOwn(OriginalErrorPrototype, 'cause')) delete OriginalErrorPrototype.cause;
-
-  if (!FORCED) return OriginalError;
-
-  var BaseError = getBuiltIn('Error');
-
-  var WrappedError = wrapper(function (a, b) {
-    var message = normalizeStringArgument(IS_AGGREGATE_ERROR ? b : a, undefined);
-    var result = IS_AGGREGATE_ERROR ? new OriginalError(a) : new OriginalError();
-    if (message !== undefined) createNonEnumerableProperty(result, 'message', message);
-    if (ERROR_STACK_INSTALLABLE) createNonEnumerableProperty(result, 'stack', clearErrorStack(result.stack, 2));
-    if (this && isPrototypeOf(OriginalErrorPrototype, this)) inheritIfRequired(result, this, WrappedError);
-    if (arguments.length > OPTIONS_POSITION) installErrorCause(result, arguments[OPTIONS_POSITION]);
-    return result;
-  });
-
-  WrappedError.prototype = OriginalErrorPrototype;
-
-  if (ERROR_NAME !== 'Error') {
-    if (setPrototypeOf) setPrototypeOf(WrappedError, BaseError);
-    else copyConstructorProperties(WrappedError, BaseError, { name: true });
-  } else if (DESCRIPTORS && STACK_TRACE_LIMIT in OriginalError) {
-    proxyAccessor(WrappedError, OriginalError, STACK_TRACE_LIMIT);
-    proxyAccessor(WrappedError, OriginalError, 'prepareStackTrace');
-  }
-
-  copyConstructorProperties(WrappedError, OriginalError);
-
-  if (!IS_PURE) try {
-    // Safari 13- bug: WebAssembly errors does not have a proper `.name`
-    if (OriginalErrorPrototype.name !== ERROR_NAME) {
-      createNonEnumerableProperty(OriginalErrorPrototype, 'name', ERROR_NAME);
-    }
-    OriginalErrorPrototype.constructor = WrappedError;
-  } catch (error) { /* empty */ }
-
-  return WrappedError;
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/modules/es.error.cause.js":
-/*!*********************************************************!*\
-  !*** ../node_modules/core-js/modules/es.error.cause.js ***!
-  \*********************************************************/
+/***/ "../node_modules/core-js/modules/es.array.push.js":
+/*!********************************************************!*\
+  !*** ../node_modules/core-js/modules/es.array.push.js ***!
+  \********************************************************/
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
-/* eslint-disable no-unused-vars -- required for functions `.length` */
+"use strict";
+
 var $ = __webpack_require__(/*! ../internals/export */ "../node_modules/core-js/internals/export.js");
-var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
-var apply = __webpack_require__(/*! ../internals/function-apply */ "../node_modules/core-js/internals/function-apply.js");
-var wrapErrorConstructorWithCause = __webpack_require__(/*! ../internals/wrap-error-constructor-with-cause */ "../node_modules/core-js/internals/wrap-error-constructor-with-cause.js");
+var toObject = __webpack_require__(/*! ../internals/to-object */ "../node_modules/core-js/internals/to-object.js");
+var lengthOfArrayLike = __webpack_require__(/*! ../internals/length-of-array-like */ "../node_modules/core-js/internals/length-of-array-like.js");
+var setArrayLength = __webpack_require__(/*! ../internals/array-set-length */ "../node_modules/core-js/internals/array-set-length.js");
+var doesNotExceedSafeInteger = __webpack_require__(/*! ../internals/does-not-exceed-safe-integer */ "../node_modules/core-js/internals/does-not-exceed-safe-integer.js");
+var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 
-var WEB_ASSEMBLY = 'WebAssembly';
-var WebAssembly = global[WEB_ASSEMBLY];
+var INCORRECT_TO_LENGTH = fails(function () {
+  return [].push.call({ length: 0x100000000 }, 1) !== 4294967297;
+});
 
-var FORCED = Error('e', { cause: 7 }).cause !== 7;
-
-var exportGlobalErrorCauseWrapper = function (ERROR_NAME, wrapper) {
-  var O = {};
-  O[ERROR_NAME] = wrapErrorConstructorWithCause(ERROR_NAME, wrapper, FORCED);
-  $({ global: true, constructor: true, arity: 1, forced: FORCED }, O);
-};
-
-var exportWebAssemblyErrorCauseWrapper = function (ERROR_NAME, wrapper) {
-  if (WebAssembly && WebAssembly[ERROR_NAME]) {
-    var O = {};
-    O[ERROR_NAME] = wrapErrorConstructorWithCause(WEB_ASSEMBLY + '.' + ERROR_NAME, wrapper, FORCED);
-    $({ target: WEB_ASSEMBLY, stat: true, constructor: true, arity: 1, forced: FORCED }, O);
+// V8 and Safari <= 15.4, FF < 23 throws InternalError
+// https://bugs.chromium.org/p/v8/issues/detail?id=12681
+var properErrorOnNonWritableLength = function () {
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).push();
+  } catch (error) {
+    return error instanceof TypeError;
   }
 };
 
-// https://github.com/tc39/proposal-error-cause
-exportGlobalErrorCauseWrapper('Error', function (init) {
-  return function Error(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('EvalError', function (init) {
-  return function EvalError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('RangeError', function (init) {
-  return function RangeError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('ReferenceError', function (init) {
-  return function ReferenceError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('SyntaxError', function (init) {
-  return function SyntaxError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('TypeError', function (init) {
-  return function TypeError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('URIError', function (init) {
-  return function URIError(message) { return apply(init, this, arguments); };
-});
-exportWebAssemblyErrorCauseWrapper('CompileError', function (init) {
-  return function CompileError(message) { return apply(init, this, arguments); };
-});
-exportWebAssemblyErrorCauseWrapper('LinkError', function (init) {
-  return function LinkError(message) { return apply(init, this, arguments); };
-});
-exportWebAssemblyErrorCauseWrapper('RuntimeError', function (init) {
-  return function RuntimeError(message) { return apply(init, this, arguments); };
+var FORCED = INCORRECT_TO_LENGTH || !properErrorOnNonWritableLength();
+
+// `Array.prototype.push` method
+// https://tc39.es/ecma262/#sec-array.prototype.push
+$({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  push: function push(item) {
+    var O = toObject(this);
+    var len = lengthOfArrayLike(O);
+    var argCount = arguments.length;
+    doesNotExceedSafeInteger(len + argCount);
+    for (var i = 0; i < argCount; i++) {
+      O[len] = arguments[i];
+      len++;
+    }
+    setArrayLength(O, len);
+    return len;
+  }
 });
 
-
-/***/ }),
-
-/***/ "@wordpress/i18n":
-/*!**************************!*\
-  !*** external "wp.i18n" ***!
-  \**************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = wp.i18n;
-
-/***/ }),
-
-/***/ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js":
-/*!***********************************************************************!*\
-  !*** ../node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
-  \***********************************************************************/
-/***/ ((module) => {
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    "default": obj
-  };
-}
-module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ })
 
@@ -8827,7 +9232,7 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -8855,9 +9260,10 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "page-transitions-editor") return "" + chunkId + ".ed9e6f841eb61c1ca3b1.bundle.js";
-/******/ 			if (chunkId === "mega-menu-editor") return "" + chunkId + ".66d798484de92bb1d092.bundle.js";
-/******/ 			if (chunkId === "modules_query-control_assets_js_editor_template-query-control_js") return "2916a86e9d819c3b8e53.bundle.js";
+/******/ 			if (chunkId === "mega-menu-editor") return "" + chunkId + ".bbef3f7412481cbce555.bundle.js";
+/******/ 			if (chunkId === "nested-carousel-editor") return "" + chunkId + ".2fdc278ce6bc9f6ec2e0.bundle.js";
+/******/ 			if (chunkId === "loop-filter-editor") return "" + chunkId + ".d1bae86a5ed21c0e9981.bundle.js";
+/******/ 			if (chunkId === "modules_query-control_assets_js_editor_template-query-control_js") return "4abfbfd970d6f7680bc7.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
@@ -8905,6 +9311,7 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 /******/ 					script.setAttribute("nonce", __webpack_require__.nc);
 /******/ 				}
 /******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 		
 /******/ 				script.src = url;
 /******/ 			}
 /******/ 			inProgress[url] = [done];
@@ -8917,7 +9324,7 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 /******/ 				script.parentNode && script.parentNode.removeChild(script);
 /******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
 /******/ 				if(prev) return prev(event);
-/******/ 			};
+/******/ 			}
 /******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
 /******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
 /******/ 			script.onload = onScriptComplete.bind(null, script.onload);
@@ -8932,10 +9339,13 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 /******/ 		var document = __webpack_require__.g.document;
 /******/ 		if (!scriptUrl && document) {
 /******/ 			if (document.currentScript)
-/******/ 				scriptUrl = document.currentScript.src
+/******/ 				scriptUrl = document.currentScript.src;
 /******/ 			if (!scriptUrl) {
 /******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				if(scripts.length) scriptUrl = scripts[scripts.length - 1].src
+/******/ 				if(scripts.length) {
+/******/ 					var i = scripts.length - 1;
+/******/ 					while (i > -1 && !scriptUrl) scriptUrl = scripts[i--].src;
+/******/ 				}
 /******/ 			}
 /******/ 		}
 /******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
@@ -8990,7 +9400,7 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 /******/ 								}
 /******/ 							};
 /******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
-/******/ 						} else installedChunks[chunkId] = 0;
+/******/ 						}
 /******/ 					}
 /******/ 				}
 /******/ 		};
@@ -9060,6 +9470,9 @@ var _module7 = _interopRequireDefault(__webpack_require__(/*! modules/woocommerc
 var _module8 = _interopRequireDefault(__webpack_require__(/*! modules/scroll-snap/assets/js/editor/module */ "../modules/scroll-snap/assets/js/editor/module.js"));
 var _module9 = _interopRequireDefault(__webpack_require__(/*! modules/payments/assets/js/editor/module */ "../modules/payments/assets/js/editor/module.js"));
 var _module10 = _interopRequireDefault(__webpack_require__(/*! modules/loop-builder/assets/js/editor/module */ "../modules/loop-builder/assets/js/editor/module.js"));
+var _tiers = __webpack_require__(/*! ./tiers */ "../assets/dev/js/editor/tiers.js");
+var _notesContextMenu = _interopRequireDefault(__webpack_require__(/*! modules/notes/assets/js/notes-context-menu */ "../modules/notes/assets/js/notes-context-menu.js"));
+var _module11 = _interopRequireDefault(__webpack_require__(/*! modules/page-transitions/assets/js/editor/module */ "../modules/page-transitions/assets/js/editor/module.js"));
 var ElementorPro = Marionette.Application.extend({
   config: {},
   modules: {},
@@ -9087,25 +9500,29 @@ var ElementorPro = Marionette.Application.extend({
       woocommerce: new _module7.default(),
       stripe: new _module9.default(),
       loopBuilder: new _module10.default(),
+      pageTransitions: new _module11.default(),
       // Popup is depended on Theme Builder.
       popup: new _module.default(),
       videoPlaylistModule: new _module6.default(),
       ScrollSnapModule: new _module8.default()
     };
-
-    // Import the Page Transitions editor module dynamically.
-    if (elementorCommon.config.experimentalFeatures['page-transitions']) {
-      __webpack_require__.e(/*! import() | page-transitions-editor */ "page-transitions-editor").then(__webpack_require__.bind(__webpack_require__, /*! modules/page-transitions/assets/js/editor/module */ "../modules/page-transitions/assets/js/editor/module.js")).then(_ref => {
-        let {
-          default: PageTransitions
-        } = _ref;
-        this.modules.pageTransitions = new PageTransitions();
-      });
-    }
     if (elementorCommon.config.experimentalFeatures['mega-menu']) {
       elementorCommon.elements.$window.on('elementor/nested-element-type-loaded', async () => {
         // The module should be loaded only when `nestedElements` is available.
         this.modules.megaMenu = new (await __webpack_require__.e(/*! import() | mega-menu-editor */ "mega-menu-editor").then(__webpack_require__.bind(__webpack_require__, /*! modules/mega-menu/assets/js/editor/module */ "../modules/mega-menu/assets/js/editor/module.js"))).default();
+      });
+    }
+    if (elementorCommon.config.experimentalFeatures['nested-elements']) {
+      elementorCommon.elements.$window.on('elementor/nested-element-type-loaded', async () => {
+        // The module should be loaded only when `nestedElements` is available.
+        this.modules.nestedCarousel = new (await __webpack_require__.e(/*! import() | nested-carousel-editor */ "nested-carousel-editor").then(__webpack_require__.bind(__webpack_require__, /*! modules/nested-carousel/assets/js/editor/module */ "../modules/nested-carousel/assets/js/editor/module.js"))).default();
+      });
+    }
+    if (elementorCommon.config.experimentalFeatures['taxonomy-filter']) {
+      __webpack_require__.e(/*! import() | loop-filter-editor */ "loop-filter-editor").then(__webpack_require__.bind(__webpack_require__, /*! modules/loop-filter/assets/js/editor/module */ "../modules/loop-filter/assets/js/editor/module.js")).then(({
+        default: LoopFilter
+      }) => {
+        this.modules.loopFilter = new LoopFilter();
       });
     }
   },
@@ -9133,32 +9550,41 @@ var ElementorPro = Marionette.Application.extend({
     elementor.on('preview:loaded', () => this.onElementorPreviewLoaded());
     elementorPro.libraryRemoveGetProButtons();
     elementorCommon.debug.addURLToWatch('elementor-pro/assets');
+    if (elementorPro.config.should_show_promotion) {
+      new _notesContextMenu.default();
+    }
   },
   onElementorPreviewLoaded() {
     elementor.$preview[0].contentWindow.elementorPro = this;
   },
   libraryRemoveGetProButtons() {
-    elementor.hooks.addFilter('elementor/editor/template-library/template/action-button', function (viewID, templateData) {
-      var _elementor$config, _elementor$config$lib;
-      if (templateData.accessLevel === undefined || ((_elementor$config = elementor.config) === null || _elementor$config === void 0 ? void 0 : (_elementor$config$lib = _elementor$config.library_connect) === null || _elementor$config$lib === void 0 ? void 0 : _elementor$config$lib.current_access_level) === undefined) {
+    elementor.hooks.addFilter('elementor/editor/template-library/template/action-button', (viewID, templateData) => {
+      if (!templateData.accessTier || !elementor.config?.library_connect?.current_access_tier) {
         // BC support.
-        return templateData.isPro && !elementorPro.config.isActive ? '#tmpl-elementor-pro-template-library-activate-license-button' : '#tmpl-elementor-template-library-insert-button';
+        return this.getProButtonViewIdBC(viewID, templateData);
       }
-
-      // When the template should be at least "pro" and the license is not active.
-      if (templateData.accessLevel > 0 && !elementorPro.config.isActive) {
+      const isProTemplate = templateData.accessTier !== elementor.config.library_connect.base_access_tier;
+      if (isProTemplate && !elementorPro.config.isActive) {
         return '#tmpl-elementor-pro-template-library-activate-license-button';
       }
-
-      // When the template access levels is greater than the current license access level it should
-      // return the "core" view template which is by default "go pro" or "go expert" button.
-      if (templateData.accessLevel > elementor.config.library_connect.current_access_level) {
-        return viewID;
-      }
-
-      // When the current license can insert the template.
-      return '#tmpl-elementor-template-library-insert-button';
+      const canInsert = (0, _tiers.isTierAtLeast)(elementor.config.library_connect.current_access_tier, templateData.accessTier);
+      return canInsert ? '#tmpl-elementor-template-library-insert-button' : viewID;
     });
+  },
+  getProButtonViewIdBC(viewID, templateData) {
+    // When the template should be at least "pro" and the license is not active.
+    if (templateData.accessLevel > 0 && !elementorPro.config.isActive) {
+      return '#tmpl-elementor-pro-template-library-activate-license-button';
+    }
+
+    // When the template access levels is greater than the current license access level it should
+    // return the "core" view template which is by default "go pro" or "go expert" button.
+    if (templateData.accessLevel > elementor.config.library_connect.current_access_level) {
+      return viewID;
+    }
+
+    // When the current license can insert the template.
+    return '#tmpl-elementor-template-library-insert-button';
   },
   onActivateSuccess() {
     // Hide notice.

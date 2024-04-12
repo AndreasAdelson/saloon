@@ -3,10 +3,10 @@ namespace WprAddons\Modules\PricingTable\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
 use Elementor\Widget_Base;
@@ -134,6 +134,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Awesome Title',
 				'condition' => [
 					'type_select' => 'heading',
@@ -146,6 +149,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Sub Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Subtitle text',
 				'condition' => [
 					'type_select' => 'heading',
@@ -176,6 +182,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'type_select' => 'heading',
 					'heading_icon_type' => 'image',
@@ -188,6 +197,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' =>'Text Element',
 				'condition' => [
 					'type_select' => 'text',
@@ -200,6 +212,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Price', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '59',
 				'condition' => [
 					'type_select' => 'price',
@@ -212,6 +227,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Sub Price', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '99',
 				'condition' => [
 					'type_select' => 'price',
@@ -257,6 +275,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Currency', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '$',
 				'condition' => [
 					'type_select' => 'price',
@@ -281,6 +302,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Old Price', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '55',
 				'condition' => [
 					'type_select' => 'price',
@@ -294,6 +318,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Period', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '/Month',
 				'condition' => [
 					'type_select' => 'price',
@@ -306,6 +333,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Awesome Feature',
 				'condition' => [
 					'type_select' => 'feature',
@@ -333,6 +363,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Button',
 				'condition' => [
 					'type_select' => 'button',
@@ -345,6 +378,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button ID', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => 'button-id',
 				'condition' => [
 					'type_select' => 'button',
@@ -356,6 +392,9 @@ class Pricing_Table extends Widget_Base {
 			'btn_url',
 			[
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'show_label' => false,
 				'condition' => [
@@ -665,6 +704,9 @@ class Pricing_Table extends Widget_Base {
 			[
 				'label' => esc_html__( ' Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Sale',
 				'condition' => [
 					'badge_style!' => 'none',
@@ -922,7 +964,6 @@ class Pricing_Table extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'heading_title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-pricing-table-title',
 			]
 		);
@@ -974,7 +1015,6 @@ class Pricing_Table extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'heading_sub_title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-pricing-table-sub-title',
 			]
 		);
@@ -1043,6 +1083,7 @@ class Pricing_Table extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-pricing-table-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-pricing-table-icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .wpr-pricing-table-icon img' => 'max-width: {{SIZE}}{{UNIT}};',
 				],
 			]
@@ -1142,7 +1183,6 @@ class Pricing_Table extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'price_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-pricing-table-price',
 			]
 		);
@@ -1393,7 +1433,6 @@ class Pricing_Table extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'period_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-pricing-table-preiod',
 			]
 		);
@@ -1518,7 +1557,6 @@ class Pricing_Table extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'feature_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-pricing-table-feature',
 			]
 		);
@@ -1969,7 +2007,6 @@ class Pricing_Table extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'btn_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-pricing-table-btn',
 				'separator' => 'before',
 			]
@@ -2118,7 +2155,6 @@ class Pricing_Table extends Widget_Base {
 			[
 				'name' => 'text_typography',
 				'label' => esc_html__( 'Typography', 'wpr-addons' ),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-pricing-table-text'
 			]
 		);
@@ -2194,7 +2230,6 @@ class Pricing_Table extends Widget_Base {
 			[
 				'name' => 'badge_typography',
 				'label' => esc_html__( 'Typography', 'wpr-addons' ),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-pricing-table-badge-inner'
 			]
 		);
@@ -2596,17 +2631,31 @@ class Pricing_Table extends Widget_Base {
 
 			<?php elseif ( $item['type_select'] === 'button' && ( ! empty( $item['btn_text'] ) || '' !== $item['select_icon']['value'] ) ) :
 				
-				if (  '' !== $item['btn_url']['url'] ) {
-					$this->add_render_attribute( 'btn_attribute'. $item_count, 'href', $item['btn_url']['url'] );
+				// if (  '' !== $item['btn_url']['url'] ) {
+				// 	$this->add_render_attribute( 'btn_attribute'. $item_count, 'href', $item['btn_url']['url'] );
 	
-					if ( $item['btn_url']['is_external'] ) :
-						$this->add_render_attribute( 'btn_attribute'. $item_count, 'target', '_blank' );
-					endif;
+				// 	if ( $item['btn_url']['is_external'] ) :
+				// 		$this->add_render_attribute( 'btn_attribute'. $item_count, 'target', '_blank' );
+				// 	endif;
 	
-					if ( $item['btn_url']['nofollow'] ) :
-						$this->add_render_attribute( 'btn_attribute'. $item_count, 'nofollow', '' );
-					endif;
-				}
+				// 	if ( $item['btn_url']['nofollow'] ) :
+				// 		$this->add_render_attribute( 'btn_attribute'. $item_count, 'nofollow', '' );
+				// 	endif;
+				// }
+                
+                if ( '' !== $item['btn_url']['url'] ) {
+                    $this->add_render_attribute( 'btn_attribute' . $item_count, 'href', esc_url( $item['btn_url']['url'] ) );
+                
+                    if ( $item['btn_url']['is_external'] ) {
+                        $this->add_render_attribute( 'btn_attribute' . $item_count, 'target', '_blank' );
+                        $this->add_render_attribute( 'btn_attribute' . $item_count, 'rel', 'noopener noreferrer' );
+                    }
+                
+                    if ( $item['btn_url']['nofollow'] ) {
+                        $this->add_render_attribute( 'btn_attribute' . $item_count, 'rel', 'nofollow', true ); // true to append if rel already exists
+                    }
+                }
+                
 
 				if ( '' !== $item['btn_id'] ) :
 					$this->add_render_attribute( 'btn_attribute' . $item_count, 'id', esc_html( $item['btn_id']) );

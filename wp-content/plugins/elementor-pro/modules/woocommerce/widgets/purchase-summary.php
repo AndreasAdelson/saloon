@@ -122,6 +122,9 @@ class Purchase_Summary extends Base_Widget {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => esc_html__( 'Order Number:', 'elementor-pro' ),
 			]
 		);
@@ -133,6 +136,9 @@ class Purchase_Summary extends Base_Widget {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'default' => esc_html__( 'Order Date:', 'elementor-pro' ),
 			]
@@ -146,6 +152,9 @@ class Purchase_Summary extends Base_Widget {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => esc_html__( 'Order Email:', 'elementor-pro' ),
 			]
 		);
@@ -158,6 +167,9 @@ class Purchase_Summary extends Base_Widget {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => esc_html__( 'Order Total:', 'elementor-pro' ),
 			]
 		);
@@ -169,6 +181,9 @@ class Purchase_Summary extends Base_Widget {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'default' => esc_html__( 'Payment Method:', 'elementor-pro' ),
 			]
@@ -190,6 +205,9 @@ class Purchase_Summary extends Base_Widget {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'default' => esc_html__( 'Our Bank Details', 'elementor-pro' ),
 			]
@@ -237,6 +255,9 @@ class Purchase_Summary extends Base_Widget {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => esc_html__( 'Downloads', 'elementor-pro' ),
 			]
 		);
@@ -282,6 +303,9 @@ class Purchase_Summary extends Base_Widget {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'default' => esc_html__( 'Order Details', 'elementor-pro' ),
 			]
@@ -329,6 +353,9 @@ class Purchase_Summary extends Base_Widget {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => esc_html__( 'Billing Details', 'elementor-pro' ),
 			]
 		);
@@ -374,6 +401,9 @@ class Purchase_Summary extends Base_Widget {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'default' => esc_html__( 'Shipping Details', 'elementor-pro' ),
 			]
@@ -433,6 +463,9 @@ class Purchase_Summary extends Base_Widget {
 				'condition' => [
 					'preview_order_type' => 'custom-order',
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'render_type' => 'template',
 				'description' => esc_html__( 'Note: To find an order ID, go to the WP dashboard: WooCommerce > Orders', 'elementor-pro' ),
 			]
@@ -484,7 +517,7 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .shop_table, {{WRAPPER}} address' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -513,7 +546,7 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--sections-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -525,7 +558,7 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--sections-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -537,11 +570,16 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -635,11 +673,16 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -690,14 +733,18 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Space Between', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 75,
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--payment-details-space-between: {{SIZE}}{{UNIT}};',
 				],
@@ -748,11 +795,16 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -817,11 +869,16 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -863,14 +920,18 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Space Between', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 75,
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--bank-details-space-between: {{SIZE}}{{UNIT}};',
 				],
@@ -918,11 +979,16 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -974,11 +1040,16 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -1043,11 +1114,16 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -1089,14 +1165,18 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Rows Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 60,
+						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--order-details-rows-gap: {{SIZE}}{{UNIT}};',
 				],
@@ -1260,11 +1340,16 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -1404,6 +1489,7 @@ class Purchase_Summary extends Base_Widget {
 					'px' => [
 						'min' => 0,
 						'max' => 3000,
+						'step' => 100,
 					],
 				],
 			]
@@ -1441,7 +1527,7 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .shop_table .button, {{WRAPPER}} .order-again .button, {{WRAPPER}} .woocommerce-pagination .button' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1470,7 +1556,7 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--button-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1482,7 +1568,7 @@ class Purchase_Summary extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--button-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],

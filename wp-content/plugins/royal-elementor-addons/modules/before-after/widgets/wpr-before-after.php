@@ -3,11 +3,10 @@ namespace WprAddons\Modules\BeforeAfter\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Image_Size;
-use Elementor\Core\Schemes\Color;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Utils;
 use WprAddons\Classes\Utilities;
@@ -116,6 +115,9 @@ class Wpr_Before_After extends Widget_Base {
 			[
 				'label' => esc_html__( 'Upload Image 1', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
@@ -127,6 +129,9 @@ class Wpr_Before_After extends Widget_Base {
 			[
 				'label' => esc_html__( 'Upload Image 2', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
@@ -191,6 +196,9 @@ class Wpr_Before_After extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image 1 Label', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'After',
 				'placeholder'=> esc_html__( 'After', 'wpr-addons' ),
 				'separator' => 'before',
@@ -205,6 +213,9 @@ class Wpr_Before_After extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image 2 Label', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Before',
 				'placeholder'=> esc_html__( 'Before', 'wpr-addons' ),
 				'condition' => [
@@ -611,7 +622,6 @@ class Wpr_Before_After extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'labels_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-ba-label > div'
 			]
 		);

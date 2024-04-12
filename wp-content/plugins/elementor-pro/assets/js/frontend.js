@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.11.5 - 12-03-2023 */
+/*! elementor-pro - v3.20.0 - 10-04-2024 */
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["frontend"],{
 
 /***/ "../assets/dev/js/frontend/frontend.js":
@@ -19,6 +19,7 @@ var _frontend4 = _interopRequireDefault(__webpack_require__(/*! ../../../../modu
 var _frontend5 = _interopRequireDefault(__webpack_require__(/*! ../../../../modules/payments/assets/js/frontend/frontend */ "../modules/payments/assets/js/frontend/frontend.js"));
 var _frontend6 = _interopRequireDefault(__webpack_require__(/*! ../../../../modules/progress-tracker/assets/js/frontend/frontend */ "../modules/progress-tracker/assets/js/frontend/frontend.js"));
 var _controls = _interopRequireDefault(__webpack_require__(/*! ./utils/controls */ "../assets/dev/js/frontend/utils/controls.js"));
+var _dropdownMenuHeightController = _interopRequireDefault(__webpack_require__(/*! ./utils/dropdown-menu-height-controller */ "../assets/dev/js/frontend/utils/dropdown-menu-height-controller.js"));
 class ElementorProFrontend extends elementorModules.ViewModule {
   onInit() {
     super.onInit();
@@ -63,7 +64,8 @@ class ElementorProFrontend extends elementorModules.ViewModule {
   }
   initOnReadyComponents() {
     this.utils = {
-      controls: new _controls.default()
+      controls: new _controls.default(),
+      DropdownMenuHeightController: _dropdownMenuHeightController.default
     };
   }
 }
@@ -159,6 +161,81 @@ class Controls {
   }
 }
 exports["default"] = Controls;
+
+/***/ }),
+
+/***/ "../assets/dev/js/frontend/utils/dropdown-menu-height-controller.js":
+/*!**************************************************************************!*\
+  !*** ../assets/dev/js/frontend/utils/dropdown-menu-height-controller.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+class DropdownMenuHeightController {
+  constructor(widgetConfig) {
+    this.widgetConfig = widgetConfig;
+  }
+  calculateStickyMenuNavHeight() {
+    this.widgetConfig.elements.$dropdownMenuContainer.css(this.widgetConfig.settings.menuHeightCssVarName, '');
+    const menuToggleHeight = this.widgetConfig.elements.$dropdownMenuContainer.offset().top - jQuery(window).scrollTop();
+    return elementorFrontend.elements.$window.height() - menuToggleHeight;
+  }
+  calculateMenuTabContentHeight($tab) {
+    return elementorFrontend.elements.$window.height() - $tab[0].getBoundingClientRect().top;
+  }
+  isElementSticky() {
+    return this.widgetConfig.elements.$element.hasClass('elementor-sticky') || this.widgetConfig.elements.$element.parents('.elementor-sticky').length;
+  }
+  getMenuHeight() {
+    return this.isElementSticky() ? this.calculateStickyMenuNavHeight() + 'px' : this.widgetConfig.settings.dropdownMenuContainerMaxHeight;
+  }
+  setMenuHeight(menuHeight) {
+    this.widgetConfig.elements.$dropdownMenuContainer.css(this.widgetConfig.settings.menuHeightCssVarName, menuHeight);
+  }
+  reassignMobileMenuHeight() {
+    const menuHeight = this.isToggleActive() ? this.getMenuHeight() : 0;
+    return this.setMenuHeight(menuHeight);
+  }
+  reassignMenuHeight($activeTabContent) {
+    if (!this.isElementSticky() || 0 === $activeTabContent.length) {
+      return;
+    }
+    const offsetBottom = elementorFrontend.elements.$window.height() - $activeTabContent[0].getBoundingClientRect().top,
+      isContentHeightBiggerThanWindow = $activeTabContent.height() > offsetBottom;
+    if (!isContentHeightBiggerThanWindow) {
+      return;
+    }
+    $activeTabContent.css('height', this.calculateMenuTabContentHeight($activeTabContent) + 'px');
+    $activeTabContent.css('overflow-y', 'scroll');
+  }
+  resetMenuHeight($activeTabContent) {
+    if (!this.isElementSticky()) {
+      return;
+    }
+    $activeTabContent.css('height', 'initial');
+    $activeTabContent.css('overflow-y', 'visible');
+  }
+  isToggleActive() {
+    const $menuToggle = this.widgetConfig.elements.$menuToggle;
+
+    // New approach.
+    // Aria attributes instead of css classes.
+    if (!!this.widgetConfig.attributes?.menuToggleState) {
+      return 'true' === $menuToggle.attr(this.widgetConfig.attributes.menuToggleState);
+    }
+
+    // This can be removed once the new markup of the Mega Menu has been implemented.
+    // Previously we used state classes to indicate the active state of the menu toggle.
+    return $menuToggle.hasClass(this.widgetConfig.classes.menuToggleActiveClass);
+  }
+}
+exports["default"] = DropdownMenuHeightController;
 
 /***/ }),
 
@@ -350,7 +427,7 @@ class _default extends elementorModules.frontend.handlers.Base {
       $dimensionsElement = $element;
       let childElementSelector;
       if ('column' === elementType) {
-        childElementSelector = elementorFrontend.config.legacyMode.elementWrappers ? '.elementor-column-wrap' : '.elementor-widget-wrap';
+        childElementSelector = '.elementor-widget-wrap';
       } else {
         childElementSelector = '.elementor-widget-container';
       }
@@ -1065,7 +1142,7 @@ class _default extends elementorModules.Module {
   constructor() {
     super();
     elementorFrontend.elementsHandler.attachHandler('paypal-button', () => __webpack_require__.e(/*! import() | paypal-button */ "paypal-button").then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/paypal-button */ "../modules/payments/assets/js/frontend/handlers/paypal-button.js")));
-    elementorFrontend.elementsHandler.attachHandler('stripe-button', () => __webpack_require__.e(/*! import() | stripe-button */ "stripe-button").then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/stripe-button */ "../modules/payments/assets/js/frontend/handlers/stripe-button.js")));
+    elementorFrontend.elementsHandler.attachHandler('stripe-button', () => Promise.all(/*! import() | stripe-button */[__webpack_require__.e("vendors-node_modules_dompurify_dist_purify_js"), __webpack_require__.e("stripe-button")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/stripe-button */ "../modules/payments/assets/js/frontend/handlers/stripe-button.js")));
   }
 }
 exports["default"] = _default;
@@ -1135,7 +1212,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   currentConfig: {},
   debouncedReactivate: null,
   bindEvents() {
@@ -1296,7 +1373,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     });
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -1337,9 +1413,11 @@ exports["default"] = _default;
 /*!****************************************************************!*\
   !*** ../node_modules/@babel/runtime/helpers/defineProperty.js ***!
   \****************************************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+var toPropertyKey = __webpack_require__(/*! ./toPropertyKey.js */ "../node_modules/@babel/runtime/helpers/toPropertyKey.js");
 function _defineProperty(obj, key, value) {
+  key = toPropertyKey(key);
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -1368,6 +1446,62 @@ function _interopRequireDefault(obj) {
   };
 }
 module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/toPrimitive.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/toPrimitive.js ***!
+  \*************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var _typeof = (__webpack_require__(/*! ./typeof.js */ "../node_modules/@babel/runtime/helpers/typeof.js")["default"]);
+function _toPrimitive(input, hint) {
+  if (_typeof(input) !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (_typeof(res) !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+module.exports = _toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/toPropertyKey.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/toPropertyKey.js ***!
+  \***************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var _typeof = (__webpack_require__(/*! ./typeof.js */ "../node_modules/@babel/runtime/helpers/typeof.js")["default"]);
+var toPrimitive = __webpack_require__(/*! ./toPrimitive.js */ "../node_modules/@babel/runtime/helpers/toPrimitive.js");
+function _toPropertyKey(arg) {
+  var key = toPrimitive(arg, "string");
+  return _typeof(key) === "symbol" ? key : String(key);
+}
+module.exports = _toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/typeof.js":
+/*!********************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/typeof.js ***!
+  \********************************************************/
+/***/ ((module) => {
+
+function _typeof(o) {
+  "@babel/helpers - typeof";
+
+  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
+}
+module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ })
 

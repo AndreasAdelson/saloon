@@ -3,12 +3,11 @@ namespace WprAddons\Modules\Mailchimp\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Color;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use WprAddons\Classes\Utilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -138,6 +137,9 @@ class Wpr_Mailchimp extends Widget_Base {
 			[
 				'label' => esc_html__( 'Form Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Join the family!',
 				'condition' => [
 					'show_form_header' => 'yes',
@@ -150,6 +152,9 @@ class Wpr_Mailchimp extends Widget_Base {
 			[
 				'label' => esc_html__( 'Form Description', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Sign up for a Newsletter.',
 				'condition' => [
 					'show_form_header' => 'yes',
@@ -190,6 +195,7 @@ class Wpr_Mailchimp extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-mailchimp-header i' => '{{VALUE}}',
+					'{{WRAPPER}} .wpr-mailchimp-header svg' => '{{VALUE}}'
 				],
 				'condition' => [
 					'show_form_header' => 'yes',
@@ -202,6 +208,9 @@ class Wpr_Mailchimp extends Widget_Base {
 			[
 				'label' => esc_html__( 'Email Label', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Email',
 				'separator' => 'before',
 			]
@@ -212,6 +221,9 @@ class Wpr_Mailchimp extends Widget_Base {
 			[
 				'label' => esc_html__( 'Email Placeholder', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'sample@mail.com',
 			]
 		);
@@ -233,6 +245,9 @@ class Wpr_Mailchimp extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Subscribe',
 			]
 		);
@@ -242,6 +257,9 @@ class Wpr_Mailchimp extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Loading Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Subscribing...',
 				'separator' => 'after'
 			]
@@ -252,6 +270,9 @@ class Wpr_Mailchimp extends Widget_Base {
 			[
 				'label' => esc_html__( 'Success Message', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'You have been successfully Subscribed!',
 			]
 		);
@@ -261,6 +282,9 @@ class Wpr_Mailchimp extends Widget_Base {
 			[
 				'label' => esc_html__( 'Error Message', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Ops! Something went wrong, please try again.',
 			]
 		);
@@ -529,7 +553,6 @@ class Wpr_Mailchimp extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'header_title_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .wpr-mailchimp-header h3',
 			]
 		);
@@ -551,7 +574,6 @@ class Wpr_Mailchimp extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'header_description_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-mailchimp-header p',
 			]
 		);
@@ -631,7 +653,6 @@ class Wpr_Mailchimp extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'labels_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-mailchimp-fields label',
 			]
 		);
@@ -819,7 +840,6 @@ class Wpr_Mailchimp extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'input_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-mailchimp-fields input',
 			]
 		);
@@ -1145,7 +1165,6 @@ class Wpr_Mailchimp extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'subscribe_btn_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-mailchimp-subscribe-btn'
 			]
 		);
@@ -1334,7 +1353,6 @@ class Wpr_Mailchimp extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'message_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-mailchimp-message',
 			]
 		);
@@ -1398,7 +1416,7 @@ class Wpr_Mailchimp extends Widget_Base {
 
 		?>
 
-		<form class="wpr-mailchimp-form" id="wpr-mailchimp-form-<?php echo esc_attr( $this->get_id() ); ?>" method="POST" data-api-key="<?php echo esc_attr(get_option('wpr_mailchimp_api_key')); ?>" data-list-id="<?php echo esc_attr($settings['maichimp_audience']); ?>" data-clear-fields="<?php echo $clear_fields_on_submit; ?>">
+		<form class="wpr-mailchimp-form" id="wpr-mailchimp-form-<?php echo esc_attr( $this->get_id() ); ?>" method="POST" data-list-id="<?php echo esc_attr($settings['maichimp_audience']); ?>" data-clear-fields="<?php echo $clear_fields_on_submit; ?>">
 			<!-- Form Header -->
 			<?php if ( 'yes' === $settings['show_form_header'] ) : ?>
 			<div class="wpr-mailchimp-header">

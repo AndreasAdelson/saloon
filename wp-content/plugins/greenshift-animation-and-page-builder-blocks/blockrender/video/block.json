@@ -1,5 +1,5 @@
 {
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"name": "greenshift-blocks/video",
 	"title": "Video",
 	"category":"GreenShift"

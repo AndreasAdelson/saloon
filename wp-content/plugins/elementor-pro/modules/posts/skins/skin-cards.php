@@ -183,10 +183,16 @@ class Skin_Cards extends Skin_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -203,10 +209,19 @@ class Skin_Cards extends Skin_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 5,
 						'max' => 50,
+					],
+					'em' => [
+						'min' => 0.5,
+						'max' => 5,
+					],
+					'rem' => [
+						'min' => 0.5,
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -223,9 +238,16 @@ class Skin_Cards extends Skin_Base {
 			[
 				'label' => esc_html__( 'Margin', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
 				'default' => [
@@ -273,10 +295,16 @@ class Skin_Cards extends Skin_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 20,
-						'max' => 90,
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -375,12 +403,15 @@ class Skin_Cards extends Skin_Base {
 			[
 				'label' => esc_html__( 'Border Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 20,
 					],
 					'em' => [
+						'max' => 2,
+					],
+					'rem' => [
 						'max' => 2,
 					],
 				],
@@ -395,11 +426,16 @@ class Skin_Cards extends Skin_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'selectors' => [
@@ -413,11 +449,16 @@ class Skin_Cards extends Skin_Base {
 			[
 				'label' => esc_html__( 'Horizontal Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -433,11 +474,16 @@ class Skin_Cards extends Skin_Base {
 			[
 				'label' => esc_html__( 'Vertical Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -578,7 +624,7 @@ class Skin_Cards extends Skin_Base {
 		$optional_attributes_html = $this->get_optional_link_attributes_html();
 
 		?>
-		<a class="elementor-post__thumbnail__link" href="<?php echo esc_url( get_permalink() ); ?>" <?php Utils::print_unescaped_internal_string( $optional_attributes_html ); ?>><div class="elementor-post__thumbnail"><?php Utils::print_unescaped_internal_string( $thumbnail_html ); ?></div></a>
+		<a class="elementor-post__thumbnail__link" href="<?php echo esc_url( get_permalink() ); ?>" tabindex="-1" <?php Utils::print_unescaped_internal_string( $optional_attributes_html ); ?>><div class="elementor-post__thumbnail"><?php Utils::print_unescaped_internal_string( $thumbnail_html ); ?></div></a>
 		<?php
 		if ( $this->get_instance_value( 'show_badge' ) ) {
 			$this->render_badge();

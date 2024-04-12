@@ -74,5 +74,20 @@ background: rgba(0, 0, 0, 0.1);
 background: #F4BE86;
 }
 
+
+.forfait2::-webkit-scrollbar{
+width: 5px;
+}
+
+.forfait2::-webkit-scrollbar-track{
+background: rgba(0, 0, 0, 0.1);
+}
+
+.forfait2::-webkit-scrollbar-thumb{
+background: #F4BE86;
+}
+
+
+
 </style>
 <!-- end Simple Custom CSS and JS -->

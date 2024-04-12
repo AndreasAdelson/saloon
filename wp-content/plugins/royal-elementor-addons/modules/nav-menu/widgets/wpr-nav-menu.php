@@ -2,12 +2,11 @@
 namespace WprAddons\Modules\NavMenu\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Color;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use WprAddons\Classes\Utilities;
 
@@ -149,7 +148,7 @@ class Wpr_Nav_Menu extends Widget_Base {
 	}
 
 	public function add_control_mob_menu_display() {
-		$breakpoints = Responsive::get_breakpoints();
+		$breakpoints = \Elementor\Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		$this->add_control(
 			'mob_menu_display',
@@ -159,9 +158,9 @@ class Wpr_Nav_Menu extends Widget_Base {
 				'default' => 'mobile',
 				'options' => [
 					/* translators: %d: Breakpoint number. */
-					'mobile' => sprintf( esc_html__( 'Mobile (< %dpx)', 'wpr-addons' ), $breakpoints['md'] ),
+					'mobile' => sprintf( esc_html__( 'Mobile (≤ %dpx)', 'wpr-addons' ), $breakpoints['mobile']->get_default_value() ),
 					/* translators: %d: Breakpoint number. */
-					'tablet' => sprintf( esc_html__( 'Tablet (< %dpx)', 'wpr-addons' ), $breakpoints['lg'] ),
+					'tablet' => sprintf( esc_html__( 'Tablet (≤ %dpx)', 'wpr-addons' ), $breakpoints['tablet']->get_default_value() ),
 					'pro-nn' => esc_html__( 'Don\'t Show (Pro)', 'wpr-addons' ),
 					'pro-al' => esc_html__( 'All Devices (Pro)', 'wpr-addons' ),
 				],
@@ -530,6 +529,9 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Toggle Open Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'Menu', 'wpr-addons' ),
 				'condition' => [
 					'mob_menu_display!' => 'none',
@@ -543,6 +545,9 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Toggle Close Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'Close', 'wpr-addons' ),
 				'condition' => [
 					'mob_menu_display!' => 'none',
@@ -626,10 +631,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_3,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_3,
+				// ],
 				'default' => '#333333',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-nav-menu .wpr-menu-item,
@@ -652,10 +657,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_4,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_4,
+				// ],
 				'default' => '#605BE5',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-nav-menu .wpr-menu-item:hover,
@@ -671,10 +676,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Pointer Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_4,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_4,
+				// ],
 				'default' => '#605BE5',
 				'selectors' => [
 					'{{WRAPPER}}.wpr-pointer-line-fx .wpr-menu-item:before,
@@ -727,7 +732,6 @@ class Wpr_Nav_Menu extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'menu_items_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .wpr-nav-menu .wpr-menu-item,{{WRAPPER}} .wpr-mobile-nav-menu a,{{WRAPPER}} .wpr-mobile-toggle-text',
 			]
 		);
@@ -874,10 +878,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_3,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_3,
+				// ],
 				'default' => '#333333',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-sub-menu .wpr-sub-menu-item,
@@ -891,10 +895,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Background Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_3,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_3,
+				// ],
 				'default' => '#ffffff',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-sub-menu .wpr-sub-menu-item' => 'background-color: {{VALUE}};',
@@ -917,10 +921,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_4,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_4,
+				// ],
 				'default' => '#ffffff',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-sub-menu .wpr-sub-menu-item:hover,
@@ -936,10 +940,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Background Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_4,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_4,
+				// ],
 				'default' => '#605BE5',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-sub-menu .wpr-sub-menu-item:hover,
@@ -957,7 +961,6 @@ class Wpr_Nav_Menu extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'sub_menu_typography',
-				'scheme' => Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .wpr-sub-menu .wpr-sub-menu-item'
 			]
 		);
@@ -1043,10 +1046,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Divider Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_4,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_4,
+				// ],
 				'default' => '#e8e8e8',
 				'selectors' => [
 					'{{WRAPPER}}.wpr-sub-divider-yes .wpr-sub-menu li:not(:last-child)' => 'border-bottom-color: {{VALUE}};',
@@ -1152,10 +1155,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_3,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_3,
+				// ],
 				'default' => '#333333',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-mobile-nav-menu a,
@@ -1169,10 +1172,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Background Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_3,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_3,
+				// ],
 				'default' => '#ffffff',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-mobile-nav-menu li' => 'background-color: {{VALUE}};',
@@ -1194,10 +1197,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_4,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_4,
+				// ],
 				'default' => '#ffffff',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-mobile-nav-menu li a:hover,
@@ -1213,10 +1216,10 @@ class Wpr_Nav_Menu extends Widget_Base {
 			[
 				'label' => esc_html__( 'Background Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_3,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_3,
+				// ],
 				'default' => '#605BE5',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-mobile-nav-menu a:hover,

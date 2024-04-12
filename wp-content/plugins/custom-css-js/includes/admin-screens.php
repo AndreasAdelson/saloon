@@ -214,7 +214,7 @@ class CustomCSSandJS_Admin {
 	 */
 	public function cm_localize() {
 
-		$settings = get_option( 'ccj_settings' );
+		$settings = get_option( 'ccj_settings', array() );
 
 		$vars = array(
 			'autocomplete'   => isset( $settings['ccj_autocomplete'] ) && ! $settings['ccj_autocomplete'] ? false : true,
@@ -276,6 +276,10 @@ class CustomCSSandJS_Admin {
 		if ( empty( $options ) || ! isset( $options['options'][0] ) ) {
 			$this->options[ $post_id ] = $this->default_options;
 			return $this->default_options;
+		}
+
+		if ( is_array( $options['options'][0] ) && isset( $options['options'][0]['type'] ) ) {
+			return $options['options'][0];
 		}
 
 		$options                   = @unserialize( $options['options'][0] );
@@ -693,7 +697,7 @@ class CustomCSSandJS_Admin {
 			return false;
 		}
 
-		if ( empty( $post->title ) && empty( $post->post_content ) ) {
+		if ( empty( $post->post_title ) && empty( $post->post_content ) ) {
 			$new_post = true;
 			$post_id  = false;
 		} else {
@@ -762,10 +766,10 @@ End of comment */ ',
 						'<!-- Add HTML code to the header or the footer.
 
 For example, you can use the following code for loading the jQuery library from Google CDN:
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 or the following one for loading the Bootstrap library from jsDelivr:
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
 -- End of the comment --> ',
 						'custom-css-js'
@@ -1341,7 +1345,7 @@ endif;
 			}
 
 			// Mark to enqueue the jQuery library, if necessary
-			if ( $options['language'] === 'js' ) {
+			if ( $options['language'] === 'js' && strstr( $options['side'], 'frontend' ) ) {
 				$_post->post_content = preg_replace( '@/\* Add your JavaScript code here[\s\S]*?End of comment \*/@im', '/* Default comment here */', $_post->post_content );
 				if ( preg_match( '/jquery\s*(\(|\.)/i', $_post->post_content ) && ! isset( $tree['jquery'] ) ) {
 					$tree['jquery'] = true;
@@ -1522,7 +1526,7 @@ endif;
 			$slug    = get_post_meta( $post->ID, '_slug', true );
 			$options = get_post_meta( $post->ID, 'options', true );
 
-			if ( isset( $options['language'] ) ) {
+			if ( is_array( $options ) && isset( $options['language'] ) ) {
 				$filetype = $options['language'];
 			}
 			if ( $filetype === 'html' ) {
@@ -1624,7 +1628,11 @@ endif;
 			return;
 		}
 
-		$options             = get_post_meta( $postid, 'options', true );
+		$options = get_post_meta( $postid, 'options', true );
+		if ( ! is_array( $options ) ) {
+			return;
+		}
+
 		$options['language'] = ( isset( $options['language'] ) ) ? strtolower( $options['language'] ) : 'css';
 		$options['language'] = in_array( $options['language'], array( 'html', 'js', 'css' ), true ) ? $options['language'] : 'css';
 

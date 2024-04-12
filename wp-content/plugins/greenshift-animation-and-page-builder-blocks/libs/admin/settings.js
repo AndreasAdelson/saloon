@@ -23,7 +23,7 @@ jQuery(document).ready(function ($) {
 		e.preventDefault()
 		const count = parseInt($("[name=fonts_count]").val());
 
-		if (count < 2) return false;
+		//if (count < 2) return false;
 
 		$container.find('.fonts-wrap .font-item').filter(':last').remove()
 		$container.find('[name=fonts_count]').val(count - 1)

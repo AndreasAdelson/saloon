@@ -3,11 +3,10 @@ namespace WprAddons\Modules\ThemeBuilder\PostNavigation\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Css_Filter;
@@ -163,6 +162,9 @@ class Wpr_Post_Navigation extends Widget_Base {
 			[
 				'label' => esc_html__( 'Previous Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Previous Post',
 				'condition' => [
 					'post_nav_labels' => 'yes',
@@ -176,6 +178,9 @@ class Wpr_Post_Navigation extends Widget_Base {
 			[
 				'label' => esc_html__( 'Next Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Next Post',
 				'condition' => [
 					'post_nav_labels' => 'yes',
@@ -664,7 +669,6 @@ class Wpr_Post_Navigation extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'content_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-post-nav-labels span',
 				'fields_options' => [
 					'typography' => [
@@ -842,7 +846,7 @@ class Wpr_Post_Navigation extends Widget_Base {
 							if ( 'yes' === $settings['post_nav_labels'] ) {
 								echo '<span>';
 									$this->render_arrow_by_location( $settings, 'label', 'left' );
-									echo esc_html( $settings['post_nav_prev_text'] );
+									echo esc_html__( $settings['post_nav_prev_text'] );
 								echo '</span>';
 							}
 
@@ -891,7 +895,7 @@ class Wpr_Post_Navigation extends Widget_Base {
 							// Next Label
 							if ( 'yes' === $settings['post_nav_labels'] ) {
 								echo '<span>';
-									echo esc_html( $settings['post_nav_next_text'] );
+									echo esc_html__( $settings['post_nav_next_text'] );
 									$this->render_arrow_by_location( $settings, 'label', 'right' );
 								echo '</span>';
 							}

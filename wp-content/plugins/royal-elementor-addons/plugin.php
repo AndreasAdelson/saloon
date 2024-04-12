@@ -10,6 +10,7 @@ use WprAddons\Includes\Controls\WPR_Control_Button_Animations;
 use WprAddons\Includes\Controls\WPR_Control_Arrow_Icons;
 use WprAddons\Classes\Utilities;
 use Elementor\Core\App\App;
+use WP_REST_Response;
 
 if ( ! defined( 'ABSPATH' ) ) {	exit; } // Exit if accessed directly
 
@@ -90,12 +91,16 @@ class Plugin {
 		require WPR_ADDONS_PATH . 'admin/includes/wpr-templates-library.php';
 
 		// Post Likes
-		require WPR_ADDONS_PATH . 'classes/wpr-post-likes.php';
+		require WPR_ADDONS_PATH . 'classes/modules/wpr-post-likes.php';
 
 		// Ajax Search
-		require WPR_ADDONS_PATH . 'classes/wpr-ajax-search.php';
-		require WPR_ADDONS_PATH . 'classes/wpr-load-more-instagram-posts.php';
-		require WPR_ADDONS_PATH . 'classes/wpr-load-more-tweets.php';
+		require WPR_ADDONS_PATH . 'classes/modules/wpr-ajax-search.php';
+
+		// Instagram
+		require WPR_ADDONS_PATH . 'classes/modules/wpr-load-more-instagram-posts.php';
+
+		// Twitter
+		require WPR_ADDONS_PATH . 'classes/modules/wpr-load-more-tweets.php';
 
 		// Particles
 		if ( 'on' === get_option('wpr-particles', 'on') ) {//TODO: make this check automatic(loop through) for all extensions
@@ -120,16 +125,24 @@ class Plugin {
 		// Mega Menu
 		require WPR_ADDONS_PATH . 'admin/mega-menu.php';
 
+
+		// Form Builder
+		// TODO:: ommit if form builder turned off if possible
+		require WPR_ADDONS_PATH . 'classes/modules/wpr-form-handlers.php';
+		
 		// Admin Files
 		if ( is_admin() ) {
-			// Plugin Updaate Notice
-			require WPR_ADDONS_PATH . 'classes/plugin-update-notice.php';
+			// Pro Features Notice
+			require WPR_ADDONS_PATH . 'admin/notices/pro-features-notice.php';
+
+			// Plugin Update Notice
+			require WPR_ADDONS_PATH . 'admin/notices/plugin-update-notice.php';
 			
 			// Plugin Sale Notice
-			require WPR_ADDONS_PATH . 'classes/plugin-sale-notice.php';
+			require WPR_ADDONS_PATH . 'admin/notices/plugin-sale-notice.php';
 			
 			// Rating Notice 
-			require WPR_ADDONS_PATH . 'classes/rating-notice.php';
+			require WPR_ADDONS_PATH . 'admin/notices/rating-notice.php';
 
 			// Plugin Options
 			require WPR_ADDONS_PATH . 'admin/plugin-options.php';
@@ -146,13 +159,40 @@ class Plugin {
 			// Theme Builder
 			require WPR_ADDONS_PATH . 'admin/popups.php';
 
+			// Secondary Image
+			require WPR_ADDONS_PATH . 'admin/metabox/wpr-secondary-image.php';
+
+			// Dropdown Category Filter for Wpr Templates
+			require WPR_ADDONS_PATH . 'admin/includes/wpr-templates-category-filter.php';
+
 			// Hide Theme Notice
 			// TODO: Remove this and fix with Transients
 			add_action( 'admin_enqueue_scripts', [ $this, 'hide_theme_notice' ] );
 		}
 
-		if ( class_exists('WooCommerce') && 'on' === get_option('wpr_override_woo_templates', 'on') ) {
-			require WPR_ADDONS_PATH . 'includes/woocommerce/woocommerce-config.php';
+		if ( class_exists('WooCommerce') ) {
+			 if ( 'on' === get_option('wpr_override_woo_templates', 'on') ) {
+				 require WPR_ADDONS_PATH . 'includes/woocommerce/woocommerce-config.php';
+			 }
+
+			// Add Remove From Wishlist
+			require WPR_ADDONS_PATH . 'classes/woocommerce/wpr-add-remove-from-wishlist.php';
+
+			// Add Remove From Compare
+			require WPR_ADDONS_PATH . 'classes/woocommerce/wpr-add-remove-from-compare.php';
+
+			// Update Mini Wishlist
+			require WPR_ADDONS_PATH . 'classes/woocommerce/wpr-update-mini-wishlist.php';
+
+			// Compare Popup Action
+			require WPR_ADDONS_PATH . 'classes/woocommerce/wpr-compare-popup-action.php';
+
+			// Add Remove From Compare
+			require WPR_ADDONS_PATH . 'classes/woocommerce/wpr-update-mini-compare.php';
+
+			// Count Wishlist Items
+			require WPR_ADDONS_PATH . 'classes/woocommerce/wpr-count-wishlist-compare-items.php';
+			require WPR_ADDONS_PATH . 'classes/woocommerce/wpr-check-product-in-wc.php';
 		}
 	}
 
@@ -284,7 +324,7 @@ class Plugin {
 			Plugin::instance()->get_version()
 		);
 
-		// GOGA - development had enqueue instead of register (reason found)
+		// GOGA - enqueue instead of register (because of animations)
 		wp_enqueue_style(
 			'wpr-text-animations-css',
 			WPR_ADDONS_URL . 'assets/css/lib/animations/text-animations'. $this->script_suffix() .'.css',
@@ -302,13 +342,13 @@ class Plugin {
 		// Posts Timeline
 		wp_register_style( 
 			'wpr-aos-css', 
-			WPR_ADDONS_URL  . 'assets/css/lib/aos/aos'. $this->script_suffix() .'.css',
+			WPR_ADDONS_URL  . 'assets/css/lib/aos/aos.min.css',
 			[]
 		);
 
 		wp_register_style(
 			'wpr-flipster-css',
-			WPR_ADDONS_URL . 'assets/css/lib/flipster/jquery.flipster'. $this->script_suffix() .'.css',
+			WPR_ADDONS_URL . 'assets/css/lib/flipster/jquery.flipster.min.css',
 			[],
 			Plugin::instance()->get_version()
 		);
@@ -320,18 +360,18 @@ class Plugin {
 			Plugin::instance()->get_version()
 		);
 
-        // Load FontAwesome - TODO: Check if necessary (maybe elementor is already loading this)
-        wp_enqueue_style(
+    // Load FontAwesome - TODO: Check if necessary (maybe elementor is already loading this)
+    wp_enqueue_style(
 			'font-awesome-5-all',
 			ELEMENTOR_ASSETS_URL . 'lib/font-awesome/css/all'. $this->script_suffix() .'.css',
 			false,
 			Plugin::instance()->get_version()
 		);
 
-        if ( \Elementor\Plugin::$instance->preview->is_preview_mode() ) {
+    if ( \Elementor\Plugin::$instance->preview->is_preview_mode() ) {
 			wp_enqueue_style(
 				'wpr-addons-library-frontend-css',
-				WPR_ADDONS_URL . 'assets/css/library-frontend'. $this->script_suffix() .'.css',
+				WPR_ADDONS_URL . 'assets/css/admin/library-frontend'. $this->script_suffix() .'.css',
 				[],
 				Plugin::instance()->get_version()
 			);
@@ -377,21 +417,37 @@ class Plugin {
 		
 		wp_enqueue_style( 
 			'wpr-aos-css', 
-			WPR_ADDONS_URL  . 'assets/css/lib/aos/aos'. $this->script_suffix() .'.css',
+			WPR_ADDONS_URL  . 'assets/css/lib/aos/aos.min.css',
 			[]
 		);
 
 		wp_enqueue_style(
 			'wpr-flipster-css',
-			WPR_ADDONS_URL . 'assets/css/lib/flipster/jquery.flipster'. $this->script_suffix() .'.css',
+			WPR_ADDONS_URL . 'assets/css/lib/flipster/jquery.flipster.min.css',
 			[],
 			Plugin::instance()->get_version()
 		);
 	}
 
-
 	public function hide_theme_notice() {
 		wp_enqueue_style( 'hide-theme-notice', WPR_ADDONS_URL .'assets/css/admin/wporg-theme-notice.css', [] );
+
+		wp_enqueue_script(
+			'wpr-plugin-notice-js',
+			WPR_ADDONS_URL . 'assets/js/admin/plugin-update-notice.js',
+			[
+				'jquery'
+			]
+		);
+
+		wp_localize_script(
+			'wpr-plugin-notice-js',
+			'WprPluginNotice',
+			[
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce' => wp_create_nonce( 'wpr-plugin-notice-js' ),
+			]
+		);
 	}
 
 	public function enqueue_scripts() {
@@ -401,6 +457,7 @@ class Plugin {
 			WPR_ADDONS_URL . 'assets/js/frontend'. $this->script_suffix() .'.js',
 			[
 				'jquery',
+				'elementor-frontend'
 			],
 			Plugin::instance()->get_version(),
 			true
@@ -422,7 +479,20 @@ class Plugin {
 			[
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'resturl' => get_rest_url() . 'wpraddons/v1',
-				'nonce' => wp_create_nonce( 'wpr-addons-js' )
+				'nonce' => wp_create_nonce( 'wpr-addons-js' ),
+				'addedToCartText' => esc_html__('was added to cart', 'wpr-addons'),
+				'viewCart' => esc_html__('View Cart', 'wpr-addons'),
+				'comparePageID' => get_option('wpr_compare_page'),
+				'comparePageURL' => get_permalink(get_option('wpr_compare_page')),
+				'wishlistPageID' => get_option('wpr_wishlist_page'),
+				'wishlistPageURL' => get_permalink(get_option('wpr_wishlist_page')),
+				'chooseQuantityText' => esc_html__('Please select the required number of items.', 'wpr-addons'),
+				'site_key' => get_option('wpr_recaptcha_v3_site_key'),
+				'is_admin' => current_user_can('manage_options'),
+				'input_empty' => esc_html__('Please fill out this field', 'wpr-addons'),
+				'select_empty' => esc_html__('Nothing selected', 'wpr-addons'),
+				'file_empty' => esc_html__('Please upload a file', 'wpr-addons'),
+				'recaptcha_error' => esc_html__('Recaptcha Error', 'wpr-addons')
 			]
 		);
 	}
@@ -431,7 +501,7 @@ class Plugin {
 
 		wp_register_script(
 			'wpr-infinite-scroll',
-			WPR_ADDONS_URL . 'assets/js/lib/infinite-scroll/infinite-scroll'. $this->script_suffix() .'.js',
+			WPR_ADDONS_URL . 'assets/js/lib/infinite-scroll/infinite-scroll.min.js',
 			[
 				'jquery',
 			],
@@ -505,7 +575,7 @@ class Plugin {
 
 		wp_register_script(
 			'wpr-lottie-animations',
-			WPR_ADDONS_URL . 'assets/js/lib/lottie/lottie'. $this->script_suffix() .'.js',
+			WPR_ADDONS_URL . 'assets/js/lib/lottie/lottie.min.js',
 			[],
 			'5.8.0',
 			true
@@ -521,7 +591,7 @@ class Plugin {
 		
 		wp_register_script(
 			'wpr-aos-js',
-			 WPR_ADDONS_URL  . 'assets/js/lib/aos/aos'. $this->script_suffix() .'.js',
+			 WPR_ADDONS_URL  . 'assets/js/lib/aos/aos.min.js',
 			 [], 
 			 null, 
 			 true
@@ -529,7 +599,7 @@ class Plugin {
 		
 		wp_register_script(
 			'wpr-charts',
-			WPR_ADDONS_URL . 'assets/js/lib/charts/charts'. $this->script_suffix() .'.js',
+			WPR_ADDONS_URL . 'assets/js/lib/charts/charts.min.js',
 			[],
 			'3.7.0',
 			true
@@ -537,7 +607,7 @@ class Plugin {
 
 		wp_register_script(
 			'wpr-flipster',
-			WPR_ADDONS_URL . 'assets/js/lib/flipster/jquery.flipster'. $this->script_suffix() .'.js',
+			WPR_ADDONS_URL . 'assets/js/lib/flipster/jquery.flipster.min.js',
 			[],
 			'2.0',
 			true
@@ -555,8 +625,8 @@ class Plugin {
 
 		wp_enqueue_script(
 			'wpr-addons-editor-js',
-			WPR_ADDONS_URL . 'assets/js/editor'. $this->script_suffix() .'.js',
-			[ 'jquery' ],
+			WPR_ADDONS_URL . 'assets/js/admin/editor'. $this->script_suffix() .'.js',
+			[ 'jquery', 'wp-i18n' ],
 			Plugin::instance()->get_version(),
 			true
 		);
@@ -580,7 +650,7 @@ class Plugin {
 
 		wp_enqueue_script(
 			'wpr-addons-library-frontend-js',
-			WPR_ADDONS_URL . 'assets/js/library-frontend'. $this->script_suffix() .'.js',
+			WPR_ADDONS_URL . 'assets/js/admin/library-frontend'. $this->script_suffix() .'.js',
 			[ 'jquery', 'wpr-macy-js' ],
 			Plugin::instance()->get_version(),
 			true
@@ -604,7 +674,7 @@ class Plugin {
 
 		wp_enqueue_script(
 			'wpr-addons-library-editor-js',
-			WPR_ADDONS_URL . 'assets/js/library-editor'. $this->script_suffix() .'.js',
+			WPR_ADDONS_URL . 'assets/js/admin/library-editor'. $this->script_suffix() .'.js',
 			[ 'jquery' ],
 			Plugin::instance()->get_version(),
 			true
@@ -614,7 +684,7 @@ class Plugin {
 	public function enqueue_panel_styles() {
 		wp_enqueue_style(
 			'wpr-addons-library-editor-css',
-			WPR_ADDONS_URL . 'assets/css/editor'. $this->script_suffix() .'.css',
+			WPR_ADDONS_URL . 'assets/css/admin/editor'. $this->script_suffix() .'.css',
 			[],
 			Plugin::instance()->get_version()
 		);
@@ -763,10 +833,15 @@ class Plugin {
 	}
 
     public function promote_premium_widgets($config) {
+
+		// if ( is_plugin_active('elementor-pro/elementor-pro.php') || is_plugin_active('pro-elements/pro-elements.php') ) {
+		// }
+		$config['promotionWidgets'] = [];
+
+		$category = Utilities::is_theme_builder_template() ? 'wpr-woocommerce-builder-widgets' : 'wpr-premium-widgets';
+
 		if ( ! wpr_fs()->can_use_premium_code() ) {
-			$category = Utilities::is_theme_builder_template() ? 'wpr-woocommerce-builder-widgets' : 'wpr-premium-widgets';
-			
-			$config['promotionWidgets'] = [
+			$promotion_widgets = [
 				[
 					'name' => 'wpr-woo-category-grid',
 					'title' => __('Woo Category Grid', 'wpr-addons'),
@@ -791,7 +866,70 @@ class Plugin {
 					'icon' => 'wpr-icon eicon-product-breadcrumbs',
 					'categories' => '["'. $category .'"]',
 				],
+				[
+					'name' => 'wpr-breadcrumbs',
+					'title' => __('Post Breadcrumbs', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-product-breadcrumbs',
+					'categories' => '["'. $category .'"]',
+				],
 			];
+			
+			$config['promotionWidgets'] = array_merge( $config['promotionWidgets'], $promotion_widgets );
+		}
+		
+		if ( !wpr_fs()->is_plan( 'expert' ) ) {
+			$expert_widgets = [
+				[
+					'name' => 'wpr-category-grid',
+					'title' => __('Category Grid', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-gallery-grid',
+					'categories' => '["'. $category .'"]',
+				],
+				[
+					'name' => 'wpr-wishlist-button',
+					'title' => __('Wishlist Button', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-heart',
+					'categories' => '["'. $category .'"]',
+				],
+				[
+					'name' => 'wpr-mini-wishlist',
+					'title' => __('Mini Wishlist', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-heart',
+					'categories' => '["'. $category .'"]',
+				],
+				[
+					'name' => 'wpr-wishlist',
+					'title' => __('Wishlist Table', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-heart',
+					'categories' => '["'. $category .'"]',
+				],
+				[
+					'name' => 'wpr-compare-button',
+					'title' => __('Compare Button', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-exchange', // GOGA - new icon needed for compare
+					'categories' => '["'. $category .'"]',
+				],
+				[
+					'name' => 'wpr-mini-compare',
+					'title' => __('Mini Compare', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-exchange',
+					'categories' => '["'. $category .'"]',
+				],
+				[
+					'name' => 'wpr-compare',
+					'title' => __('Compare Table', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-exchange',
+					'categories' => '["'. $category .'"]',
+				],
+				[
+					'name' => 'wpr-custom-field',
+					'title' => __('Custom Field', 'wpr-addons'),
+					'icon' => 'wpr-icon eicon-database',
+					'categories' => '["'. $category .'"]',
+				],
+			];
+
+			$config['promotionWidgets'] = array_merge( $config['promotionWidgets'], $expert_widgets );
 		}
 
         return $config;
@@ -809,6 +947,8 @@ class Plugin {
 
 		// Register Mega Menu Route
 		$this->register_megamenu_route();
+
+		// $this->register_compare_custom_routes();
 
 		// Register Custom Controls
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_custom_controls' ] );
@@ -837,7 +977,27 @@ class Plugin {
 		add_action( 'wp_head', [ $this, 'lightbox_styles' ], 988 );
 
 		// Promote Premium Widgets
-        add_filter('elementor/editor/localize_settings', [$this, 'promote_premium_widgets']);
+		if ( current_user_can('administrator') ) {
+			add_filter('elementor/editor/localize_settings', [$this, 'promote_premium_widgets']);
+		}
+
+		add_filter( 'pre_get_posts', [$this, 'wpr_custom_posts_per_page'] );
+	}
+
+	public function wpr_custom_posts_per_page( $query ) {
+		if ( $query->is_main_query() && isset($query->query['post_type']) ) {
+			if (is_admin() ) {
+				if (\Elementor\Plugin::$instance->editor && !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+					return;
+				}
+			}
+			$query_post_type = $query->query['post_type'];
+			if ( is_string($query_post_type) && is_post_type_archive($query_post_type) && get_option('wpr_cpt_ppp_'. $query_post_type ) ) {
+				$query->set( 'posts_per_page', get_option('wpr_cpt_ppp_'. $query_post_type ) );
+			}
+		}
+	
+		return $query;
 	}
 
 	/**

@@ -4,14 +4,13 @@ namespace WprAddons\Modules\FeatureList\Widgets;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Utils;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Repeater;
 use Elementor\Group_Control_Image_Size;
 use WprAddons\Classes\Utilities;
@@ -377,6 +376,9 @@ class Wpr_Feature_List extends Widget_Base {
 				'label' => esc_html__( 'Choose Image', 'plugin-name' ),
 				'type' => \Elementor\Controls_Manager::MEDIA,
 				'skin' => 'inline',
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'feature_list_media_type' => 'image'
 				]
@@ -387,6 +389,9 @@ class Wpr_Feature_List extends Widget_Base {
 			'list_title', [
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'List Title' , 'wpr-addons' ),
 				'separator' => 'before',
 				'label_block' => true,
@@ -398,6 +403,9 @@ class Wpr_Feature_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title Link', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'default' => [
 					'url' => '',
@@ -414,9 +422,12 @@ class Wpr_Feature_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Content', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::TEXTAREA,
-				'rows' => 10,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'List Content', 'wpr-addons' ),
 				'placeholder' => esc_html__( 'Type your description here', 'wpr-addons' ),
+				'rows' => 10,
 			]
 		);
 
@@ -815,7 +826,6 @@ class Wpr_Feature_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'feature_list_title',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-feature-list-title',
 				'fields_options' => [
 					'typography' => [
@@ -862,7 +872,6 @@ class Wpr_Feature_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'feature_list_description',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-feature-list-description',
 				'fields_options' => [
 					'typography' => [

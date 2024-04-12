@@ -3,10 +3,9 @@ namespace WprAddons\Modules\ThemeBuilder\PostInfo\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Repeater;
 use WprAddons\Classes\Utilities;
@@ -44,7 +43,7 @@ class Wpr_Post_Info extends Widget_Base {
 			'comments' => esc_html__( 'Comments', 'wpr-addons' ),
 			'author' => esc_html__( 'Author', 'wpr-addons' ),
 			'taxonomy' => esc_html__( 'Taxonomy', 'wpr-addons' ),
-			'pro-cf' => esc_html__( 'Custom Field (Pro)', 'wpr-addons' ),
+			'pro-cf' => esc_html__( 'Custom Field (Expert)', 'wpr-addons' ),
 		];
 	}
 
@@ -108,16 +107,15 @@ class Wpr_Post_Info extends Widget_Base {
 		$repeater->add_control(
 			'post_info_custom_field_video_tutorial',
 			[
-				'raw' => esc_html__( 'See how to use Custom Fields in this', 'wpr-addons' ) . sprintf( '<br><a href="%1$s" target="_blank">%2$s <span class="dashicons dashicons-video-alt3"></span></a>', 'https://www.youtube.com/watch?v=9GvpqyHF_Cs', esc_html__( 'Video Tutorial', 'wpr-addons' ) ),
+				'raw' => esc_html__( 'Watch Custom Fields ', 'wpr-addons' ) . sprintf( '<a href="%1$s" target="_blank">%2$s <span class="dashicons dashicons-video-alt3"></span></a>', 'https://www.youtube.com/watch?v=9GvpqyHF_Cs', esc_html__( 'Video Tutorial', 'wpr-addons' ) ),
 				'type' => Controls_Manager::RAW_HTML,
-				'separator' => 'after',
 				'condition' => [
 					'post_info_select' => 'custom-field'
 				]
 			]
 		);
 
-		Utilities::upgrade_pro_notice( $repeater, Controls_Manager::RAW_HTML, 'post-info', 'post_info_select', ['pro-cf'] );
+		Utilities::upgrade_expert_notice( $repeater, Controls_Manager::RAW_HTML, 'post-info', 'post_info_select', ['pro-cf'] );
 
 		$repeater->add_control(
 			'post_info_modified_time',
@@ -137,6 +135,9 @@ class Wpr_Post_Info extends Widget_Base {
 			[
 				'label' => esc_html__( 'No Comments', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => ' No Comments',
 				'condition' => [
 					'post_info_select' => 'comments',
@@ -149,6 +150,9 @@ class Wpr_Post_Info extends Widget_Base {
 			[
 				'label' => esc_html__( 'One Comment', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => ' Comment',
 				'condition' => [
 					'post_info_select' => 'comments',
@@ -161,6 +165,9 @@ class Wpr_Post_Info extends Widget_Base {
 			[
 				'label' => esc_html__( 'Multiple Comments', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => ' Comments',
 				'separator' => 'after',
 				'condition' => [
@@ -207,6 +214,9 @@ class Wpr_Post_Info extends Widget_Base {
 			[
 				'label' => esc_html__( 'Separator', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => ', ',
 				'separator' => 'after',
 				'condition' => [
@@ -246,94 +256,102 @@ class Wpr_Post_Info extends Widget_Base {
 			]
 		);
 
-		$repeater->add_control(
-			'post_info_cf',
-			[
-				'label' => esc_html__( 'Select Custom Field', 'wpr-addons' ),
-				'type' => Controls_Manager::SELECT2,
-				'label_block' => true,
-				'default' => 'default',
-				'options' => $post_meta_keys[1],
-				'condition' => [
-					'post_info_select' => 'custom-field'
-				],
-			]
-		);
+		if ( wpr_fs()->is_plan( 'expert' ) ) {
+			$repeater->add_control(
+				'post_info_cf',
+				[
+					'label' => esc_html__( 'Select Custom Field', 'wpr-addons' ),
+					'type' => Controls_Manager::SELECT2,
+					'label_block' => true,
+					'default' => 'default',
+					'options' => $post_meta_keys[1],
+					'condition' => [
+						'post_info_select' => 'custom-field'
+					],
+				]
+			);
 
-		$repeater->add_control(
-			'post_info_cf_btn_link',
-			[
-				'label' => esc_html__( 'Use Value as Button Link', 'wpr-addons' ),
-				'type' => Controls_Manager::SWITCHER,
-				'return_value' => 'yes',
-				'condition' => [
-					'post_info_select' => 'custom-field'
-				],
-			]
-		);
+			$repeater->add_control(
+				'post_info_cf_btn_link',
+				[
+					'label' => esc_html__( 'Use Value as Button Link', 'wpr-addons' ),
+					'type' => Controls_Manager::SWITCHER,
+					'return_value' => 'yes',
+					'condition' => [
+						'post_info_select' => 'custom-field'
+					],
+				]
+			);
 
-		$repeater->add_control(
-			'post_info_cf_new_tab',
-			[
-				'label' => esc_html__( 'Open Link in a New Tab', 'wpr-addons' ),
-				'type' => Controls_Manager::SWITCHER,
-				'return_value' => 'yes',
-				'condition' => [
-					'post_info_select' => 'custom-field',
-					'post_info_cf_btn_link' => 'yes'
-				],
-			]
-		);
+			$repeater->add_control(
+				'post_info_cf_new_tab',
+				[
+					'label' => esc_html__( 'Open Link in a New Tab', 'wpr-addons' ),
+					'type' => Controls_Manager::SWITCHER,
+					'return_value' => 'yes',
+					'condition' => [
+						'post_info_select' => 'custom-field',
+						'post_info_cf_btn_link' => 'yes'
+					],
+				]
+			);
 
-		$repeater->add_control(
-			'post_info_cf_btn_text',
-			[
-				'label' => esc_html__( 'Button Text', 'wpr-addons' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => 'Click Me',
-				'condition' => [
-					'post_info_select' => 'custom-field',
-					'post_info_cf_btn_link' => 'yes'
-				],
-			]
-		);
+			$repeater->add_control(
+				'post_info_cf_btn_text',
+				[
+					'label' => esc_html__( 'Button Text', 'wpr-addons' ),
+					'type' => Controls_Manager::TEXT,
+					'dynamic' => [
+						'active' => true,
+					],
+					'default' => 'Click Me',
+					'condition' => [
+						'post_info_select' => 'custom-field',
+						'post_info_cf_btn_link' => 'yes'
+					],
+				]
+			);
 
-		$repeater->add_control(
-			'custom_field_wrapper_html_divider1',
-			[
-				'type' => Controls_Manager::DIVIDER,
-				'style' => 'thick',
-				'condition' => [
-					'post_info_select' => 'custom-field',
-				],
-			]
-		);
+			$repeater->add_control(
+				'custom_field_wrapper_html_divider1',
+				[
+					'type' => Controls_Manager::DIVIDER,
+					'style' => 'thick',
+					'condition' => [
+						'post_info_select' => 'custom-field',
+					],
+				]
+			);
 
-		$repeater->add_control(
-			'post_info_cf_wrapper',
-			[
-				'label' => esc_html__( 'Wrap with HTML', 'wpr-addons' ),
-				'type' => Controls_Manager::SWITCHER,
-				'return_value' => 'yes',
-				'condition' => [
-					'post_info_select' => 'custom-field'
-				],
-			]
-		);
+			$repeater->add_control(
+				'post_info_cf_wrapper',
+				[
+					'label' => esc_html__( 'Wrap with HTML', 'wpr-addons' ),
+					'type' => Controls_Manager::SWITCHER,
+					'return_value' => 'yes',
+					'condition' => [
+						'post_info_select' => 'custom-field'
+					],
+				]
+			);
 
-		$repeater->add_control(
-			'post_info_cf_wrapper_html',
-			[
-				'label' => esc_html__( 'Custom HTML Wrapper', 'wpr-addons' ),
-				'description' => 'Insert <strong>*cf_value*</strong> to dislpay your Custom Field.',
-				'placeholder'=> 'For Ex: <span>*cf_value*</span>',
-				'type' => Controls_Manager::TEXTAREA,
-				'condition' => [
-					'post_info_select' => 'custom-field',
-					'post_info_cf_wrapper' => 'yes',
-				],
-			]
-		);
+			$repeater->add_control(
+				'post_info_cf_wrapper_html',
+				[
+					'label' => esc_html__( 'Custom HTML Wrapper', 'wpr-addons' ),
+					'description' => 'Insert <strong>*cf_value*</strong> to dislpay your Custom Field.',
+					'placeholder'=> 'For Ex: <span>*cf_value*</span>',
+					'type' => Controls_Manager::TEXTAREA,
+					'dynamic' => [
+						'active' => true,
+					],
+					'condition' => [
+						'post_info_select' => 'custom-field',
+						'post_info_cf_wrapper' => 'yes',
+					],
+				]
+			);
+		}
 
 		$repeater->add_control(
 			'post_info_link_wrap',
@@ -360,10 +378,27 @@ class Wpr_Post_Info extends Widget_Base {
 		);
 
 		$repeater->add_control(
+			'post_info_apply_individually',
+			[
+				'label' => esc_html__( 'Apply Individually', 'wpr-addons' ),
+				'type' => Controls_Manager::SWITCHER,
+				'default' => '',
+				'return_value' => 'yes',
+				'condition' => [
+					'post_info_select' => [ 'taxonomy' ],
+          'post_info_extra_icon!' => ''
+				]
+			]
+		);
+
+		$repeater->add_control(
 			'post_info_extra_text',
 			[
 				'label' => esc_html__( 'Extra Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 			]
 		);
@@ -393,7 +428,7 @@ class Wpr_Post_Info extends Widget_Base {
 
 		// Section: Pro Features
 		Utilities::pro_features_list_section( $this, '', Controls_Manager::RAW_HTML, 'post-info', [
-			'Display and Style Custom Fields in and Advanced way.',
+			'Display and Style Custom Fields in and Advanced way (Expert).',
 			'Query Custom Post Type Taxonomies (categories).'
 		] );
 
@@ -486,10 +521,10 @@ class Wpr_Post_Info extends Widget_Base {
 				'label' => esc_html__( 'Color', 'wpr-addons' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
-				'scheme' => [
-					'type' => Color::get_type(),
-					'value' => Color::COLOR_3,
-				],
+				// 'scheme' => [
+				// 	'type' => Color::get_type(),
+				// 	'value' => Color::COLOR_3,
+				// ],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-post-info li:after' => 'border-color: {{VALUE}};',
 				],
@@ -640,7 +675,6 @@ class Wpr_Post_Info extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'post_info_elements_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'label' => esc_html__('Typography', 'wpr-addons'),
 				'selector' => '{{WRAPPER}} .wpr-post-info li:not(.wpr-post-info-taxonomy):not(.wpr-post-info-custom-field)',
 				'fields_options' => [
@@ -778,7 +812,6 @@ class Wpr_Post_Info extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'post_info_tax_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-post-info-taxonomy a, {{WRAPPER}} .wpr-post-info-taxonomy > span:not(.wpr-post-info-text)',
 				'separator' => 'before',
 				'fields_options' => [
@@ -969,6 +1002,7 @@ class Wpr_Post_Info extends Widget_Base {
 				'default' => '#333333',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-post-info li:not(.wpr-post-info-custom-field) i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .wpr-post-info li:not(.wpr-post-info-custom-field) svg' => 'fill: {{VALUE}}',
 				],
 				'separator' => 'after'
 			]
@@ -992,6 +1026,7 @@ class Wpr_Post_Info extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-post-info li i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-post-info li svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -1014,6 +1049,7 @@ class Wpr_Post_Info extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-post-info li i' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-post-info li svg' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -1038,9 +1074,30 @@ class Wpr_Post_Info extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '#333333',
 				'selectors' => [
-					'{{WRAPPER}} .wpr-post-info li:not(.wpr-post-info-custom-field) .wpr-post-info-text' => 'color: {{VALUE}}',
+					// '{{WRAPPER}} .wpr-post-info li:not(.wpr-post-info-custom-field) .wpr-post-info-text' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .wpr-post-info li .wpr-post-info-text' => 'color: {{VALUE}}'
 				],
 				'separator' => 'after'
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'post_info_extra_text_typography',
+				'label' => esc_html__('Typography', 'wpr-addons'),
+				'selector' => '{{WRAPPER}} .wpr-post-info li .wpr-post-info-text',
+				'fields_options' => [
+					'typography' => [
+						'default' => 'custom',
+					],
+					'font_size' => [
+						'default' => [
+							'size' => '12',
+							'unit' => 'px',
+						],
+					]
+				]
 			]
 		);
 
@@ -1076,7 +1133,7 @@ class Wpr_Post_Info extends Widget_Base {
 		$this->render_extra_icon_text( $settings );
 
 		// Wrap with Link
-		if ( 'yes' === $settings['post_info_link_wrap'] ) {
+		if ( isset($settings['post_info_link_wrap']) && 'yes' === $settings['post_info_link_wrap'] ) {
 			echo '<a href="'. esc_url( get_day_link( get_post_time( 'Y' ), get_post_time( 'm' ), get_post_time( 'j' ) ) ) .'">';
 		}
 
@@ -1089,7 +1146,7 @@ class Wpr_Post_Info extends Widget_Base {
 		}
 
 		// Wrap with Link
-		if ( 'yes' === $settings['post_info_link_wrap'] ) {
+		if ( isset($settings['post_info_link_wrap']) && 'yes' === $settings['post_info_link_wrap'] ) {
 			echo '</a>';
 		}
 	}
@@ -1123,14 +1180,14 @@ class Wpr_Post_Info extends Widget_Base {
 			}
 
 			// Wrap with Link
-			if ( 'yes' === $settings['post_info_link_wrap'] ) {
+			if ( isset($settings['post_info_link_wrap']) && 'yes' === $settings['post_info_link_wrap'] ) {
 				echo '<a href="'. esc_url( get_comments_link() ) .'">';
 			}
 
 			// Comments
 			echo '<span> '. esc_html($text) .'</span>';
 
-			if ( 'yes' === $settings['post_info_link_wrap'] ) {
+			if ( isset($settings['post_info_link_wrap']) && 'yes' === $settings['post_info_link_wrap'] ) {
 				echo '</a>';
 			}
 		}
@@ -1144,7 +1201,7 @@ class Wpr_Post_Info extends Widget_Base {
 		$this->render_extra_icon_text( $settings );
 		
 		// Wrap with Link
-		if ( 'yes' === $settings['post_info_link_wrap'] ) {
+		if ( isset($settings['post_info_link_wrap']) && 'yes' === $settings['post_info_link_wrap'] ) {
 			echo '<a href="'. esc_url( get_author_posts_url( $author_id ) ) .'">';
 		}
 
@@ -1154,7 +1211,7 @@ class Wpr_Post_Info extends Widget_Base {
 
 			echo '<span>'. esc_html(get_the_author_meta( 'display_name', $author_id )) .'</span>';
 
-		if ( 'yes' === $settings['post_info_link_wrap'] ) {
+		if ( isset($settings['post_info_link_wrap']) && 'yes' === $settings['post_info_link_wrap'] ) {
 			echo '</a>';
 		}
 	}
@@ -1165,12 +1222,18 @@ class Wpr_Post_Info extends Widget_Base {
 		$count = 0;
 
 		// Extra Icon & Text 
-		$this->render_extra_icon_text( $settings );
+    if ( 'yes' !== $settings['post_info_apply_individually'] ) {
+      $this->render_extra_icon_text( $settings );
+    }
 		
 		// Taxonomies
 		foreach ( $terms as $term ) {
-			if ( 'yes' === $settings['post_info_link_wrap'] ) {
+			if ( isset($settings['post_info_link_wrap']) && 'yes' === $settings['post_info_link_wrap'] ) {
 				echo '<a href="'. esc_url(get_term_link( $term->term_id )) .'">';
+          if ( 'yes' == $settings['post_info_apply_individually'] ) {
+            $this->render_extra_icon_text( $settings );
+          }
+
 					// Term Name
 					echo esc_html( $term->name );
 
@@ -1181,6 +1244,10 @@ class Wpr_Post_Info extends Widget_Base {
 				echo '</a>';
 			} else {
 				echo '<span>';
+          if ( 'yes' == $settings['post_info_apply_individually'] ) {
+            $this->render_extra_icon_text( $settings );
+          }
+
 					// Term Name
 					echo esc_html( $term->name );
 
@@ -1198,7 +1265,7 @@ class Wpr_Post_Info extends Widget_Base {
 
 	// Extra Icon & Text 
 	public function render_extra_icon_text( $settings ) {
-		if ( '' !== $settings['post_info_extra_icon'] || '' !== $settings['post_info_extra_text'] ) {
+		if ( ( isset( $settings['post_info_extra_icon'] ) && '' !== $settings['post_info_extra_icon']['value'] ) || '' !== $settings['post_info_extra_text'] ) {
 			echo '<span class="wpr-post-info-text">';
 				// Extra Icon
 				if ( '' !== $settings['post_info_extra_icon'] ) {

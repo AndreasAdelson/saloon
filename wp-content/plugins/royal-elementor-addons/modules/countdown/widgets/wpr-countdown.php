@@ -6,11 +6,11 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Css_Filter;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Icons;
@@ -95,6 +95,15 @@ class Wpr_Countdown extends Widget_Base {
 
 		Utilities::wpr_library_buttons( $this, Controls_Manager::RAW_HTML );
 
+		$this->add_control(
+			'countdown_apply_changes',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => '<div class="elementor-update-preview editor-wpr-preview-update"><span>Update changes to Preview</span><button class="elementor-button elementor-button-success" onclick="elementor.reloadPreview();">Apply</button>',
+				'separator' => 'after'
+			]
+		);
+
 		$this->add_control_countdown_type();
 
 		// Upgrade to Pro Notice
@@ -114,6 +123,9 @@ class Wpr_Countdown extends Widget_Base {
 					esc_html__( 'Date set according to your timezone: %s.', 'wpr-addons' ),
 					Utils::get_timezone_string()
 				),
+				'dynamic' => [
+					'active' => true,
+				],
 				'separator' => 'before',
 				'condition' => [
 					'countdown_type' => 'due-date',
@@ -228,6 +240,9 @@ class Wpr_Countdown extends Widget_Base {
 			[
 				'label' => esc_html__( 'Day', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Day',
 				'condition' => [
 					'show_labels' => 'yes',
@@ -240,6 +255,9 @@ class Wpr_Countdown extends Widget_Base {
 			[
 				'label' => esc_html__( 'Days', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Days',
 				'condition' => [
 					'show_labels' => 'yes',
@@ -252,6 +270,9 @@ class Wpr_Countdown extends Widget_Base {
 			[
 				'label' => esc_html__( 'Hour', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Hour',
 				'condition' => [
 					'show_labels' => 'yes',
@@ -264,6 +285,9 @@ class Wpr_Countdown extends Widget_Base {
 			[
 				'label' => esc_html__( 'Hours', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Hours',
 				'condition' => [
 					'show_labels' => 'yes',
@@ -276,6 +300,9 @@ class Wpr_Countdown extends Widget_Base {
 			[
 				'label' => esc_html__( 'Minute', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Minute',
 				'condition' => [
 					'show_labels' => 'yes',
@@ -288,6 +315,9 @@ class Wpr_Countdown extends Widget_Base {
 			[
 				'label' => esc_html__( 'Minutes', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Minutes',
 				'condition' => [
 					'show_labels' => 'yes',
@@ -300,6 +330,9 @@ class Wpr_Countdown extends Widget_Base {
 			[
 				'label' => esc_html__( 'Seconds', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Seconds',
 				'condition' => [
 					'show_labels' => 'yes',
@@ -350,6 +383,9 @@ class Wpr_Countdown extends Widget_Base {
 				'label' => esc_html__( 'CSS Selector to Hide Element', 'wpr-addons' ),
 				'label_block' => true,
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'separator' => 'before',
 				'condition' => [
@@ -377,6 +413,9 @@ class Wpr_Countdown extends Widget_Base {
 				'label' => esc_html__( 'Redirect URL', 'wpr-addons' ),
 				'label_block' => true,
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'separator' => 'before',
 				'condition' => [
@@ -630,7 +669,6 @@ class Wpr_Countdown extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'numbers_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-countdown-number',
 			]
 		);
@@ -681,7 +719,6 @@ class Wpr_Countdown extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'labels_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-countdown-label',
 			]
 		);
@@ -852,7 +889,6 @@ class Wpr_Countdown extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'message_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-countdown-message',
 			]
 		);

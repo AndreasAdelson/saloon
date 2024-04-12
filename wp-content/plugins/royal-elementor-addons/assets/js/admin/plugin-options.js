@@ -12,8 +12,10 @@ jQuery(document).ready(function( $ ) {
 
 	// Current Tab
 	var currentTab = $('.nav-tab-active').attr( 'data-title' );
-		currentTab = currentTab.trim().toLowerCase(),
-		currentTab = currentTab.replace(' ', '_');
+		if ( currentTab ) {
+			currentTab = currentTab.trim().toLowerCase(),
+			currentTab = currentTab.replace(' ', '_');
+		}
 
 	/*
 	** Get Active Filter -------------------------
@@ -265,6 +267,17 @@ jQuery(document).ready(function( $ ) {
 		// Hide Extra Options
 		var currentFilter = $('.template-filters .active-filter').attr('data-class');
 
+		
+		if (clone.hasClass('wpr-tab-product_single')) {
+			setTimeout(function() {
+				clone.find('.wpr-condition-input-ids').each(function() {
+					if ( !($(this).val()) ) {
+						$(this).val('all').show();
+					}
+				});
+			}, 600);
+		}
+
 		if ( 'blog-posts' === currentFilter || 'custom-posts' === currentFilter ) {
 			clone.find('.singles-condition-select').children(':nth-child(1),:nth-child(2),:nth-child(3)').remove();
 			clone.find('.wpr-condition-input-ids').val('all').show();
@@ -365,7 +378,6 @@ jQuery(document).ready(function( $ ) {
 	** Popup: Open -------------------------
 	*/
 	function openConditionsPopup( template ) {
-		
 		// Set Conditions
 		popupSetConditions(template);
 		popupMainConditionSelect();
@@ -450,13 +462,23 @@ jQuery(document).ready(function( $ ) {
 	function popupSubConditionSelect() {
 		$('.archives-condition-select, .singles-condition-select').on( 'change', function() {
 			var current = $(this).parent(),
-				selected = $( 'option:selected', this );
+				selected = $( 'option:selected', this ),
+				value = $(this).val();
 
 			// Show Custom ID input
 			if ( selected.hasClass('custom-ids') || selected.hasClass('custom-type-ids') ) {
 				current.find(inputIDs).val('all').trigger('keyup').show();
 			} else {
 				current.find(inputIDs).hide();
+			}
+
+			console.log(value);
+
+			// Show/Hide Expert Notice
+			if ( 0 === value.indexOf('pro-') ) {
+				$('.wpr-expert-notice').show();
+			} else {
+				$('.wpr-expert-notice').hide();
 			}
 		});
 	}
@@ -630,7 +652,7 @@ jQuery(document).ready(function( $ ) {
 	** Highlight Templates with Active Conditions --------
 	*/
 	if ( $('body').hasClass('royal-addons_page_wpr-theme-builder') || $('body').hasClass('royal-addons_page_wpr-popups') ) {
-		if ( 'my_templates' !== currentTab ) {
+		if ( currentTab && 'my_templates' !== currentTab ) {
 			var conditions = $( '#wpr_'+ currentTab +'_conditions' ).val(),
 				conditions = ('' === conditions || '[]' === conditions) ? {} : JSON.parse(conditions);
 
@@ -839,6 +861,16 @@ jQuery(document).ready(function( $ ) {
 		// Show
 		if ( 'none' === display ) {
 			options.slideDown();
+			if ( $(this).hasClass('wpr-premium-template-kit-lib') ) {
+				setTimeout(function() {
+					window.open('https://demosites.royal-elementor-addons.com/elementor-templates/?ref=rea-plugin-backend-freevsprotab-pro', '_blank');
+				}, 600);
+			}
+			if ( $(this).hasClass('wpr-advanced-sticky-options') ) {
+				setTimeout(function() {
+					window.open('https://royal-elementor-addons.com/advanced-sticky-header/?ref=rea-plugin-backend-freevsprotab-pro', '_blank');
+				}, 600);
+			}
 		} else {
 			options.slideUp();
 		}

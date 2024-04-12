@@ -388,7 +388,7 @@ class UniteCreatorLayoutsExporterWork extends UniteCreatorExporterBase{
 	
 			echo esc_html($message);
 			
-			if(GlobalsUC::SHOW_TRACE == true)			
+			if(GlobalsUC::$SHOW_TRACE == true)			
 				dmp($e->getTraceAsString());
 			
 			exit();
@@ -994,7 +994,15 @@ class UniteCreatorLayoutsExporterWork extends UniteCreatorExporterBase{
 		
 		if(empty($filepath))
 			UniteFunctionsUC::throwError("layout filepath not found");
+	
 		
+		//file type validation
+			
+		$objAssets = new UniteCreatorAssets();
+		$objAssets->deleteFilesInExtracted($filepath);
+		$objAssets->validateAllowedFilesInExtracted($filepath);
+			
+			
 		//get extension
 		if(is_array($arrFile)){
 			$filename = UniteFunctionsUC::getVal($arrFile, "name");
@@ -1011,6 +1019,9 @@ class UniteCreatorLayoutsExporterWork extends UniteCreatorExporterBase{
 				$this->importTxtFile($filepath, $layoutID);
 				break;
 			case "zip":
+				
+				UniteFunctionsUC::throwError("Import layout zip file is not supported anymore");
+				
 				$this->importZipFile($filepath, $layoutID, $overwriteAddons);
 				break;
 			default:

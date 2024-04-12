@@ -114,6 +114,9 @@ class Blockquote extends Base_Widget {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => esc_html__( 'John Doe', 'elementor-pro' ),
 				'separator' => 'after',
 			]
@@ -180,6 +183,9 @@ class Blockquote extends Base_Widget {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -194,6 +200,9 @@ class Blockquote extends Base_Widget {
 				],
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 			]
 		);
@@ -227,6 +236,9 @@ class Blockquote extends Base_Widget {
 						TagsModule::POST_META_CATEGORY,
 						TagsModule::URL_CATEGORY,
 					],
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'elementor-pro' ),
 				'label_block' => true,
@@ -273,6 +285,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote__content +.e-q-footer' => 'margin-top: {{SIZE}}{{UNIT}}',
 				],
@@ -315,6 +328,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 20,
 				],
@@ -361,32 +375,23 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote__tweet-button' => 'border-radius: {{SIZE}}{{UNIT}}',
 				],
 				'range' => [
+					'px' => [
+						'max' => 50,
+					],
 					'em' => [
 						'min' => 0,
 						'max' => 5,
-						'step' => 0.1,
 					],
 					'rem' => [
 						'min' => 0,
 						'max' => 5,
-						'step' => 0.1,
-					],
-					'px' => [
-						'min' => 0,
-						'max' => 50,
-						'step' => 1,
-					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-						'step' => 1,
 					],
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem' ],
 			]
 		);
 
@@ -488,6 +493,21 @@ class Blockquote extends Base_Widget {
 			]
 		);
 
+		$this->add_control(
+			'button_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 'ms',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-blockquote__tweet-button' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
@@ -552,6 +572,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}} .elementor-blockquote' => 'border-left-width: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}} .elementor-blockquote' => 'border-right-width: {{SIZE}}{{UNIT}}',
@@ -564,6 +585,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}} .elementor-blockquote' => 'padding-left: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}} .elementor-blockquote' => 'padding-right: {{SIZE}}{{UNIT}}',
@@ -596,6 +618,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}} .elementor-blockquote:hover' => 'border-left-width: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}} .elementor-blockquote:hover' => 'border-right-width: {{SIZE}}{{UNIT}}',
@@ -608,9 +631,25 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}} .elementor-blockquote:hover' => 'padding-left: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}} .elementor-blockquote:hover' => 'padding-right: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'border_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 'ms',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-blockquote' => 'transition-duration: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -624,6 +663,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Vertical Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote' => 'padding-top: {{SIZE}}{{UNIT}}; padding-bottom: {{SIZE}}{{UNIT}}',
 				],
@@ -652,6 +692,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote' => 'padding: {{SIZE}}{{UNIT}}',
 				],
@@ -691,7 +732,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote' => 'border-radius: {{SIZE}}{{UNIT}}',
 				],
@@ -742,7 +783,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote:hover' => 'border-radius: {{SIZE}}{{UNIT}}',
 				],
@@ -757,6 +798,21 @@ class Blockquote extends Base_Widget {
 					'box_shadow_position',
 				],
 				'selector' => '{{WRAPPER}} .elementor-blockquote:hover',
+			]
+		);
+
+		$this->add_control(
+			'box_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 'ms',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-blockquote' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -814,6 +870,7 @@ class Blockquote extends Base_Widget {
 			[
 				'label' => esc_html__( 'Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote__content' => 'margin-top: {{SIZE}}{{UNIT}}',
 				],

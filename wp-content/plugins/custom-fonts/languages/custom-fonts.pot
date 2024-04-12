@@ -1,14 +1,14 @@
-# Copyright (C) 2022 Brainstorm Force
+# Copyright (C) 2023 Brainstorm Force
 # This file is distributed under the same license as the Custom Fonts package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Custom Fonts 1.3.7\n"
+"Project-Id-Version: Custom Fonts 2.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/custom-fonts\n"
-"POT-Creation-Date: 2022-08-19 10:52:21+00:00\n"
+"POT-Creation-Date: 2023-07-11 06:59:59+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -65,161 +65,274 @@ msgstr ""
 msgid "Learn More."
 msgstr ""
 
-#: classes/class-bsf-custom-fonts-render.php:149
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:40
+msgid "100 Thin"
+msgstr ""
+
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:41
+msgid "200 Extra Light"
+msgstr ""
+
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:42
+msgid "300 Light"
+msgstr ""
+
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:43
+msgid "400 Regular"
+msgstr ""
+
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:44
+msgid "500 Medium"
+msgstr ""
+
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:45
+msgid "600 Semi-Bold"
+msgstr ""
+
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:46
+msgid "700 Bold"
+msgstr ""
+
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:47
+msgid "800 Extra-Bold"
+msgstr ""
+
+#: admin/dashboard/includes/class-bcf-custom-font-families.php:48
+msgid "900 Ultra-Bold"
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-admin-ajax.php:57
+msgid "Sorry, you are not allowed to do this operation."
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-admin-ajax.php:58
+msgid "Nonce validation failed"
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-admin-ajax.php:59
+msgid "Sorry, something went wrong."
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-admin-ajax.php:60
+msgid "No post data found!"
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-admin-ajax.php:146
+#: admin/dashboard/includes/class-bsf-custom-fonts-admin-ajax.php:209
+msgid "Successfully created the Font!"
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-admin-ajax.php:259
+msgid "Successfully updated the Font!"
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-admin-ajax.php:304
+msgid "Successfully deleted the Font!"
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-menu.php:278
+#. translators: 1: Custom Fonts, 2: Plugin rating link
+msgid ""
+"Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your "
+"support!"
+msgstr ""
+
+#: classes/class-bsf-custom-fonts-render.php:176
 msgid "Custom"
 msgstr ""
 
-#: classes/class-bsf-custom-fonts-render.php:459
+#: classes/class-bsf-custom-fonts-render.php:426
 #. translators: 1: Astra theme from wordpress.org
 msgid "Custom Fonts Plugin requires minimum 1.0.16 version of the Astra Theme."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-msgid "Custom Fonts"
+#: classes/class-bsf-custom-fonts-white-label.php:78
+msgid "visit the plugin settings page"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:117
-msgid "The name of the font as it appears in the customizer options."
+#: classes/class-bsf-custom-fonts-white-label.php:78
+msgid "Settings"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:191
-#: includes/class-bsf-custom-fonts-admin.php:279
+#: includes/class-bcf-google-fonts-compatibility.php:672
+msgid "There was some error in deleting the font."
+msgstr ""
+
+#: includes/class-bcf-google-fonts-compatibility.php:697
+msgid "Successfully deleted font."
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-admin.php:143
+#: includes/class-bsf-custom-fonts-admin.php:231
 msgid "Font Fallback"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:191
-#: includes/class-bsf-custom-fonts-admin.php:279
+#: includes/class-bsf-custom-fonts-admin.php:143
+#: includes/class-bsf-custom-fonts-admin.php:231
 msgid "Add the font's fallback names with comma(,) separator.  eg. Arial, Serif"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:195
-#: includes/class-bsf-custom-fonts-admin.php:283
+#: includes/class-bsf-custom-fonts-admin.php:147
+#: includes/class-bsf-custom-fonts-admin.php:235
 msgid "Font Display"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:196
-#: includes/class-bsf-custom-fonts-admin.php:284
+#: includes/class-bsf-custom-fonts-admin.php:148
+#: includes/class-bsf-custom-fonts-admin.php:236
 msgid "Select font-display property for this font"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:215
-#: includes/class-bsf-custom-fonts-admin.php:314
+#: includes/class-bsf-custom-fonts-admin.php:167
+#: includes/class-bsf-custom-fonts-admin.php:266
 msgid "Font weight"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:216
-#: includes/class-bsf-custom-fonts-admin.php:315
+#: includes/class-bsf-custom-fonts-admin.php:168
+#: includes/class-bsf-custom-fonts-admin.php:267
 msgid "Select font-weight property for this font"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:218
-#: includes/class-bsf-custom-fonts-admin.php:317
+#: includes/class-bsf-custom-fonts-admin.php:170
+#: includes/class-bsf-custom-fonts-admin.php:269
 msgid "Thin 100"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:219
-#: includes/class-bsf-custom-fonts-admin.php:318
+#: includes/class-bsf-custom-fonts-admin.php:171
+#: includes/class-bsf-custom-fonts-admin.php:270
 msgid "Extra-Light 200"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:220
-#: includes/class-bsf-custom-fonts-admin.php:319
+#: includes/class-bsf-custom-fonts-admin.php:172
+#: includes/class-bsf-custom-fonts-admin.php:271
 msgid "Light 300"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:221
-#: includes/class-bsf-custom-fonts-admin.php:320
+#: includes/class-bsf-custom-fonts-admin.php:173
+#: includes/class-bsf-custom-fonts-admin.php:272
 msgid "Normal 400"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:222
-#: includes/class-bsf-custom-fonts-admin.php:321
+#: includes/class-bsf-custom-fonts-admin.php:174
+#: includes/class-bsf-custom-fonts-admin.php:273
 msgid "Medium 500"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:223
-#: includes/class-bsf-custom-fonts-admin.php:322
+#: includes/class-bsf-custom-fonts-admin.php:175
+#: includes/class-bsf-custom-fonts-admin.php:274
 msgid "Semi-Bold 600"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:224
-#: includes/class-bsf-custom-fonts-admin.php:323
+#: includes/class-bsf-custom-fonts-admin.php:176
+#: includes/class-bsf-custom-fonts-admin.php:275
 msgid "Bold 700"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:225
-#: includes/class-bsf-custom-fonts-admin.php:324
+#: includes/class-bsf-custom-fonts-admin.php:177
+#: includes/class-bsf-custom-fonts-admin.php:276
 msgid "Extra-Bold 800"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:226
-#: includes/class-bsf-custom-fonts-admin.php:325
+#: includes/class-bsf-custom-fonts-admin.php:178
+#: includes/class-bsf-custom-fonts-admin.php:277
 msgid "Ultra-Bold 900"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:229
-#: includes/class-bsf-custom-fonts-admin.php:332
+#: includes/class-bsf-custom-fonts-admin.php:181
+#: includes/class-bsf-custom-fonts-admin.php:284
 msgid "Font .woff2"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:229
-#: includes/class-bsf-custom-fonts-admin.php:332
+#: includes/class-bsf-custom-fonts-admin.php:181
+#: includes/class-bsf-custom-fonts-admin.php:284
 msgid "Upload the font's woff2 file or enter the URL."
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:230
-#: includes/class-bsf-custom-fonts-admin.php:334
+#: includes/class-bsf-custom-fonts-admin.php:182
+#: includes/class-bsf-custom-fonts-admin.php:286
 msgid "Font .woff"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:230
-#: includes/class-bsf-custom-fonts-admin.php:334
+#: includes/class-bsf-custom-fonts-admin.php:182
+#: includes/class-bsf-custom-fonts-admin.php:286
 msgid "Upload the font's woff file or enter the URL."
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:231
-#: includes/class-bsf-custom-fonts-admin.php:336
+#: includes/class-bsf-custom-fonts-admin.php:183
+#: includes/class-bsf-custom-fonts-admin.php:288
 msgid "Font .ttf"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:231
-#: includes/class-bsf-custom-fonts-admin.php:336
+#: includes/class-bsf-custom-fonts-admin.php:183
+#: includes/class-bsf-custom-fonts-admin.php:288
 msgid "Upload the font's ttf file or enter the URL."
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:232
-#: includes/class-bsf-custom-fonts-admin.php:338
+#: includes/class-bsf-custom-fonts-admin.php:184
+#: includes/class-bsf-custom-fonts-admin.php:290
 msgid "Font .eot"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:232
-#: includes/class-bsf-custom-fonts-admin.php:338
+#: includes/class-bsf-custom-fonts-admin.php:184
+#: includes/class-bsf-custom-fonts-admin.php:290
 msgid "Upload the font's eot file or enter the URL."
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:233
-#: includes/class-bsf-custom-fonts-admin.php:340
+#: includes/class-bsf-custom-fonts-admin.php:185
+#: includes/class-bsf-custom-fonts-admin.php:292
 msgid "Font .svg"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:233
-#: includes/class-bsf-custom-fonts-admin.php:340
+#: includes/class-bsf-custom-fonts-admin.php:185
+#: includes/class-bsf-custom-fonts-admin.php:292
 msgid "Upload the font's svg file or enter the URL."
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:234
-#: includes/class-bsf-custom-fonts-admin.php:342
+#: includes/class-bsf-custom-fonts-admin.php:186
+#: includes/class-bsf-custom-fonts-admin.php:294
 msgid "Font .otf"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:234
-#: includes/class-bsf-custom-fonts-admin.php:342
+#: includes/class-bsf-custom-fonts-admin.php:186
+#: includes/class-bsf-custom-fonts-admin.php:294
 msgid "Upload the font's otf file or enter the URL."
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-admin.php:396
-#: includes/class-bsf-custom-fonts-admin.php:556
+#: includes/class-bsf-custom-fonts-admin.php:348
+#: includes/class-bsf-custom-fonts-admin.php:508
 msgid "Upload"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:85
+msgid "Search Font"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:86
+#: includes/class-bsf-custom-fonts-taxonomy.php:87
+msgid "All Fonts"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:87
+#: includes/class-bsf-custom-fonts-taxonomy.php:90
+msgid "Edit Font"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:88
+msgid "View Font"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:89
+#: includes/class-bsf-custom-fonts-posttype.php:91
+msgid "Add New"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:90
+#: includes/class-bsf-custom-fonts-taxonomy.php:91
+msgid "Update Font"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:92
+#: includes/class-bsf-custom-fonts-taxonomy.php:93
+msgid "New Font Name"
 msgstr ""
 
 #: includes/class-bsf-custom-fonts-taxonomy.php:84
@@ -230,10 +343,6 @@ msgstr ""
 msgid "Search Fonts"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-taxonomy.php:87
-msgid "All Fonts"
-msgstr ""
-
 #: includes/class-bsf-custom-fonts-taxonomy.php:88
 msgid "Parent Font"
 msgstr ""
@@ -242,20 +351,8 @@ msgstr ""
 msgid "Parent Font:"
 msgstr ""
 
-#: includes/class-bsf-custom-fonts-taxonomy.php:90
-msgid "Edit Font"
-msgstr ""
-
-#: includes/class-bsf-custom-fonts-taxonomy.php:91
-msgid "Update Font"
-msgstr ""
-
 #: includes/class-bsf-custom-fonts-taxonomy.php:92
 msgid "Add New Font"
-msgstr ""
-
-#: includes/class-bsf-custom-fonts-taxonomy.php:93
-msgid "New Font Name"
 msgstr ""
 
 #: includes/class-bsf-custom-fonts-taxonomy.php:94
@@ -264,6 +361,10 @@ msgstr ""
 
 #: includes/class-bsf-custom-fonts-taxonomy.php:95
 msgid "← Go to Fonts"
+msgstr ""
+
+#: includes/class-custom-fonts-api-init.php:180
+msgid "Sorry, you cannot list resources."
 msgstr ""
 
 #: includes/white-label.php:18 includes/white-label.php:23
@@ -282,14 +383,21 @@ msgstr ""
 msgid "WordPress Nonce not validated."
 msgstr ""
 
+#. Plugin Name of the plugin/theme
+msgid "Custom Fonts"
+msgstr ""
+
 #. Plugin URI of the plugin/theme
 msgid "http://www.wpastra.com/"
 msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
-"Custom Fonts allows you to add more fonts that extend formatting options in "
-"your site."
+"Upload your own custom font or choose from a vast collection of Google "
+"fonts, all hosted directly on your server. Enjoy improved performance, "
+"enhanced privacy, and full site editing theme support. Take control of your "
+"website's typography without compromising performance, privacy or "
+"compliance!"
 msgstr ""
 
 #. Author of the plugin/theme
@@ -298,6 +406,22 @@ msgstr ""
 
 #. Author URI of the plugin/theme
 msgid "http://www.brainstormforce.com"
+msgstr ""
+
+#: admin/dashboard/includes/class-bsf-custom-fonts-menu.php:88
+#: includes/class-bsf-custom-fonts-taxonomy.php:83
+msgctxt "Menu title"
+msgid "Custom Fonts"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:83
+msgctxt "font general name"
+msgid "Custom Fonts"
+msgstr ""
+
+#: includes/class-bsf-custom-fonts-posttype.php:84
+msgctxt "font singular name"
+msgid "Font"
 msgstr ""
 
 #: includes/class-bsf-custom-fonts-taxonomy.php:85

@@ -84,10 +84,15 @@ class UniteProviderFrontUC{
 		if(empty($renderTemplateID))
 			return(false);
 		
+			
 		//disable short pixel
-		
+					
 		if(defined("SHORTPIXEL_AI_VERSION")){
-			if(!defined("DONOTCDN"))
+			
+			$isMultiple = UniteFunctionsUC::getGetVar("multiple","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+			$isMultiple = UniteFunctionsUC::strToBool($isMultiple);
+			
+			if(!defined("DONOTCDN") && $isMultiple == false)
 				define("DONOTCDN",true);
 		}
 		
@@ -131,7 +136,6 @@ class UniteProviderFrontUC{
 		$this->addFilter("template_include", "onTemplateInclude",12);	//after elementor and woo
 
 		$this->addAction( 'plugins_loaded', 'onPluginsLoaded' );
-		
 		
 		//$this->checkDisableShortPixel();
 		

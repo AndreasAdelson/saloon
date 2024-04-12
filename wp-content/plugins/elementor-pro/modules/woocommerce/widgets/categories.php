@@ -170,9 +170,10 @@ class Categories extends Base_Widget {
 		$this->add_control(
 			'wc_style_warning',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'The style of this widget is often affected by your theme and plugins. If you experience any such issue, try to switch to a basic theme and deactivate related plugins.', 'elementor-pro' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				// TODO: Remove define() with the release of Elementor 3.22
+				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
+				'alert_type' => 'info',
+				'content' => esc_html__( 'The style of this widget is often affected by your theme and plugins. If you experience any such issue, try to switch to a basic theme and deactivate related plugins.', 'elementor-pro' ),
 			]
 		);
 
@@ -190,12 +191,12 @@ class Categories extends Base_Widget {
 			[
 				'label'     => esc_html__( 'Columns Gap', 'elementor-pro' ),
 				'type'      => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default'   => [
 					'size' => 20,
 				],
 				'range'     => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 				],
@@ -210,12 +211,12 @@ class Categories extends Base_Widget {
 			[
 				'label'     => esc_html__( 'Rows Gap', 'elementor-pro' ),
 				'type'      => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default'   => [
 					'size' => 40,
 				],
 				'range'     => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 				],
@@ -273,7 +274,7 @@ class Categories extends Base_Widget {
 			[
 				'label'      => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type'       => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors'  => [
 					'{{WRAPPER}} a > img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
@@ -285,7 +286,7 @@ class Categories extends Base_Widget {
 			[
 				'label'      => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type'       => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors'  => [
 					'{{WRAPPER}} a > img' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],

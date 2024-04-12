@@ -3,11 +3,10 @@ namespace WprAddons\Modules\PageList\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Background;
-use Elementor\Core\Schemes\Color;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Image_Size;
 use WprAddons\Classes\Utilities;
 
@@ -110,9 +109,13 @@ class Wpr_Page_List extends Widget_Base {
 		);
 
 		$repeater->add_control(
-			'page_list_item_title', [
+			'page_list_item_title', 
+			[
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'New Page' , 'wpr-addons' ),
 				'label_block' => true,
 				'separator' => 'before',
@@ -123,10 +126,14 @@ class Wpr_Page_List extends Widget_Base {
 		);
 
 		$repeater->add_control(
-			'page_list_item_sub_title', [
+			'page_list_item_sub_title', 
+			[
 				'label' => esc_html__( 'Sub Title', 'wpr-addons' ),
 				'label_block' => true,
 				'type' => \Elementor\Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'New Page Sub Title' , 'wpr-addons' ),
 			]
 		);
@@ -136,6 +143,9 @@ class Wpr_Page_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title Link', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'default' => [
 					'url' => '',
@@ -204,6 +214,9 @@ class Wpr_Page_List extends Widget_Base {
 			'page_list_item_badge_text', [
 				'label' => esc_html__( 'Badge Text', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'Badge' , 'wpr-addons' ),
                 'condition' => [
                     'show_page_list_item_badge' => 'yes'
@@ -441,7 +454,7 @@ class Wpr_Page_List extends Widget_Base {
 				'default' => '#E8E8E8',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-page-list-item' => 'border-color: {{VALUE}}',
-				],
+				]
 			]
 		);
 
@@ -456,7 +469,8 @@ class Wpr_Page_List extends Widget_Base {
 				'step' => 0.1,
 				'selectors' => [
 					'{{WRAPPER}} .wpr-page-list-item' => 'transition-duration: {{VALUE}}s',
-				],
+					'{{WRAPPER}} .wpr-page-list-item a' => 'transition-duration: {{VALUE}}s'
+				]
 			]
 		);
 
@@ -464,7 +478,6 @@ class Wpr_Page_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'page_list_item_title_typo',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-page-list-item a',
 				'fields_options' => [
 					'typography'      => [
@@ -581,7 +594,6 @@ class Wpr_Page_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'page_list_item_sub_title_typo',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-page-list-item p',
 				'fields_options' => [
 					'typography'      => [
@@ -767,6 +779,7 @@ class Wpr_Page_List extends Widget_Base {
 				'default' => '#605BE5',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-page-list i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .wpr-page-list svg' => 'fill: {{VALUE}}'
 				],
 			]
 		);
@@ -816,6 +829,7 @@ class Wpr_Page_List extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-page-list i' => 'font-size: {{SIZE}}{{UNIT}}; max-height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-page-list svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .wpr-page-list i:before' => 'max-height: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .wpr-page-list-item-icon' => 'max-height: {{SIZE}}{{UNIT}};',
 				],

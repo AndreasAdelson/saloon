@@ -3,14 +3,13 @@ namespace WprAddons\Modules\ProgressBar\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Icons;
 use Elementor\Utils;
@@ -131,6 +130,9 @@ class Wpr_Progress_Bar extends Widget_Base {
 				'min' => 0,
 				'step' => 1,
 				'separator' => 'before',
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -142,6 +144,9 @@ class Wpr_Progress_Bar extends Widget_Base {
 				'default' => 70,
 				'min' => 0,
 				'step' => 1,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -150,6 +155,9 @@ class Wpr_Progress_Bar extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Title',
 				'separator' => 'before',
 			]
@@ -178,6 +186,9 @@ class Wpr_Progress_Bar extends Widget_Base {
 			[
 				'label' => esc_html__( 'Subtitle', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'separator' => 'before',
 			]
@@ -230,6 +241,9 @@ class Wpr_Progress_Bar extends Widget_Base {
 			[
 				'label' => esc_html__( 'Counter Prefix', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'condition' => [
 					'counter_switcher' => 'yes',
@@ -242,6 +256,9 @@ class Wpr_Progress_Bar extends Widget_Base {
 			[
 				'label' => esc_html__( 'Counter Suffix', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '%',
 				'condition' => [
 					'counter_switcher' => 'yes',
@@ -743,7 +760,6 @@ class Wpr_Progress_Bar extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-prbar-title',
 				'condition' => [
 					'title!' => '',
@@ -810,7 +826,6 @@ class Wpr_Progress_Bar extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'subtitle_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-prbar-subtitle',
 				'condition' => [
 					'subtitle!' => '',
@@ -877,7 +892,6 @@ class Wpr_Progress_Bar extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'counter_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-prbar-counter',
 				'condition' => [
 					'counter_switcher' => 'yes',
@@ -1295,7 +1309,7 @@ class Wpr_Progress_Bar extends Widget_Base {
 
 	protected function render() {
 		// Get Settings
-		$settings = $this->get_settings();
+		$settings = $this->get_settings_for_display();
 
 		$prbar_counter_persent = round( ( $settings['counter_value'] / $settings['max_value'] ) * 100 );
 

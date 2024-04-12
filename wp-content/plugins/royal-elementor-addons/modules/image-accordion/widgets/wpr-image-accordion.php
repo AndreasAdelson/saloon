@@ -4,14 +4,13 @@ namespace WprAddons\Modules\ImageAccordion\Widgets;
 use Elementor;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Repeater;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Utils;
@@ -439,6 +438,9 @@ class Wpr_Image_Accordion extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'render_type' => 'template',
 				'default' => [
 					'url' => WPR_ADDONS_ASSETS_URL . 'img/logo-slider-450x450.png',
@@ -514,6 +516,9 @@ class Wpr_Image_Accordion extends Widget_Base {
 			'accordion_item_title', [
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'Item 1 Title' , 'wpr-addons' ),
 				'label_block' => true,
 				'separator' => 'before'
@@ -524,6 +529,9 @@ class Wpr_Image_Accordion extends Widget_Base {
 			'accordion_item_description', [
 				'label' => esc_html__( 'Description', 'wpr-addons' ),
 				'type' => \Elementor\Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => esc_html__( 'Lorem ipsum dolos ave nita' , 'wpr-addons' ),
 				'label_block' => true
 			]
@@ -534,6 +542,9 @@ class Wpr_Image_Accordion extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Button'
 			]
 		);
@@ -542,7 +553,10 @@ class Wpr_Image_Accordion extends Widget_Base {
 			'accordion_btn_url',
 			[
 				'label' => esc_html__( 'Button URL', 'wpr-addons' ),
-				'type' => Controls_Manager::URL
+				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				]
 			]
 		);
 		
@@ -768,6 +782,9 @@ class Wpr_Image_Accordion extends Widget_Base {
 			[
 				'label' => esc_html__( 'Extra Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'condition' => [
 					'element_select!' => [
@@ -1386,7 +1403,6 @@ class Wpr_Image_Accordion extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-img-accordion-item-title a'
 			]
 		);
@@ -1543,7 +1559,6 @@ class Wpr_Image_Accordion extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'description_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-img-accordion-item-description'
 			]
 		);
@@ -1721,7 +1736,6 @@ class Wpr_Image_Accordion extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'button_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-img-accordion-item-button a'
 			]
 		);
@@ -2379,12 +2393,15 @@ class Wpr_Image_Accordion extends Widget_Base {
 		?>
 
 		<div class="wpr-image-accordion-wrap <?php echo $no_column ?>">
+
 			<?php if ( ! wpr_fs()->can_use_premium_code() ) : ?>
 				<div class="wpr-image-accordion">
 			<?php else : ?>
 				<div class="wpr-image-accordion" <?php echo $this->get_render_attribute_string('lightbox-settings') ?>>
 			<?php endif ; ?>
+
 			<?php foreach ( $settings['accordion_items'] as $key => $item ) :
+
 			if ( ! wpr_fs()->can_use_premium_code() && $key === 3 ) {
 				break;
 			}
@@ -2429,7 +2446,9 @@ class Wpr_Image_Accordion extends Widget_Base {
 								echo '</div>';
 							?>
 				</div>
+
 			<?php endforeach; ?>
+            
 			</div>
 		</div>
 

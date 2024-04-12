@@ -19,22 +19,26 @@
     "url": "https://github.com/wpsoul/greenshift/issues"
   },
   "devDependencies": {
-    "@wordpress/scripts": "19.2.1",
+    "@wordpress/scripts": "26.9.0",
     "process": "0.11.10",
     "raw-loader": "^4.0.2",
     "sass": "~1.26.11",
-    "swiper": "^7.0.0"
+    "swiper": "^8.4.7"
   },
   "dependencies": {
+    "@dnd-kit/sortable": "^7.0.2",
     "@wordpress/icons": "^6.1.1",
+    "antd": "^5.8.5",
+    "colord": "^2.9.3",
     "convert-svg-react": "^1.0.0",
     "csso": "^4.2.0",
     "debounce-promise": "^3.1.2",
     "extract-json-string": "^1.0.1",
-    "gsap": "^3.11.1",
+    "gsap": "^3.12.2",
     "icomoon-react": "^2.0.19",
     "is-svg": "^4.3.1",
     "lodash": "^4.17.21",
+    "react-grid-layout": "^1.4.2",
     "react-select": "^5.2.1",
     "use-debounce": "^8.0.4",
     "use-eye-dropper": "^1.4.3",

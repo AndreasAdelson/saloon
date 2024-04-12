@@ -27,9 +27,10 @@ abstract class Products_Base extends Base_Widget {
 		$this->add_control(
 			'wc_style_warning',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'The style of this widget is often affected by your theme and plugins. If you experience any such issue, try to switch to a basic theme and deactivate related plugins.', 'elementor-pro' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				// TODO: Remove define() with the release of Elementor 3.22
+				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
+				'alert_type' => 'info',
+				'content' => esc_html__( 'The style of this widget is often affected by your theme and plugins. If you experience any such issue, try to switch to a basic theme and deactivate related plugins.', 'elementor-pro' ),
 			]
 		);
 
@@ -47,6 +48,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Columns Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 20,
 				],
@@ -58,8 +60,13 @@ abstract class Products_Base extends Base_Widget {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -73,6 +80,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Rows Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 40,
 				],
@@ -84,8 +92,13 @@ abstract class Products_Base extends Base_Widget {
 				],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -142,7 +155,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products .attachment-woocommerce_thumbnail' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
@@ -154,7 +167,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products .attachment-woocommerce_thumbnail' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],
@@ -203,12 +216,16 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
+					'px' => [
+						'max' => 100,
+					],
 					'em' => [
-						'min' => 0,
-						'max' => 5,
-						'step' => 0.1,
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -254,14 +271,19 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Star Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'unit' => 'em',
 				],
 				'range' => [
+					'px' => [
+						'max' => 50,
+					],
 					'em' => [
-						'min' => 0,
-						'max' => 4,
-						'step' => 0.1,
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -275,12 +297,16 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
+					'px' => [
+						'max' => 50,
+					],
 					'em' => [
-						'min' => 0,
 						'max' => 5,
-						'step' => 0.1,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -484,7 +510,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products ul.products li.product .button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -496,7 +522,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Text Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products ul.products li.product .button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -508,7 +534,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products ul.products li.product .button' => 'margin-top: {{SIZE}}{{UNIT}}',
 				],
@@ -566,17 +592,16 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
-						'step' => 1,
 					],
 					'em' => [
-						'min' => 0,
-						'max' => 3.5,
-						'step' => 0.1,
+						'max' => 5,
+					],
+					'rem' => [
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -600,7 +625,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Width', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products ul.products li.product' => 'border-style: solid; border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
@@ -612,11 +637,16 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'selectors' => [
@@ -630,7 +660,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -741,6 +771,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} nav.woocommerce-pagination' => 'margin-top: {{SIZE}}{{UNIT}}',
 				],
@@ -780,14 +811,18 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
+					'px' => [
+						'max' => 20,
+					],
 					'em' => [
-						'min' => 0,
 						'max' => 2,
-						'step' => 0.1,
+					],
+					'rem' => [
+						'max' => 2,
 					],
 				],
-				'size_units' => [ 'em' ],
 				'selectors' => [
 					'{{WRAPPER}} nav.woocommerce-pagination ul li a, {{WRAPPER}} nav.woocommerce-pagination ul li span' => 'padding: {{SIZE}}{{UNIT}}',
 				],
@@ -966,7 +1001,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products ul.products li.product span.onsale' => 'border-radius: {{SIZE}}{{UNIT}}',
 				],
@@ -981,7 +1016,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products ul.products li.product span.onsale' => 'min-width: {{SIZE}}{{UNIT}};',
 				],
@@ -996,7 +1031,7 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Height', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products ul.products li.product span.onsale' => 'min-height: {{SIZE}}{{UNIT}}; line-height: {{SIZE}}{{UNIT}};',
 				],
@@ -1039,13 +1074,17 @@ abstract class Products_Base extends Base_Widget {
 			[
 				'label' => esc_html__( 'Distance', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => -20,
 						'max' => 20,
 					],
 					'em' => [
+						'min' => -2,
+						'max' => 2,
+					],
+					'rem' => [
 						'min' => -2,
 						'max' => 2,
 					],

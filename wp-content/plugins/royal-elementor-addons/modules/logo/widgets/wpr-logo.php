@@ -6,11 +6,11 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Css_Filter;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Icons;
@@ -63,6 +63,9 @@ class Wpr_Logo extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
@@ -74,6 +77,9 @@ class Wpr_Logo extends Widget_Base {
 			[
 				'label' => esc_html__( 'Retina Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				]
 			]
 		);
 
@@ -82,6 +88,9 @@ class Wpr_Logo extends Widget_Base {
 			[
 				'label' => esc_html__( 'Mobile Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				]
 			]
 		);
 
@@ -105,6 +114,9 @@ class Wpr_Logo extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'My Custom Logo',
 				'condition' => [
 					'title_type' => 'custom',
@@ -132,6 +144,9 @@ class Wpr_Logo extends Widget_Base {
 			[
 				'label' => esc_html__( 'Tagline Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Tagline',
 				'condition' => [
 					'description_type' => 'custom',
@@ -184,6 +199,9 @@ class Wpr_Logo extends Widget_Base {
 			'custom_url',
 			[
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://www.your-link.com', 'wpr-addons' ),
 				'condition' => [
 					'url_type' => 'custom',
@@ -448,7 +466,6 @@ class Wpr_Logo extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-logo-title',
 			]
 		);
@@ -500,7 +517,6 @@ class Wpr_Logo extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-logo-description',
 			]
 		);
@@ -623,7 +639,7 @@ class Wpr_Logo extends Widget_Base {
 			$this->add_render_attribute( 'url_attr', 'nofollow', '' );
 		}
 
-		$this->add_render_attribute( 'url_attr', 'href',  $settings['custom_url']['url'] );
+		$this->add_render_attribute( 'url_attr', 'href',  esc_url( $settings['custom_url']['url'] ) );
 	}
 
 	?>

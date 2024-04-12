@@ -48,7 +48,7 @@ class Wpr_Popup extends Elementor\Core\Base\Document {
 					'pro-dt' => esc_html__( 'After Specific Date (Pro)', 'wpr-addons' ),
 					'pro-ia'  => esc_html__( 'After User Inactivity (Pro)', 'wpr-addons' ),
 					'pro-ex' => esc_html__( 'After User Exit Intent (Pro)', 'wpr-addons' ),
-					'pro-cs' => esc_html__( 'Custom Trigger (Selector) (Pro)', 'wpr-addons' ),
+					'pro-cs' => esc_html__( 'Custom Trigger (Button Click) (Pro)', 'wpr-addons' ),
 				],
 			]
 		);	
@@ -143,6 +143,9 @@ class Wpr_Popup extends Elementor\Core\Base\Document {
 			[
 				'label' => esc_html__( 'Element Selector', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'condition' => [
 					'popup_trigger' => 'element-scroll',
@@ -169,6 +172,9 @@ class Wpr_Popup extends Elementor\Core\Base\Document {
 			[
 				'label' => esc_html__( 'Element Selector', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '',
 				'condition' => [
 					'popup_trigger' => 'custom',
@@ -631,7 +637,7 @@ class Wpr_Popup extends Elementor\Core\Base\Document {
 						<li>Open Popup: After Specific Date</li>
 						<li>Open Popup: After User Inactivity</li>
 						<li>Open Popup: After User Exit Intent</li>
-						<li>Open Popup: Custom Trigger (Selector)</li>
+						<li>Open Popup: Custom Trigger (Button Click or Selector)</li>
 						<li>Show Again Delay: Set any time (hours, days, weeks) - This option determines when to show popup again to a visitor after it is closed.</li>
 						<li>Stop showing after Specific Date</li>
 						<li>Automatic Closing Delay</li>
@@ -919,6 +925,7 @@ class Wpr_Popup extends Elementor\Core\Base\Document {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-popup-close-btn i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-popup-close-btn svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};'
 				],
 			]
 		);
@@ -942,6 +949,7 @@ class Wpr_Popup extends Elementor\Core\Base\Document {
 				'selectors' => [
 					'{{WRAPPER}} .wpr-popup-close-btn' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .wpr-popup-close-btn i' => 'line-height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-popup-close-btn svg' => 'line-height: {{SIZE}}{{UNIT}};'
 				],
 			]
 		);

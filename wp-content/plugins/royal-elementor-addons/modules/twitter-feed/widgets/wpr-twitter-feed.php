@@ -3,14 +3,13 @@ namespace WprAddons\Modules\TwitterFeed\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Repeater;
 use Elementor\Group_Control_Image_Size;
 use WprAddons\Classes\Utilities;
@@ -60,7 +59,10 @@ class Wpr_Twitter_Feed extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'default' => 6,
 				'min' => 0,
-				'max' => 6
+				'max' => 6,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 	}
@@ -388,7 +390,7 @@ class Wpr_Twitter_Feed extends Widget_Base {
 				// }
 
                 // echo wp_date(get_option( 'date_format' ), strtotime($item['created_at'])) 
-                echo human_time_diff(strtotime($item['created_at'])) .' '. esc_html__('ago');
+                echo human_time_diff(strtotime($item['created_at'])) .' '. esc_html__('ago', 'wpr-addons');
 
 				// Icon: After
 				// if ( 'after' === $settings['element_extra_icon_pos'] ) {
@@ -669,6 +671,9 @@ class Wpr_Twitter_Feed extends Widget_Base {
             [
                 'label' => esc_html__('Profile Name', 'wpr-addons'),
                 'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
                 'default' => '@elemntor',
                 'label_block' => false,
                 'description' => esc_html__('Use @ sign with your profile name.', 'wpr-addons'),
@@ -704,6 +709,9 @@ class Wpr_Twitter_Feed extends Widget_Base {
             [
                 'label' => esc_html__('Hashtag Name', 'wpr-addons'),
                 'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
                 'label_block' => true,
                 'description' => esc_html__('Enter comma-separated list and remove # sign from your hashtag name', 'wpr-addons'),
             ]
@@ -728,9 +736,12 @@ class Wpr_Twitter_Feed extends Widget_Base {
             [
                 'label' => esc_html__('Consumer Key', 'wpr-addons'),
                 'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
                 'label_block' => false,
-                'default' => 'sOmRR0YaKwg0eyv4hIiEsu5pH',
-                'description' => '<a href="https://apps.twitter.com/app/" target="_blank">Get Consumer Key.</a> Create a new app or select existing app and grab the <b>consumer key.</b>',
+                'default' => '',
+                'description' => '<a href="https://developer.twitter.com/en/docs/authentication/oauth-1-0a/api-key-and-secret" target="_blank">Get Consumer Key.</a> Create a new app or select existing app and grab the <b>consumer key.</b>',
             ]
         );
 
@@ -739,9 +750,12 @@ class Wpr_Twitter_Feed extends Widget_Base {
             [
                 'label' => esc_html__('Consumer Secret', 'wpr-addons'),
                 'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
                 'label_block' => false,
-                'default' => 'Gi4doRTttrEWUuGgjfWTPb0pkxRroBOijN6iNJHtNn2N8uEb47',
-                'description' => '<a href="https://apps.twitter.com/app/" target="_blank">Get Consumer Secret.</a> Create a new app or select existing app and grab the <b>consumer secret.</b>',
+                'default' => '',
+                'description' => '<a href="https://developer.twitter.com/en/docs/authentication/oauth-1-0a/api-key-and-secret" target="_blank">Get Consumer Secret.</a> Create a new app or select existing app and grab the <b>consumer secret.</b>',
             ]
         );
 
@@ -915,8 +929,8 @@ class Wpr_Twitter_Feed extends Widget_Base {
 				'label' => esc_html__( 'Header Info Style', 'wpr-addons' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'inline' => esc_html__('Inline'),
-					'block' => esc_html__('Block'),
+					'inline' => esc_html__('Inline', 'wpr-addons'),
+					'block' => esc_html__('Block', 'wpr-addons'),
 				],
 				'selectors_dictionary' => [
 					'inline' => 'display: flex;',
@@ -1200,6 +1214,9 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Read More Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Read More',
 				'condition' => [
 					'element_select' => [ 'read-more' ],
@@ -1771,6 +1788,9 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Load More Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Load More',
 			]
 		);
@@ -1780,6 +1800,9 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Finish Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'End of Content.',
 			]
 		);
@@ -1924,7 +1947,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Typography', 'wpr-addons' ),
 				'name' => 'header_username_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-tf-header-user-name',
 				'fields_options' => [
 					'typography' => [
@@ -1966,7 +1988,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Typography', 'wpr-addons' ),
 				'name' => 'header_account_name_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-tf-header-user-acc-name',
 			]
 		);
@@ -1997,7 +2018,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			[
 				'label' => esc_html__( 'Typography', 'wpr-addons' ),
 				'name' => 'header_stats_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-tf-statistics span',
 			]
 		);
@@ -2226,7 +2246,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-twitter-feed-item-username a',
 				'fields_options' => [
 					'typography' => [
@@ -2561,7 +2580,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'account_name_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-twitter-feed-item-profile-name a',
 				'fields_options' => [
 					'typography' => [
@@ -2756,7 +2774,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'caption_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-twitter-feed-item-twit',
 				'fields_options' => [
 					'typography' => [
@@ -2953,7 +2970,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'date_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-twitter-feed-item-date',
 				'fields_options' => [
 					'typography' => [
@@ -3113,7 +3129,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'read_more_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-twitter-feed-item-read-more a',
 				'fields_options' => [
 					'typography' => [
@@ -3785,7 +3800,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			[
 				'name' => 'cs_pag_fraction_typography',
 				'label' => __( 'Typography', 'wpr-addons' ),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}}.wpr-twitter-feed-carousel .swiper-pagination-fraction',
 				'fields_options' => [
 					'typography' => [
@@ -4042,7 +4056,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'button_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-twitter-follow-btn',
 				'separator' => 'before',
 			]
@@ -4373,7 +4386,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'pagination_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-grid-pagination, {{WRAPPER}} .wpr-grid-pagination button'
 			]
 		);
@@ -4653,6 +4665,11 @@ class Wpr_Twitter_Feed extends Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
+		if ( empty($settings['twitter_feed_consumer_key']) || empty($settings['twitter_feed_consumer_secret']) ) {
+			echo '<p class="wpr-token-missing">'. esc_html__('Please insert Consumer and Secret Keys in respective fields', 'wpr-addons') .'</p>';
+			return;
+		}
+
 		if ( !wpr_fs()->can_use_premium_code() && $settings['number_of_posts'] > 6 ) {
 			$settings['number_of_posts'] = 6;
 		}
@@ -4784,8 +4801,6 @@ class Wpr_Twitter_Feed extends Widget_Base {
 			$delay = isset($settings['twitter_feed_delay']) ? $settings['twitter_feed_delay'] : '';
 			$speed = $settings['twitter_feed_speed'];
 
-			// var_dump($slides_to_show, $slides_to_show_widescreen, $slides_to_show_laptop, $slides_to_show_tablet_extra, $slides_to_show_tablet, $slides_to_show_mobile, $settings['twitter_feed_slides_to_show_mobile'] );
-
 			$twitter_settings['carousel'] = [
 				'wpr_cs_navigation' => $navigation,
 				'wpr_cs_pagination' => $pagination,
@@ -4834,9 +4849,9 @@ class Wpr_Twitter_Feed extends Widget_Base {
 							<p class="wpr-tf-header-user-name"><?php echo $items_array[0][0]['user']['name'] ?></p>
 							<p class="wpr-tf-header-user-acc-name"><a href="<?php echo $items_array[0][0]['user']['screen_name'] ?>" target="_blank"><?php echo '@'. $items_array[0][0]['user']['screen_name'] ?></a></p>
 						</div>
-						<span class=""><a href='https://twitter.com/<?php echo $items_array[0][0]['user']['screen_name'] ?>' target="_blank"><span><?php echo $this->format_numbers($items_array[0][0]['user']['statuses_count']) ?></span><span><?php esc_html__(' Tweets') ?></span></a></span>
-						<span class=""><a href='https://twitter.com/<?php echo $items_array[0][0]['user']['screen_name'] ?>/following' target="_blank"><span><?php echo $this->format_numbers($items_array[0][0]['user']['friends_count']) ?></span><span><?php esc_html__(' Following') ?></span></a></span>
-						<span class=""><a href='https://twitter.com/<?php echo $items_array[0][0]['user']['screen_name'] ?>/followers' target="_blank"><span><?php echo $this->format_numbers($items_array[0][0]['user']['followers_count']) ?></span><span><?php esc_html__(' Followers') ?></span></a></span>
+						<span class=""><a href='https://twitter.com/<?php echo $items_array[0][0]['user']['screen_name'] ?>' target="_blank"><span><?php echo $this->format_numbers($items_array[0][0]['user']['statuses_count']) ?></span><span><?php esc_html__(' Tweets', 'wpr-addons') ?></span></a></span>
+						<span class=""><a href='https://twitter.com/<?php echo $items_array[0][0]['user']['screen_name'] ?>/following' target="_blank"><span><?php echo $this->format_numbers($items_array[0][0]['user']['friends_count']) ?></span><span><?php esc_html__(' Following', 'wpr-addons') ?></span></a></span>
+						<span class=""><a href='https://twitter.com/<?php echo $items_array[0][0]['user']['screen_name'] ?>/followers' target="_blank"><span><?php echo $this->format_numbers($items_array[0][0]['user']['followers_count']) ?></span><span><?php esc_html__(' Followers', 'wpr-addons') ?></span></a></span>
 					</div>
 				</div>
 	

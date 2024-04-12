@@ -162,20 +162,21 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				}
 				
 			}catch (Exception $e){
+				
 				$view = esc_html($view);
 				$message = $e->getMessage();
 				$message = esc_html($message);
 				
 				echo "<div id='uc_view_error_message'> <br><br>View ($view) Error: <b>".$message."</b>";
 				
-				if(GlobalsUC::SHOW_TRACE == true)
+				if(GlobalsUC::$SHOW_TRACE == true)
 					dmp($e->getTraceAsString());
 				echo "</div>";
 				?>
 				<script>
 					jQuery(document).ready(function(){
 						var htmlError = jQuery("#uc_view_error_message").html();
-						jQuery("#viewWrapper").html(htmlError);
+						jQuery("#viewWrapper").append("Duplicating Error Here: <br> <div style='padding-left:20px;padding-right:20px;'>"+htmlError+"</div><br><br>");
 					});
 				</script>
 				<?php 

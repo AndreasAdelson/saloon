@@ -113,9 +113,10 @@ class Products extends Products_Base {
 		$this->add_control(
 			'wc_notice_frontpage',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Ordering is not available if this widget is placed in your front page. Visible on frontend only.', 'elementor-pro' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				// TODO: Remove define() with the release of Elementor 3.22
+				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
+				'alert_type' => 'info',
+				'content' => esc_html__( 'Ordering is not available if this widget is placed in your front page. Visible on frontend only.', 'elementor-pro' ),
 				'condition' => [
 					'paginate' => 'yes',
 					'allow_order' => 'yes',
@@ -304,14 +305,18 @@ class Products extends Products_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--products-title-spacing: {{SIZE}}{{UNIT}};',
 				],

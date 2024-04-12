@@ -155,6 +155,9 @@ class UniteCreatorWpmlIntegrate{
 				case UniteCreatorDialogParam::PARAM_TEXTAREA:
 					$editorType = "AREA";
 				break;
+				case UniteCreatorDialogParam::PARAM_LINK:
+					$editorType = "LINK";		//this code makes a fatal error
+				break;
 			}
 			
 			if(empty($editorType))
@@ -170,6 +173,9 @@ class UniteCreatorWpmlIntegrate{
 				$fieldType = $widgetTitle." - Items - ".$paramTitle;
 			
 			$fieldName = UniteFunctionsUC::getVal($param, "name");
+			
+			if($editorType == "LINK")
+				$fieldName .= ">url";
 			
 			$arrField = array();
 			$arrField["field"] = $fieldName;
@@ -247,8 +253,8 @@ class UniteCreatorWpmlIntegrate{
 				self::$arrWidgetItemsData[$addonName] = $arrItemsFields;
 				
 				$className = "UE_WPML_INTEGRATION__".$addonName;
-				
-				if($isWPMLExists == true){
+				 
+				if($isWPMLExists == true && class_exists($className) == false){
 					$code = "class {$className} extends UNITE_CREATOR_WPML_Translation_Module{}";
 					eval($code);
 				}

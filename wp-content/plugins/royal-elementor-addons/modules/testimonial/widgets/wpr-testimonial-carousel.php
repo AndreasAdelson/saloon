@@ -2,14 +2,13 @@
 namespace WprAddons\Modules\Testimonial\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use WprAddons\Classes\Utilities;
 use Elementor\Utils;
@@ -252,6 +251,9 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Author', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'John Doe',
 			]
 		);
@@ -261,6 +263,9 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Job', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Sony CEO',
 			]
 		);
@@ -270,6 +275,9 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Author Image', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
 				],
@@ -281,6 +289,9 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Company Logo', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -289,6 +300,9 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Logo URL', 'wpr-addons' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://www.your-link.com', 'wpr-addons' ),
 				'conditions' => [
 					'terms' => [
@@ -315,6 +329,9 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Awesome Theme',
 			]
 		);
@@ -328,6 +345,9 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 				'max' => 10,
 				'step' => 0.1,
 				'default' => 4.5,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -345,6 +365,9 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Date', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => '7 Days Ago',
 			]
 		);
@@ -1163,7 +1186,6 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-testimonial-title',
 			]
 		);
@@ -1243,7 +1265,6 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-testimonial-content',
 			]
 		);
@@ -1323,7 +1344,6 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'date_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-testimonial-date',
 			]
 		);
@@ -1386,6 +1406,7 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 				'default' => '#FFD726',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-testimonial-rating i:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-rating-icon .wpr-rating-marked svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -1398,6 +1419,7 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 				'default' => '#d8d8d8',
 				'selectors' => [
 					'{{WRAPPER}} .wpr-testimonial-rating i' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .wpr-testimonial-rating svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -1459,6 +1481,7 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-testimonial-rating i' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-testimonial-rating svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -1481,6 +1504,7 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .wpr-testimonial-rating i' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-testimonial-rating svg' => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .wpr-testimonial-rating span' => 'margin-left: {{SIZE}}{{UNIT}};',
 				],	
 			]
@@ -1513,7 +1537,6 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'rating_color_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-testimonial-rating span',
 			]
 		);
@@ -1760,7 +1783,6 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'name_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-testimonial-name',
 			]
 		);
@@ -1838,7 +1860,6 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'job_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-testimonial-job',
 			]
 		);
@@ -2061,6 +2082,7 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .wpr-testimonial-social' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .wpr-testimonial-social i' => 'line-height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .wpr-testimonial-social svg' => 'line-height: {{SIZE}}{{UNIT}};',
 				],
 				'separator' => 'before',
 			]
@@ -2674,7 +2696,7 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 
 					$logo_element = 'a';
 
-					$this->add_render_attribute( 'logo_attribute'. $item_count, 'href', $item['testimonial_logo_url']['url'] );
+					$this->add_render_attribute( 'logo_attribute'. $item_count, 'href', esc_url( $item['testimonial_logo_url']['url'] ) );
 
 					if ( $item['testimonial_logo_url']['is_external'] ) {
 						$this->add_render_attribute( 'logo_attribute'. $item_count, 'target', '_blank' );
@@ -2742,14 +2764,38 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			</div>
 		</div>
 
-	<?php
+	    <?php
 	}
+
+    public function render_rating_icon( $class ) {
+        $settings = $this->get_settings();
+        ?>
+
+        <span class="wpr-rating-icon <?php echo esc_attr($class); ?>">
+            <span class="wpr-rating-marked">
+                <?php \Elementor\Icons_Manager::render_icon( [ 'value' => 'fas fa-star', 'library' => 'fa-solid' ], [ 'aria-hidden' => 'true' ] ); ?>
+            </span>
+
+            <span class="wpr-rating-unmarked">
+                <?php 
+                    if ( 'outline' === $settings['testimonial_unmarked_rating_style'] ) {
+                        \Elementor\Icons_Manager::render_icon( [ 'value' => 'far fa-star', 'library' => 'fa-regular' ], [ 'aria-hidden' => 'true' ] );
+                    } else {
+                        \Elementor\Icons_Manager::render_icon( [ 'value' => 'fas fa-star', 'library' => 'fa-solid' ], [ 'aria-hidden' => 'true' ] );
+                    }
+                 ?>
+            </span>
+        </span>
+
+        <?php
+    }
 
 	public function render_testimonial_rating( $item ) {
 		$settings = $this->get_settings();
 		$rating_amount = $item['testimonial_rating_amount'];
 		$round_rating = (int)$rating_amount;
 		$rating_icon = '&#xE934;';
+        $rating_icon_entity = '&#9733;';
 
 		if ( 'style_1' === $settings['testimonial_rating_style'] ) {
 			if ( 'outline' === $settings['testimonial_unmarked_rating_style'] ) {
@@ -2763,17 +2809,49 @@ class Wpr_Testimonial_Carousel extends Widget_Base {
 			}
 		}
 
+        if ( 'outline' === $settings['testimonial_unmarked_rating_style'] ) {
+            $rating_icon_entity = '&#9734;';
+        }
+
 		if ( 'yes' === $settings['testimonial_rating'] && ! empty( $rating_amount ) ) : ?>	
 
 			<div class="wpr-testimonial-rating">
 			<?php for( $i = 1; $i <= $settings['testimonial_rating_scale']; $i++ ) : ?>
-				<?php if ( $i <= $rating_amount ) : ?>
-					<i class="wpr-rating-icon-full"><?php echo esc_html($rating_icon); ?></i>
-				<?php elseif ( $i === $round_rating + 1 && $rating_amount !== $round_rating ) : ?>
-					<i class="wpr-rating-icon-<?php echo esc_attr(( $rating_amount - $round_rating ) * 10); ?>"><?php echo esc_html($rating_icon); ?></i>
-				<?php else : ?>
-					<i class="wpr-rating-icon-empty"><?php echo esc_html($rating_icon); ?></i>
-				<?php endif; ?>
+
+
+                <?php if ( \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) : ?>
+                    <?php if ( 'style_1' === $settings['testimonial_rating_style'] ) : ?>
+
+                        <?php if ( $i <= $rating_amount ) : ?>
+                            <?php $this->render_rating_icon( 'wpr-rating-icon-full' ); ?>
+                        <?php elseif ( $i === $round_rating + 1 && $rating_amount !== $round_rating ) : ?>
+                            <?php $this->render_rating_icon( 'wpr-rating-icon-'. (( $rating_amount - $round_rating ) * 10) ); ?>
+                        <?php else : ?>
+                            <?php $this->render_rating_icon( 'wpr-rating-icon-empty' ); ?>
+                        <?php endif; ?>
+
+                    <?php else: ?>
+
+                        <?php if ( $i <= $rating_amount ) : ?>
+                            <i class="wpr-rating-icon-full"><?php echo esc_html($rating_icon_entity); ?></i>
+                        <?php elseif ( $i === $round_rating + 1 && $rating_amount !== $round_rating ) : ?>
+                            <i class="wpr-rating-icon-<?php echo esc_attr(( $rating_amount - $round_rating ) * 10); ?>"><?php echo esc_html($rating_icon_entity); ?></i>
+                        <?php else : ?>
+                            <i class="wpr-rating-icon-empty"><?php echo esc_html($rating_icon_entity); ?></i>
+                        <?php endif; ?>
+
+                    <?php endif; ?>
+                <?php else : ?>
+                    <?php if ( $i <= $rating_amount ) : ?>
+                        <i class="wpr-rating-icon-full"><?php echo esc_html($rating_icon); ?></i>
+                    <?php elseif ( $i === $round_rating + 1 && $rating_amount !== $round_rating ) : ?>
+                        <i class="wpr-rating-icon-<?php echo esc_attr(( $rating_amount - $round_rating ) * 10); ?>"><?php echo esc_html($rating_icon); ?></i>
+                    <?php else : ?>
+                        <i class="wpr-rating-icon-empty"><?php echo esc_html($rating_icon); ?></i>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+
 	     	<?php endfor; ?>
 
 	     	<?php $this->render_pro_element_testimonial_score($rating_amount); ?>

@@ -6,7 +6,7 @@
  * Author: Wpsoul
  * Author URI: https://greenshiftwp.com
  * Plugin URI: https://greenshiftwp.com
- * Version: 5.5
+ * Version: 8.6.5
  * Text Domain: greenshift-animation-and-page-builder-blocks
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -29,15 +29,23 @@ function gspb_greenShift_category($categories, $post)
 	return array_merge(
 		array(
 			array(
+				'slug'  => 'GreenShiftContent',
+				'title' => __('GreenShift Content Elements', 'greenshift-animation-and-page-builder-blocks'),
+			),
+			array(
 				'slug'  => 'GreenShift',
-				'title' => __('GreenShift'),
+				'title' => __('GreenShift', 'greenshift-animation-and-page-builder-blocks'),
+			),
+			array(
+				'slug'  => 'GreenShiftElements',
+				'title' => __('GreenShift Framework Elements', 'greenshift-animation-and-page-builder-blocks'),
 			),
 		),
 		$categories
 	);
 }
 
-add_filter('block_categories_all', 'gspb_greenShift_category', 1, 2);
+add_filter('block_categories_all', 'gspb_greenShift_category', 11, 2);
 
 // GreenShift Page Templates
 class gspb_PageTemplater
@@ -191,26 +199,12 @@ class gspb_PageTemplater
 
 add_action('init', array('gspb_PageTemplater', 'get_instance'));
 
-add_filter(
-	'body_class',
-	function ($classes) {
-		return array_merge($classes, array('gspbody', 'gspb-bodyfront'));
-	}
-);
-
-add_filter(
-	'admin_body_class',
-	function ($classes) {
-		$classes .= ' gspbody gspb-bodyadmin ';
-		return $classes;
-	}
-);
-
 require_once GREENSHIFT_DIR_PATH . 'init.php';
-require_once GREENSHIFT_DIR_PATH . 'helper.php';
+require_once GREENSHIFT_DIR_PATH . 'includes/helper.php';
 require_once GREENSHIFT_DIR_PATH . 'settings.php';
-require_once GREENSHIFT_DIR_PATH . 'patterns.php';
-require_once GREENSHIFT_DIR_PATH . 'jsoptimization.php';
+//require_once GREENSHIFT_DIR_PATH . 'includes/patterns.php';
+require_once GREENSHIFT_DIR_PATH . 'includes/jsoptimization.php';
+require_once GREENSHIFT_DIR_PATH . 'includes/importer.php';
 
 require_once GREENSHIFT_DIR_PATH . '/edd/edd_start.php';
 add_action('plugins_loaded', 'gspb_GreenShift_plugin_init');
@@ -228,7 +222,11 @@ function gspb_GreenShift_plugin_init()
 function gspb_activation_redirect($plugin)
 {
 	if ($plugin == plugin_basename(__FILE__)) {
-		exit(wp_redirect(admin_url('?page=greenshift_dashboard')));
+		if(defined('GREENSHIFT_THEME_VERSION')){
+			exit(wp_redirect(admin_url('admin.php?page=greenshift_theme_settings')));
+		}else{
+			exit(wp_redirect(admin_url('admin.php?page=greenshift_dashboard')));
+		}
 	}
 }
 add_action('activated_plugin', 'gspb_activation_redirect');

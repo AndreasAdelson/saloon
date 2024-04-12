@@ -15,6 +15,10 @@ define( 'EDD_ALL_IN_ONE_ADDON_NAME', 'All in One Access' );
 define( 'EDD_ALL_IN_ONE_SEO_ADDON_ID', 289 );
 define( 'EDD_ALL_IN_ONE_SEO_ADDON_NAME', 'SEO Pack' );
 
+// Woo Pack data
+define( 'EDD_ALL_IN_ONE_WOO_ADDON_ID', 5658 );
+define( 'EDD_ALL_IN_ONE_WOO_ADDON_NAME', 'Woocommerce Pack' );
+
 // Design Pack data
 define( 'EDD_ALL_IN_ONE_DESIGN_ADDON_ID', 286 );
 define( 'EDD_ALL_IN_ONE_DESIGN_ADDON_NAME', 'Design Pack' );

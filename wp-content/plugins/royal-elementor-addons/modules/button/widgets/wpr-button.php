@@ -3,14 +3,13 @@ namespace WprAddons\Modules\Button\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Image_Size;
-use Elementor\Core\Schemes\Color;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Icons;
@@ -97,6 +96,9 @@ class Wpr_Button extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Click here',
 			]
 		);
@@ -105,6 +107,9 @@ class Wpr_Button extends Widget_Base {
 			'button_url',
 			[
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'placeholder' => esc_html__( 'https://your-link.com', 'wpr-addons' ),
 				'default' => [
 					'url' => '#link',
@@ -182,6 +187,9 @@ class Wpr_Button extends Widget_Base {
 			[
 				'label' => esc_html__( 'Effect Text', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'default' => 'Go',
 				'condition' => [
 					'button_hover_animation' => ['wpr-button-winona','wpr-button-rayen-left','wpr-button-rayen-right']
@@ -284,6 +292,9 @@ class Wpr_Button extends Widget_Base {
 			[
 				'label' => esc_html__( 'Button ID', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'wpr-addons' ),
 				'description' => esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this button is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'wpr-addons' ),
 				'label_block' => false,
@@ -482,7 +493,6 @@ class Wpr_Button extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'button_typography',
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-button-text,{{WRAPPER}} .wpr-button::after',
 			]
 		);
@@ -668,7 +678,7 @@ class Wpr_Button extends Widget_Base {
 
 			$btn_element = 'a';
 
-			$this->add_render_attribute( 'button_attribute', 'href', $settings['button_url']['url'] );
+			$this->add_render_attribute( 'button_attribute', 'href', esc_url( $settings['button_url']['url'] ) );
 
 			if ( $settings['button_url']['is_external'] ) {
 				$this->add_render_attribute( 'button_attribute', 'target', '_blank' );
@@ -690,7 +700,7 @@ class Wpr_Button extends Widget_Base {
 			
 			<span class="wpr-button-content">
 				<?php if ( '' !== $settings['button_text'] ) : ?>
-					<span class="wpr-button-text"><?php echo esc_html( $settings['button_text'] ); ?></span>
+					<span class="wpr-button-text"><?php echo esc_html__( $settings['button_text'] ); ?></span>
 				<?php endif; ?>
 				
 				<?php if ( '' !== $settings['select_icon']['value'] ) : ?>

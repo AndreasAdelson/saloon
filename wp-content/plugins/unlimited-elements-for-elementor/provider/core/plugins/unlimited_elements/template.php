@@ -7,6 +7,8 @@ class UCEmptyTemplate{
 	const SHOW_DEBUG = false;
 	
 	private $templateID;
+	private $isMultiple = false;
+	
 	
 	
 	/**
@@ -16,7 +18,7 @@ class UCEmptyTemplate{
 		$this->init();
 	}
 	
-	/**
+	/** 
 	 * put error message
 	 */
 	private function putErrorMessage($message = null){
@@ -93,6 +95,15 @@ class UCEmptyTemplate{
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="profile" href="https://gmpg.org/xfn/11">
     <?php wp_head(); ?>
+    
+    <style>
+    html{
+    	margin:0px !important;
+    	padding:0px !important;
+    }
+    
+    </style>
+        
   </head>
   <body <?php body_class(); ?>>
 		
@@ -103,8 +114,9 @@ class UCEmptyTemplate{
 	 * render footer part
 	 */
 	private function renderFooter(){
-		wp_footer();
 		
+		wp_footer();
+				
 		?>
 			</body>
 		</html>
@@ -116,6 +128,11 @@ class UCEmptyTemplate{
 	 */
 	private function renderTemplate(){
 
+		if(is_singular() == false)
+			UniteFunctionsUC::throwError("not singlular");
+		
+		UniteFunctionsUC::validateNumeric($this->templateID,"template id");
+		
 		$this->validateTemplateExists();
 		
 		$content = HelperProviderCoreUC_EL::getElementorTemplate($this->templateID, true);
@@ -129,7 +146,228 @@ class UCEmptyTemplate{
 		$this->renderFooter();
 		
 }
+
+	/**
+	 * check and output debug
+	 */
+	private function checkOutputDebug(){
+		
+		$isDebug = UniteFunctionsUC::getGetVar("framedebug","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+		$isDebug = UniteFunctionsUC::strToBool($isDebug);
+		
+		if($isDebug == false)
+			return(false);
+
+		?>
+		
+		<style>
+		
+			.uc-debug-holder{
+				display:flex;
+				justify-content:center;
+				padding:10px;
+			}
+			
+			.uc-debug-holder button{
+				margin-left:20px;
+			}
+			
+			.uc-template-index{
+				position:absolute;
+				top:10px;
+				left:10px;
+			}
+			
+		</style>
+		
+		<div class="uc-debug-holder">
+			
+			<div id="debug_index" class="uc-template-index"></div>
+			
+			<button id="debug_button_prev">Prev</button>
+			
+			<button id="debug_button_next">Next</button>
+			
+		</div>
+		
+		
+		<script>
+		
+			function trace(str){
+				console.log(str);
+			}
+
+			jQuery(document).ready(function(){
+
+				function setTemplateIndex(){
+
+					var total = jQuery(".uc-template-holder").length;
+
+					var active = jQuery(".uc-template-holder").not(".uc-template-hidden").index();
+
+					active++;
+					
+					var text = active + " / " + total;
+					
+					jQuery("#debug_index").html(text);
+					
+				}
+				
+				
+				//set some item active
+				function setActive(dir){
+					
+					var objActiveTemplate = jQuery(".uc-template-holder").not(".uc-template-hidden");
+					
+					if(objActiveTemplate.length != 1){
+						
+						trace(objActiveTemplate);
+						throw new Error("Wrong active template");
+					}
+
+					if(dir == "prev")					
+						var objNextTemplate = objActiveTemplate.prev();
+					else
+						var objNextTemplate = objActiveTemplate.next();
+
+					if(objNextTemplate.length == 0)
+						return(false);
+					
+					objActiveTemplate.hide().addClass("uc-template-hidden");
+
+					objNextTemplate.show().removeClass("uc-template-hidden");
+
+					
+					//clone the template tag
+					
+					var nextTemplateElement = objNextTemplate.children("template");
+
+					if(nextTemplateElement.length){
+						
+						objNextTemplate.removeClass("uc-not-inited");
+
+			            if(objNextTemplate.length > 1){
+				            
+				            trace(objNextTemplate);
+				            throw new Error("wrong next template");
+				            
+				        }
+
+			        	    
+				        var clonedContent = nextTemplateElement[0].content.cloneNode(true);
+				        objNextTemplate.append(clonedContent);
+				      	
+				        nextTemplateElement.remove();
+				        
+						setTimeout(function(){
+					        
+							jQuery("body").trigger("uc_dom_updated");
+							
+						}, 300);
+						
+					}
+
+					setTemplateIndex();
+				}
+
+				jQuery("#debug_button_next").on("click",function(){
+
+					setActive("next");
+						
+				});
+
+				jQuery("#debug_button_prev").on("click",function(){
+
+					setActive("prev");
+						
+				});
+
+				setTemplateIndex();
+				
+			});
+		
+		</script>
+		
+		<?php 
+		
+		return(true);
+	}
 	
+	
+	/**
+	 * render multiple template for templates widget output
+	 */
+	private function renderMultipleTemplates(){
+		
+		$this->isMultiple = true;
+		
+		$arrTemplates = explode(",", $this->templateID);
+		
+		UniteFunctionsUC::validateIDsList($this->templateID,"template ids");
+		
+		$content = "";
+		
+		foreach($arrTemplates as $index => $templateID){
+			
+			$urlTemplate = UniteFunctionsWPUC::getPermalink($templateID);
+			
+			//render in hidden mode
+			
+			$isHidden = false;
+			
+			if($index > 0){
+				
+				GlobalsProviderUC::$renderJSForHiddenContent = true;
+				$isHidden = true;
+				
+			}
+						
+			$output = HelperProviderCoreUC_EL::getElementorTemplate($templateID, true);
+
+			//set hidden content
+			
+			$class = "";
+			if($isHidden == true){
+				
+				$class = " uc-template-hidden uc-not-inited";
+				
+				$output = "\n\n<template>\n$output\n</template>\n\n";
+			}
+			
+			if(empty($output))
+				$output = "template $templateID not found";
+			
+			$urlTemplate = esc_attr($urlTemplate);
+			
+			$content .= "<div id='uc_template_$templateID' class='uc-template-holder{$class}' data-id='$templateID' data-link='$urlTemplate'>$output</div>";
+			
+			GlobalsProviderUC::$renderJSForHiddenContent = false;
+			
+		}
+		
+		//don't know why, but it's not working. need to remove this dependency
+		
+		UniteFunctionsWPUC::removeIncludeScriptDep("elementor-frontend");
+
+		$this->renderHeaderPart();
+		
+		//check debug
+		
+		$isDebug = $this->checkOutputDebug();
+		
+		//$this->renderRegularBody();
+		if($isDebug == true)
+			echo "<div class='uc-debug-templates-wrapper'>";
+		
+		echo $content;
+		
+		if($isDebug == true)
+			echo "</div>";
+		
+		
+		$this->renderFooter();
+		
+	}
 	
 	
 	/**
@@ -141,17 +379,22 @@ class UCEmptyTemplate{
 			
   			show_admin_bar(false);
 			
-			$renderTemplateID = UniteFunctionsUC::getGetVar("ucrendertemplate","",UniteFunctionsUC::SANITIZE_ID);
+			$renderTemplateID = UniteFunctionsUC::getGetVar("ucrendertemplate","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+			
+			$isMultiple = UniteFunctionsUC::getGetVar("multiple","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+			$isMultiple = UniteFunctionsUC::strToBool($isMultiple);
 			
 			if(empty($renderTemplateID))
 				UniteFunctionsUC::throwError("template id not found");
 			
-			if(is_singular() == false)
-				UniteFunctionsUC::throwError("not singlular");
-		
 			$this->templateID = $renderTemplateID;
-				
-			$this->renderTemplate();
+			
+			if($isMultiple == true)
+				$this->renderMultipleTemplates();
+			else{
+													
+				$this->renderTemplate();
+			}
 			
 			
 		}catch(Exception $e){

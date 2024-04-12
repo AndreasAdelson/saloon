@@ -3,12 +3,11 @@ namespace WprAddons\Modules\GoogleMaps\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Repeater;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Color;
-use Elementor\Core\Schemes\Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use WprAddons\Classes\Utilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -122,8 +121,11 @@ class Wpr_Google_Maps extends Widget_Base {
 			'gm_custom_color_scheme',
 			[
 				'label' => esc_html__( 'Custom Style', 'wpr-addons' ),
-				'description' => esc_html__( 'Get custom map style code from <a href="https://snazzymaps.com/explore" target="_blank">Snazzy Maps</a> or <a href="https://mapstyle.withgoogle.com/" target="_blank">GM Styling Wizard</a> and copy/paste in this field.', 'wpr-addons' ),
+				'description' => __( 'Get custom map style code from <a href="https://snazzymaps.com/explore" target="_blank">Snazzy Maps</a> or <a href="https://mapstyle.withgoogle.com/" target="_blank">GM Styling Wizard</a> and copy/paste in this field.', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'gm_color_scheme' => 'custom',
 				]
@@ -191,9 +193,6 @@ class Wpr_Google_Maps extends Widget_Base {
 
 		$this->end_controls_section(); // End Controls Section
 
-		// Section: Request New Feature
-		Utilities::wpr_add_section_request_feature( $this, Controls_Manager::RAW_HTML, '' );
-
 		// Tab: Content ==============
 		// Section: Locations --------
 		$this->start_controls_section(
@@ -220,6 +219,9 @@ class Wpr_Google_Maps extends Widget_Base {
 			[
 				'label' => esc_html__( 'Latitude', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -228,6 +230,9 @@ class Wpr_Google_Maps extends Widget_Base {
 			[
 				'label' => esc_html__( 'Longtitude', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -252,6 +257,9 @@ class Wpr_Google_Maps extends Widget_Base {
 				'label' => esc_html__( 'Location Title', 'wpr-addons' ),
 				'label_block' => true,
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'gm_show_info_window!' => 'none',
 				]
@@ -263,6 +271,9 @@ class Wpr_Google_Maps extends Widget_Base {
 			[
 				'label' => esc_html__( 'Location Description', 'wpr-addons' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'gm_show_info_window!' => 'none',
 				]
@@ -318,6 +329,9 @@ class Wpr_Google_Maps extends Widget_Base {
 			[
 				'label' => esc_html__( 'Upload Marker Icon', 'wpr-addons' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'gm_custom_marker' => 'yes',
 				]
@@ -430,6 +444,9 @@ class Wpr_Google_Maps extends Widget_Base {
 
 		$this->end_controls_section(); // End Controls Section
 
+		// Section: Request New Feature
+		Utilities::wpr_add_section_request_feature( $this, Controls_Manager::RAW_HTML, '' );
+
 		// Styles ====================
 		// Section: Info Window ------
 		$this->start_controls_section(
@@ -502,6 +519,7 @@ class Wpr_Google_Maps extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .wpr-google-map .gm-style-iw-d' => 'background-color: {{VALUE}}',
 					'{{WRAPPER}} .wpr-google-map .gm-style-iw-t:after' => 'background: {{VALUE}}',
+					'{{WRAPPER}} .wpr-google-map .gm-style-iw-tc:after' => 'background: {{VALUE}}'
 				],
 			]
 		);
@@ -511,7 +529,6 @@ class Wpr_Google_Maps extends Widget_Base {
 			[
 				'name' => 'infow_window_title_typography',
 				'label' => esc_html__( 'Title Typography', 'wpr-addons' ),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-google-map .gm-style-iw-c .wpr-gm-iwindow h3'
 			]
 		);
@@ -521,7 +538,6 @@ class Wpr_Google_Maps extends Widget_Base {
 			[
 				'name' => 'infow_window_desc_typography',
 				'label' => esc_html__( 'Description Typography', 'wpr-addons' ),
-				'scheme' => Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .wpr-google-map .gm-style-iw-c .wpr-gm-iwindow p'
 			]
 		);
@@ -589,15 +605,21 @@ class Wpr_Google_Maps extends Widget_Base {
 	}
 
 	public function get_map_settings( $settings ) {
-		return [
+		$map_settings = [
 			'type' => $settings['gm_type'],
 			'style' => $settings['gm_color_scheme'],
-			'custom_style' => preg_replace( '/\s/', '', strip_tags($settings['gm_custom_color_scheme']) ),
 			'zoom_depth' => $settings['gm_zoom_depth']['size'],
 			'zoom_on_scroll' => $settings['gm_zoom_on_scroll'],
 			'cluster_markers' => $settings['gm_cluster_markers'],
 			'clusters_url' => WPR_ADDONS_URL . 'assets/js/lib/gmap/clusters/m',
 		];
+
+
+        if ( !is_array($settings['gm_custom_color_scheme']) ) {
+			$map_settings['custom_style'] = preg_replace( '/\s/', '', strip_tags($settings['gm_custom_color_scheme']) );
+        }
+
+        return $map_settings;
 	}
 
 	public function get_map_controls( $settings ) {
@@ -618,6 +640,10 @@ class Wpr_Google_Maps extends Widget_Base {
 		$attributes .= ' data-controls="'. esc_attr( json_encode($this->get_map_controls( $settings )) ) .'"';
 
 		echo '<div class="wpr-google-map" '. $attributes .'></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+		if ( current_user_can('manage_options') && '' == get_option('wpr_google_map_api_key') ) {
+			echo '<p class="wpr-api-key-missing">Please go to plugin <a href='. admin_url( 'admin.php?page=wpr-addons&tab=wpr_tab_settings' ) .' target="_blank">Settings</a> and Insert Google Map API Key in order to make Google Maps work</p>';
+		}
 
 	}
 	
