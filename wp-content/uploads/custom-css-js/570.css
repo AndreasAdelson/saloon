@@ -63,7 +63,8 @@ background: rgba(0, 0, 0, 0.31);
 }
 
 .forfait::-webkit-scrollbar{
-width: 5px;
+	width: 5px;
+	height:5px;
 }
 
 .forfait::-webkit-scrollbar-track{
@@ -74,9 +75,23 @@ background: rgba(0, 0, 0, 0.1);
 background: #F4BE86;
 }
 
+.forfait2 {
+    min-height: 300px;
+     max-height: 475px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color:transparent;
+}
+
+@media (max-width: 767px) {
+    .forfait2 {
+        overflow-x: scroll;
+    }
+}
 
 .forfait2::-webkit-scrollbar{
-width: 5px;
+	height: 5px;
+	width: 5px;
 }
 
 .forfait2::-webkit-scrollbar-track{

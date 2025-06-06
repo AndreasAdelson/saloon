@@ -182,7 +182,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gs-swiper-init',
 		GREENSHIFT_DIR_URL . 'libs/swiper/init.js',
 		array(),
-		'8.9.4',
+		'8.9.6',
 		true
 	);
 	wp_localize_script(
@@ -214,7 +214,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gstabs',
 		GREENSHIFT_DIR_URL . 'libs/tabs/tabs.js',
 		array(),
-		'1.4',
+		'1.5',
 		true
 	);
 
@@ -223,7 +223,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gstoggler',
 		GREENSHIFT_DIR_URL . 'libs/toggler/index.js',
 		array(),
-		'1.1',
+		'1.2',
 		true
 	);
 
@@ -247,7 +247,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gsvideo',
 		GREENSHIFT_DIR_URL . 'libs/video/index.js',
 		array(),
-		'1.9.4',
+		'1.9.5',
 		true
 	);
 
@@ -309,7 +309,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gsslidingpanel',
 		GREENSHIFT_DIR_URL . 'libs/slidingpanel/index.js',
 		array(),
-		'2.7',
+		'2.8.1',
 		true
 	);
 
@@ -451,7 +451,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gspb_interactions',
 		GREENSHIFT_DIR_URL . 'libs/interactionlayer/index.js',
 		array(),
-		'1.8',
+		'2.0',
 		true
 	);
 
@@ -460,29 +460,29 @@ function gspb_greenShift_register_scripts_blocks(){
 		'greenShift-library-editor',
 		GREENSHIFT_DIR_URL . 'build/gspbLibrary.css',
 		'',
-		'8.6.3'
+		'8.8.1'
 	);
 	wp_register_style(
 		'greenShift-block-css', // Handle.
 		GREENSHIFT_DIR_URL . 'build/index.css', // Block editor CSS.
 		array('greenShift-library-editor', 'wp-edit-blocks'),
-		'8.6.3'
+		'8.8.1'
 	);
 	wp_register_style(
 		'greenShift-stylebook-css', // Handle.
 		GREENSHIFT_DIR_URL . 'build/gspbStylebook.css', // Block editor CSS.
 		array(),
-		'8.6.3'
+		'8.8.1'
 	);
 	wp_register_style(
 		'greenShift-admin-css', // Handle.
 		GREENSHIFT_DIR_URL . 'templates/admin/style.css', // admin css
 		array(),
-		'8.6.3'
+		'8.8.1'
 	);
 
 	//Script for ajax reusable loading
-	wp_register_script('gselajaxloader',  GREENSHIFT_DIR_URL . 'libs/reusable/index.js', array(), '2.0', true);
+	wp_register_script('gselajaxloader',  GREENSHIFT_DIR_URL . 'libs/reusable/index.js', array(), '2.4', true);
 	wp_register_style('gspreloadercss',  GREENSHIFT_DIR_URL . 'libs/reusable/preloader.css', array(), '1.2');
 
 
@@ -517,8 +517,8 @@ function gspb_greenShift_register_scripts_blocks(){
 	register_block_type(__DIR__ . '/blockrender/element');
 
 	// admin settings scripts and styles
-	wp_register_script('gsadminsettings',  GREENSHIFT_DIR_URL . 'libs/admin/settings.js', array(), '1.1', true);
-	wp_register_style('gsadminsettings',  GREENSHIFT_DIR_URL . 'libs/admin/settings.css', array(), '1');
+	wp_register_script('gsadminsettings',  GREENSHIFT_DIR_URL . 'libs/admin/settings.js', array(), '1.2', true);
+	wp_register_style('gsadminsettings',  GREENSHIFT_DIR_URL . 'libs/admin/settings.css', array(), '1.1');
 	wp_localize_script(
 		'gsadminsettings',
 		'greenShift_params',
@@ -1187,6 +1187,14 @@ function gspb_greenShift_block_script_assets($html, $block)
 			}
 			if($thumbposter){
 				$html = str_replace($block['attrs']['poster'], $thumbposter, $html);
+			}
+			if(!empty($block['attrs']['disableSmartLoading'])){
+				$html = str_replace('data-mute="true"', 'data-mute="true" muted', $html);
+				$html = str_replace('data-loop="true"', 'data-loop="true" loop', $html);
+				$html = str_replace('data-playsinline="true"', 'data-playsinline="true" playsinline', $html);
+				$html = str_replace('data-autoplay="true"', 'data-autoplay="true" autoplay', $html);
+				$html = str_replace('data-controls="true"', 'data-controls="true" controls', $html);
+
 			}
 		}
 		// looking for toggler
@@ -1973,6 +1981,21 @@ function gspb_register_route()
 		)
 	);
 
+	register_rest_route(
+		'greenshift/v1',
+		'/global_wp_settings/',
+		array(
+			array(
+				'methods'             => 'POST',
+				'callback'            => 'gspb_update_global_wp_settings',
+				'permission_callback' => function () {
+					return current_user_can('edit_posts');
+				},
+				'args'                => array(),
+			),
+		)
+	);
+
 	register_rest_route('greenshift/v1', '/convert-svgstring-from-svg-image/', [
 		[
 			'methods' => 'GET',
@@ -2205,6 +2228,96 @@ function gspb_update_css_settings($request)
 		return json_encode(array(
 			'success' => true,
 			'message' => 'Post css updated!',
+		));
+	} catch (Exception $e) {
+		return json_encode(array(
+			'success' => false,
+			'message' => $e->getMessage(),
+		));
+	}
+}
+
+function gspb_update_global_wp_settings($request)
+{
+
+	try {
+		$params = $request->get_params();
+		$settings = wp_get_global_settings();
+		if(!empty($params['colors'])){
+			$colors = [];
+			foreach($params['colors'] as $key=>$value){
+				$colors[$key] = sanitize_text_field($value['color']);
+			}
+
+			$theme = wp_get_theme();
+			if ($theme->parent_theme) {
+				$template_dir = basename(get_template_directory());
+				$theme = wp_get_theme($template_dir);
+			}
+			$themename = $theme->get('TextDomain');
+	
+			// Define post parameters
+			$post_type = 'wp_global_styles';
+			$post_name = 'wp-global-styles-'.$themename;
+		
+			$stylesObject = get_page_by_path($post_name, OBJECT, $post_type);
+			$stylesPostId = is_object($stylesObject) ? $stylesObject->ID : '';
+		
+			if ($stylesPostId) {
+		
+				$post_id = $stylesPostId;
+				$content = $stylesObject->post_content;
+				$contentclean = json_decode($content, true);
+				if (empty($contentclean['settings']['color']['palette']['theme'])) {
+					$contentclean = array();
+					$contentclean['settings']['color']['palette']['theme'] = $settings['color']['palette']['theme'];
+					$contentclean["isGlobalStylesUserThemeJSON"] = true;
+					$contentclean["version"] = 2;
+				}
+				if(!empty($colors)){
+					foreach($colors as $key=>$value){
+						$contentclean['settings']['color']['palette']['theme'][$key]['color'] = $value;
+					}
+				}
+		
+				// Update post data as needed
+				$post_data = array(
+					'ID'   =>  $stylesPostId,
+					'post_title' => $stylesObject->post_title, // Replace with the new title
+					'post_content' => json_encode($contentclean), // Replace with the new content
+				);
+		
+				// Update the post
+				wp_update_post($post_data);
+			} else {
+				$contentclean = array();
+				$contentclean['settings']['color']['palette']['theme'] = $settings['color']['palette']['theme'];
+				$contentclean["isGlobalStylesUserThemeJSON"] = true;
+				$contentclean["version"] = 2;
+				if(!empty($colors)){
+					foreach($colors as $key=>$value){
+						$contentclean['settings']['color']['palette']['theme'][$key]['color'] = $value;
+					}
+				}
+				$content = json_encode($contentclean);
+				$post_id = wp_insert_post(array(
+					'post_name' => $post_name,
+					'post_title' => "Custom Styles",
+					'post_type' => $post_type,
+					'post_content' => $content,
+					'post_status' => 'publish',
+				));
+		
+				$category_domain = 'wp_theme';
+				$category_slug = $themename;
+		
+				wp_set_object_terms($post_id, $category_slug, $category_domain, false);
+			}
+		}
+
+		return json_encode(array(
+			'success' => true,
+			'message' => 'Settings updated!',
 		));
 	} catch (Exception $e) {
 		return json_encode(array(

@@ -105,8 +105,17 @@ if (!current_user_can('manage_options')) {
                             margin-left: 1em;
                         }
 
+                        .rtl .design-import .is-design-theme-name {
+                            margin-right: 1em;
+                            margin-left: 0;
+                        }
+
                         .design-import .is-design-option {
                             margin: 0 0 0.5em 2em;
+                        }
+
+                        .rtl .design-import .is-design-option {
+                            margin: 0 2em 0.5em 0;
                         }
 
                         .design-import .notice.is-designs-not-available {

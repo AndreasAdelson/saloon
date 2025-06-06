@@ -29,6 +29,17 @@ jQuery(document).ready(function ($) {
 		$container.find('[name=fonts_count]').val(count - 1)
 	});
 
+	$container.on('click', '.remove-font', function (e) {
+		e.preventDefault()
+		const count = parseInt($("[name=fonts_count]").val());
+
+		//if (count < 2) return false;
+
+		let index = $(this).index('.remove-font');
+		$container.find('.fonts-wrap .font-item').eq(index).remove()
+		$container.find('[name=fonts_count]').val(count - 1)
+	});
+
 	$container.on('click', '.current-file-actions .remove-font-file', function (e) {
 		e.preventDefault();
 		const $this = $(this);

@@ -64,6 +64,10 @@
 #gspb_iconsList-id-gsbp-843b958c-d873.gspb_iconsList .gspb_iconsList__item__text {
     margin-left: 15px
 }
+.rtl #gspb_iconsList-id-gsbp-843b958c-d873.gspb_iconsList .gspb_iconsList__item__text {
+    margin-right: 15px;
+    margin-left: 0
+}
 
 #gspb_iconsList-id-gsbp-843b958c-d873.gspb_iconsList .gspb_iconsList__item {
     display: flex;

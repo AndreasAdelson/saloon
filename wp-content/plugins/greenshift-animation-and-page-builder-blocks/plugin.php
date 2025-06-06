@@ -6,7 +6,7 @@
  * Author: Wpsoul
  * Author URI: https://greenshiftwp.com
  * Plugin URI: https://greenshiftwp.com
- * Version: 8.6.5
+ * Version: 8.8.3
  * Text Domain: greenshift-animation-and-page-builder-blocks
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -30,15 +30,15 @@ function gspb_greenShift_category($categories, $post)
 		array(
 			array(
 				'slug'  => 'GreenShiftContent',
-				'title' => __('GreenShift Content Elements', 'greenshift-animation-and-page-builder-blocks'),
+				'title' => __('Content Elements', 'greenshift-animation-and-page-builder-blocks'),
 			),
 			array(
 				'slug'  => 'GreenShift',
-				'title' => __('GreenShift', 'greenshift-animation-and-page-builder-blocks'),
+				'title' => __('Interactive Elements', 'greenshift-animation-and-page-builder-blocks'),
 			),
 			array(
 				'slug'  => 'GreenShiftElements',
-				'title' => __('GreenShift Framework Elements', 'greenshift-animation-and-page-builder-blocks'),
+				'title' => __('Framework Elements', 'greenshift-animation-and-page-builder-blocks'),
 			),
 		),
 		$categories
@@ -222,6 +222,10 @@ function gspb_GreenShift_plugin_init()
 function gspb_activation_redirect($plugin)
 {
 	if ($plugin == plugin_basename(__FILE__)) {
+		global $pagenow;
+		if($pagenow != 'plugins.php' && $pagenow != 'themes.php'){
+			return;
+		}
 		if(defined('GREENSHIFT_THEME_VERSION')){
 			exit(wp_redirect(admin_url('admin.php?page=greenshift_theme_settings')));
 		}else{

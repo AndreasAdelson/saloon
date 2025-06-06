@@ -8,7 +8,7 @@ Requires at least: 6.3
 Tested up to: 6.6
 Requires PHP: 7.0
 License: GPLv2 or later
-Stable tag: 8.6.5
+Stable tag: 8.8.3
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 More than 20 special blocks for Gutenberg to build complex pages and animations with highest possible web vitals score.
@@ -108,7 +108,48 @@ Yes, we guarantee that Greenshift is built on top of google recommendations and 
 
 == Changelog ==
 
-= 8.6.3 =
+= 8.8.3 =
+
+* Added: Animation attribute can be copied by Design by type Copy function 
+* Added: Cursor option to css transform panel and fix for variable deletion
+
+= 8.8.1 =
+
+* Added: Slider has option to set Auto for items per view
+* Added: Row video background has stretched view
+
+= 8.7.8 =
+
+* Added: Theme colors can be edited from stylebook
+
+= 8.7.7 =
+
+* Added: Copy style option for class and sub selector system
+* Added: Fix for Remove button for fonts 
+
+= 8.7.6 =
+* Fix: Flex Child options wrong indicator
+
+= 8.7.4 =
+* Added: Fix for insertion point for templates in WP 6.5
+* Added: Variable system now shows all variables divided by category
+
+= 8.7.2 =
+* Added: Copy - Paste by type option supports copying classes from block to block
+
+= 8.7.1 =
+* Added: Support for tabs, accordion, slider, video lightbox, toggle, sliding panel scripts in template ajax loading and in ajax Infinite scroll options
+* Added: Better video block support for dynamic queries
+
+= 8.7 =
+* Added: New Form Elements to Element block
+* Added: On Input change Interaction Layer trigger and Input value conditions
+* Added: Slider pause/resume Interaction Layer actions
+* Added: RTL improvements in interface
+* Added: Selector Rule Builder for class system
+* Added: Mix Blend for Overlay panel
+
+= 8.6.5 =
 * Added: Class system has options for Flex Child
 * Fix: rating star colors for progress bar
 

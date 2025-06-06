@@ -185,6 +185,11 @@ if (!current_user_can('manage_options')) {
                         line-height: 30px;
                         background: #2184f9;
                     }
+                    .rtl #gspb_addons .gspb-cards-list .gspb-card .gspb-inner .gspb-cta .button,
+                    .rtl #gspb_addons .gspb-cards-list .gspb-card .gspb-inner .gspb-cta .button-group {
+                        right: auto;
+                        left: 10px;
+                    }
 
                     @media screen and (min-width: 960px) {
                         #gspb_addons .gspb-cards-list .gspb-card:hover .gspb-inner ul {

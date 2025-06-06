@@ -34,6 +34,7 @@ class UniteCreatorFiltersProcess{
 	private $contentWidgetsDebug = array();
 	private static $lastArgs = null;	
 	private static $isUnderAjaxSearch = false;
+	public static $isUnderAjax = false;
 	private static $showEchoDebug = false;
 	
 	private $hasSelectedByRequest = false;
@@ -134,18 +135,6 @@ class UniteCreatorFiltersProcess{
 	}
 	
 	
-	/**
-	 * check if under ajax request
-	 */
-	private function isUnderAjax(){
-		
-		$ajaxAction = UniteFunctionsUC::getPostGetVariable("ucfrontajaxaction","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
-		
-		if(!empty($ajaxAction))
-			return(true);
-		
-		return(false);
-	}
 	
 		
 	/**
@@ -612,39 +601,6 @@ class UniteCreatorFiltersProcess{
 	}
 	
 	
-	/**
-	 * get input filters in assoc mode
-	 */
-	private function getInputFiltersAssoc(){
-		
-		if(!empty(self::$arrFiltersAssocCache))
-			return(self::$arrFiltersAssocCache);
-		
-		$arrFilters = $this->getArrInputFilters();
-		
-		$output = array();
-		
-		$terms = UniteFunctionsUC::getVal($arrFilters, "terms");
-		
-		if(empty($terms))
-			$terms = array();
-		
-		foreach($terms as $taxonomy=>$arrTermSlugs){
-				
-			foreach($arrTermSlugs as $slug){
-				
-				$key = "term_{$taxonomy}_{$slug}";
-				
-				$output[$key] = true;
-			}
-			
-		}
-		
-		self::$arrFiltersAssocCache = $output;
-		
-		return($output);
-	}
-	
 	
 	/**
 	 * get filters arguments
@@ -885,15 +841,14 @@ class UniteCreatorFiltersProcess{
 	 */
 	public function processRequestFilters($args, $isFilterable, $isMainQuery = false){
 		
-		$isUnderAjax = $this->isUnderAjax();
+		//allow all ajax, forbid under request and not filterable.
 		
-		if($isUnderAjax == false && $isFilterable == false)
+		if($isFilterable == false)
 			return($args);
-		
+					
 		$arrFilters = $this->getRequestFilters();
 		
 		$arrMetaQuery = array();
-		
 		
 		//---- set offset and count ----
 		
@@ -994,13 +949,13 @@ class UniteCreatorFiltersProcess{
 		
 		//supress all filters
 		if(self::$isUnderAjaxSearch == true){
-
+			
 			$args["suppress_filters"] = true;
 			
 			//delete all filters in case of ajax search
 			
-			global $wp_filter;
-			$wp_filter = array();
+			UniteCreatorAjaxSeach::supressThirdPartyFilters();
+			
 		}
 		
 		//Woo Prices
@@ -1166,7 +1121,7 @@ class UniteCreatorFiltersProcess{
 		$arrSettingsValues = UniteFunctionsUC::getVal($arrElement, "settings");
 		
 		$widgetName = str_replace("ucaddon_", "", $widgetType);
-				
+		
 		$addon = new UniteCreatorAddon();
 		$addon->initByAlias($widgetName, GlobalsUC::ADDON_TYPE_ELEMENTOR);
 
@@ -1181,6 +1136,13 @@ class UniteCreatorFiltersProcess{
 		
 		$addon->setParamsValues($arrSettingsValues);
 		
+		
+		//init the ajax search object to modify the post search list, if available
+		if(GlobalsProviderUC::$isUnderAjaxSearch){
+			
+			$objAjaxSearch = new UniteCreatorAjaxSeach();
+			$objAjaxSearch->initCustomAjaxSeach($addon);
+		}
 		
 		//------ get the html output
 				
@@ -1616,7 +1578,6 @@ class UniteCreatorFiltersProcess{
 		
 		define("UE_AJAX_SEARCH_ACTIVE", true);
 		
-		
 		$layoutID = UniteFunctionsUC::getPostGetVariable("layoutid","",UniteFunctionsUC::SANITIZE_KEY);
 		$elementID = UniteFunctionsUC::getPostGetVariable("elid","",UniteFunctionsUC::SANITIZE_KEY);
 		
@@ -1630,11 +1591,9 @@ class UniteCreatorFiltersProcess{
 		
 		//for outside filters - check that under ajax
 				
-		
 		$arrHtmlWidget = $this->getContentWidgetHtml($arrContent, $elementID);
 		
 		GlobalsProviderUC::$isUnderAjaxSearch = false;
-		
 		
 		$htmlGridItems = UniteFunctionsUC::getVal($arrHtmlWidget, "html");
 		$htmlGridItems2 = UniteFunctionsUC::getVal($arrHtmlWidget, "html2");
@@ -1832,10 +1791,7 @@ class UniteCreatorFiltersProcess{
 		$data["uc_filtering_attributes"] = $strAttributes;
 		$data["uc_filtering_addclass"] = $addClass;
 		
-		
 		return($data);
-		
-		
 	}
 	
 	/**
@@ -1875,7 +1831,7 @@ class UniteCreatorFiltersProcess{
 	 * get the base url
 	 */
 	private function getFiltersJSData(){
-		
+				
 		$urlBase = UniteFunctionsUC::getBaseUrl(GlobalsUC::$current_page_url, true);		//strip pagination
 		
 		//include some common url filters
@@ -1913,6 +1869,7 @@ class UniteCreatorFiltersProcess{
 		//get current filters
 		
 		$arrData = array();
+		$arrData["platform"] = GlobalsProviderUC::$renderPlatform;
 		$arrData["urlbase"] = $urlBase;
 		$arrData["urlajax"] = GlobalsUC::$url_ajax_full;
 		$arrData["urlkeys"] = $arrUrlKeys;
@@ -2452,7 +2409,7 @@ class UniteCreatorFiltersProcess{
 		
 		$isInsideEditor = GlobalsProviderUC::$isInsideEditor;
 		
-		$isUnderAjax = $this->isUnderAjax();
+		$isUnderAjax = self::$isUnderAjax;
 		
 		if($isUnderAjax == true)
 			$isFirstLoad = false;
@@ -2691,6 +2648,8 @@ s	 */
 		$this->setShowDebug();
 		
 		$this->checkSetErrorsReporting();
+
+		self::$isUnderAjax = true;
 		
 		try{
 			
